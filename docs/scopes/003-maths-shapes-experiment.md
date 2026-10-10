@@ -28,9 +28,16 @@ does the fitting. Claude may only propose a starting layout of parts.
    (papers and open repos on primitive fitting, superquadrics, CSG recovery,
    neural SDFs, and SDF modelling references). For each source: what it does,
    its licence, what we take as technique. Techniques only; no GPL code.
-2. **Input model:** one free CC0 car (e.g. Kenney or Quaternius car kits).
-   Record its source and licence. If the owner subscribes to Meshy, repeat the
-   run with one Meshy car.
+2. **Input models:** the owner's own World Drive cars, so the comparison is
+   against models the game would really use.
+   - Main test: `car_traffic_1.glb` (hatchback, 803 KB) from the World Drive
+     repo (`game/public/models/`), based on "Generic passenger car pack" by
+     Comrade1280, CC-BY-4.0, credited on the About page.
+   - Hard test: `car_concept.glb` (11.8 MB, Khronos glTF Sample Assets
+     "CarConcept", CC-BY-4.0).
+   - Optional: one Meshy car if the owner subscribes.
+   The orchestrating session copies these files onto the branch; record
+   source and licence for each.
 3. **Distance samples:** sample the model's signed distance at points near
    and away from its surface. Deterministic: same model and seed, same points.
 4. **Fitter:** an optimizer that fits a small list of shapes and blends to
@@ -50,15 +57,26 @@ does the fitting. Claude may only propose a starting layout of parts.
    | Speed | Frame time drawing 20 cars on the reference phone (or a stated stand-in if no phone is available, said so plainly) | Holds 60 fps |
    | Repeatable | Same model and seed, run twice | Identical shape lists |
 
-7. **Write-up** (`research/31-maths-shapes.md`, results section): the numbers
+7. **Side-by-side scene:** 20 cars drawn from the original mesh next to 20
+   drawn from the maths, same camera and lighting, so the owner can see and
+   time both.
+8. **Write-up** (`research/31-maths-shapes.md`, results section): the numbers
    for runs A and B at each shape count, pictures side by side, and a plain
    verdict. A clear win ends with a proposed follow-up scope. A loss says why,
    so the idea is settled.
 
+## Later, only if this wins (not this scope)
+
+Train once instead of fitting each car: generate thousands of procedural
+shapes whose maths is known, teach a model to turn a mesh into maths, and
+score it against the known answer every round (the same idea as Corridor
+Crew's green-screen keyer trained on generated images with perfect answers).
+Possibly open-sourced.
+
 ## Out of scope
 
-Putting any of this in the game; buildings or any other model; more than one
-car (plus the optional Meshy repeat); merging into `main`.
+Putting any of this in the game; buildings or any other model; any car beyond the two
+above (plus the optional Meshy repeat); merging into `main`.
 
 ## Rules
 
