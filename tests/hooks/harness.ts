@@ -14,10 +14,15 @@ export interface HookResult {
   stderr: string;
 }
 
-export function runHook(script: string, projectDir: string, input: object): HookResult {
+export function runHook(
+  script: string,
+  projectDir: string,
+  input: object,
+  extraEnv: Record<string, string> = {},
+): HookResult {
   const run = spawnSync("sh", [join(hooksDir, script)], {
     input: JSON.stringify(input),
-    env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
+    env: { ...process.env, ...extraEnv, CLAUDE_PROJECT_DIR: projectDir },
     encoding: "utf8",
   });
   return { status: run.status, stdout: run.stdout, stderr: run.stderr };

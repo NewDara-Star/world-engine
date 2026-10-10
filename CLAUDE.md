@@ -147,9 +147,13 @@ anything is committed or pushed. The hooks in `.claude/hooks/` (wired in
   typecheck has not run since.
 - **Story before commit:** a commit that changes `src/` is blocked without a
   `Story:` paragraph.
-- **Second-model review before push:** a separate Claude reads this file, the
-  commit messages and the diff, and blocks the push with findings when a rule
-  here is broken. If a finding is wrong, say why in a commit message paragraph
+- **Second-model review before push:** separate Claudes read this file, the
+  commit messages and the diff, and block the push with findings when a rule
+  here is broken. A big or risky push (over 400 lines, money or trust code,
+  the rules themselves, or a `Scope-complete:` commit) gets one Opus review;
+  any other push gets three Sonnet reviewers, one each for the player's story,
+  the rules, and the tests. The risky paths are listed in
+  `.claude/hooks/review-risk-paths.txt`. If a finding is wrong, say why in a commit message paragraph
   starting `Review:`. Never work around the review; if it is stuck, tell the
   owner. If the reviewer cannot run, the push is blocked.
 

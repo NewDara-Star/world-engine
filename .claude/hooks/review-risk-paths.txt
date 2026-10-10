@@ -1,0 +1,18 @@
+# Which changed files make a push "big or risky", so the review is one Opus
+# read instead of three Sonnet lenses (docs/scopes/001b, item 2).
+# One rule per line: `<kind> <path prefix>`. A changed file matches when its
+# path starts with the prefix. Lines starting with # are notes.
+#
+# money: the server decides rewards, so anything that moves money or trust.
+# These folders do not exist yet; the list is ready for when they do.
+money src/server/rewards/
+money src/server/economy/
+money src/server/payments/
+money src/server/anticheat/
+money src/server/jobs/
+money src/server/pins/
+# rules: the files that say how we work, so a mistake here spreads everywhere.
+rules .claude/hooks/
+rules .claude/settings.json
+rules CLAUDE.md
+rules src/place/
