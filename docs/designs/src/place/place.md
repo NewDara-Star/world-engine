@@ -47,24 +47,21 @@ flowchart TD
   s --> a
 ```
 
-## crossFieldProblemsInPlace
+## repeatedClassProblemsInPlace
 
-Why the game needs it: the place's rules that look at more than one value are all checked in the same report as the field checks.
+Why the game needs it: a vehicle class listed twice is reported in the same pass as every other mistake, as soon as the class list itself is good, whatever else in the file is wrong.
 
 ```mermaid
 flowchart TD
-  s(["crossFieldProblemsInPlace with the allowed vehicle classes and the constants' sources, once both are good"])
+  s(["repeatedClassProblemsInPlace with the allowed vehicle classes, once that list is good"])
   a["find firstRepeatedVehicleClass"]
   b{"is there one"}
-  c["a problem at allowedVehicleClasses: lists that class twice"]
-  d["no problem for classes"]
-  e(["return that, together with sourceProblemsForConstants"])
+  c(["return a problem at allowedVehicleClasses: lists that class twice"])
+  d(["return no problems"])
   s --> a
   a --> b
   b -->|"yes"| c
   b -->|"no"| d
-  c --> e
-  d --> e
 ```
 
 ## validatePlace
@@ -74,6 +71,6 @@ Why the game needs it: adding a town is adding a file; this is the referee that 
 ```mermaid
 flowchart TD
   s(["validatePlace with the file's name and its text"])
-  a(["return validateJsonFile with the name, the text, and the place checker: the place's shape with crossFieldProblemsInPlace added as a cross-field rule reading allowedVehicleClasses and constantsSources"])
+  a(["return validateJsonFile with the name, the text, and the place checker: the place's shape with two cross-field rules added, repeatedClassProblemsInPlace reading allowedVehicleClasses, and sourceProblemsForConstants reading constantsSources, so neither waits for the other"])
   s --> a
 ```

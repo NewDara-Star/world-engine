@@ -59,7 +59,7 @@ cross-check waited. The file name and line are added once, at the end
 | repeatedClass | firstRepeatedVehicleClass | No. |
 | missingSource | sourceProblemsForConstants | Yes: returns every constant with none or more than one source, not the first with none (2f). |
 | (none) | sourceProblemForOneConstant | New: none, one or more than one, for one constant (2f). |
-| placeProblem | crossFieldProblemsInPlace | Yes: returns a list, both checks every time, instead of stopping at the first (2f). |
+| placeProblem | split: repeatedClassProblemsInPlace, plus sourceProblemsForConstants as its own rule | Yes: two rules, each run as soon as its own field is good, so a broken source list never holds back the class check (2f; orchestrator decision on session A's finding). |
 | validatePlace | validatePlace | Yes: takes the file name and raw text, through validateJsonFile (2d). |
 
 ## vehicle.md
