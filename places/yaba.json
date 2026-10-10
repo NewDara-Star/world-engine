@@ -27,8 +27,8 @@
     {
       "name": "Google Open Buildings v3 (building footprints)",
       "url": "https://sites.research.google/gr/open-buildings/",
-      "licence": "CC-BY-4.0",
-      "attribution": "Google Open Buildings (CC BY 4.0)"
+      "licence": "ODbL-1.0",
+      "attribution": "Google Open Buildings (ODbL)"
     },
     {
       "name": "Google Open Buildings 2.5D Temporal (building heights)",

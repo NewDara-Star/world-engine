@@ -12,9 +12,9 @@ export const STEERING_TYPES = ["steering-wheel", "handlebars", "tiller", "yoke",
 // How the vehicle moves: on wheels, on two wheels, on water, or through air.
 export const DYNAMICS_TYPES = ["wheeled", "two-wheeler", "hull", "aerodynamic"] as const;
 
-// Licences a data source may carry. CC0, CC-BY, MIT and Apache are the working
-// rule (CLAUDE.md). ODbL is the licence of OpenStreetMap and so of every map
-// built from it; it is allowed for map data only and flagged for the owner.
+// Licences a data source may carry (CLAUDE.md): CC0, MIT and Apache, and the
+// attribution-only ones (CC-BY, ODbL), credited on the About page. ODbL is also
+// the licence of OpenStreetMap and so of every map built from it.
 export const LICENCES = ["CC0-1.0", "CC-BY-4.0", "MIT", "Apache-2.0", "ODbL-1.0"] as const;
 
 // The physical constants a place file states, and how far each has been checked

@@ -32,9 +32,15 @@ published datasets, game-dev write-ups.
 - Study the best two or three. Read their licences.
 - Write what you found to `research/`, naming the source (repo, page, dataset).
 - Take **techniques only**. Never copy GPL code. Never copy code from sites.
-- Licences for anything we use: CC0, CC-BY, MIT or Apache, and credited.
-  Map data from OpenStreetMap is ODbL, which the place format accepts for map
-  data only. Check the credit is in the place file's `dataSources`.
+- Licences for anything we use: CC0, MIT or Apache, or an attribution-only
+  licence (CC-BY, ODbL, and similar such as Copernicus), credited. Every
+  credit lives on the game's About page and nowhere else, so each source goes
+  in the place file's `dataSources` and the About page is built from those.
+  For Google Open Buildings, which is offered under more than one licence, we
+  choose ODbL.
+- Map data we improve and hand out stays open under ODbL. Baked map data
+  shipped to players may count as a derivative database, so the bake script
+  and the extracted data are published. Game code stays private.
 - Never touch leaked or proprietary source code (for example GTA source on the
   owner's machine). Not to read, not to port, not to "just check".
 
@@ -56,6 +62,7 @@ only joins pieces cites the API it uses.
 - Diagrams generated from the code (Scope 002 builds this) must match the
   approved one. If they differ, either the code or the diagram is wrong: tell
   the owner, do not quietly change one.
+- The diagram gate (built in Scope 002) blocks everywhere, with no exceptions.
 
 ## Write code that reads like a diagram
 
@@ -103,6 +110,19 @@ has not run since.
   phone said so.
 - Anything the game says about the player's progress ("delivered", "paid")
   needs the server fact that makes it true.
+- Samples (position, speed, route) stream live and are timed by the server
+  clock, not the phone's.
+- The server assigns jobs; the phone never picks its own.
+- Earnings have caps.
+- Guessing a pin is rate-limited per device and per IP.
+
+## The target device and streaming
+
+- A mid-range Android phone is the reference device. Every slice is measured
+  on it. Under about 30 MB is downloaded before you can drive. The steering
+  wheel is a desktop bonus, never required.
+- The world streams in plain 100 m grid chunks (a visual piece and a collider
+  per cell), not 3D Tiles.
 
 ## The player's story
 
