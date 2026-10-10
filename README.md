@@ -8,14 +8,16 @@ right). Later: boats, planes, other countries, maybe other planets.
 It runs in the browser. The core mode is deliveries in Lagos, and the server
 decides every payout.
 
-**Where things are now:** Scope 001 only. The repo, the working rules, the
-checks that enforce them, and the place and vehicle file format. There is no
-game code yet.
+**Where things are now:** Scopes 001 and 001b only. The repo, the working
+rules, the checks that enforce them, and the place and vehicle file format.
+There is no game code yet. The order of what comes next is in
+`docs/roadmap.md`.
 
 ## What is here
 
 - `CLAUDE.md`: the working rules, in plain words.
 - `docs/scopes/`: one file per piece of work. `TEMPLATE.md` starts a new one.
+- `docs/roadmap.md`: the slices, in order.
 - `places/`: the places, as data.
 - `src/place/`: the place and vehicle file format and its checker.
 - `.claude/`: the hooks that block a commit, push or search when a rule is broken.
