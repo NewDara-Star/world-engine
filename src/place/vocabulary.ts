@@ -1,0 +1,21 @@
+// The fixed words a place or vehicle file may use. One list each, so the types
+// and the validator can never disagree about what is allowed.
+
+export const DRIVING_SIDES = ["left", "right"] as const;
+export const SPEED_UNITS = ["kmh", "mph"] as const;
+
+export const VEHICLE_CLASSES = ["car", "bike", "bus", "truck", "boat", "plane"] as const;
+
+export const WHEEL_POSITIONS = ["left", "right", "centre", "none"] as const;
+export const STEERING_TYPES = ["steering-wheel", "handlebars", "tiller", "yoke", "stick"] as const;
+
+// How the vehicle moves: on wheels, on two wheels, on water, or through air.
+export const DYNAMICS_TYPES = ["wheeled", "two-wheeler", "hull", "aerodynamic"] as const;
+
+// Licences a data source may carry. CC0, CC-BY, MIT and Apache are the working
+// rule (CLAUDE.md). ODbL is the licence of OpenStreetMap and so of every map
+// built from it; it is allowed for map data only and flagged for the owner.
+export const LICENCES = ["CC0-1.0", "CC-BY-4.0", "MIT", "Apache-2.0", "ODbL-1.0"] as const;
+
+export type VehicleClass = (typeof VEHICLE_CLASSES)[number];
+export type DynamicsType = (typeof DYNAMICS_TYPES)[number];

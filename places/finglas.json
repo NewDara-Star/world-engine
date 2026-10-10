@@ -1,0 +1,28 @@
+{
+  "id": "finglas",
+  "name": "Finglas, Dublin",
+  "planet": "earth",
+  "drivingSide": "left",
+  "speedUnits": "kmh",
+  "roadRuleSetId": "ie-rsa-rules-of-the-road",
+  "gravityMs2": 9.8137,
+  "airDensityKgM3": 1.247,
+  "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
+  "skyPosition": { "lat": 53.396, "lon": -6.296 },
+  "allowedVehicleClasses": ["car", "bike", "bus"],
+  "dataSources": [
+    {
+      "name": "OpenStreetMap",
+      "url": "https://www.openstreetmap.org/copyright",
+      "licence": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    {
+      "name": "Tailte Éireann High Value Dataset - Ways (road surface polygons)",
+      "url": "https://data.gov.ie/dataset/high-value-dataset-ways1",
+      "licence": "CC-BY-4.0",
+      "attribution": "© Tailte Éireann (CC BY 4.0)"
+    }
+  ],
+  "constantsNote": "Place centre is the middle of the Finglas box in research/world-drive/28-lane-widths.md (-6.323,53.38,-6.269,53.412). Gravity: WGS84 normal gravity (Somigliana formula) at 53.396 N, sea level. Air density: ideal gas law, p = 101325 Pa (ISO 2533 standard sea-level pressure), T = 10 °C (approximate annual mean for Dublin, not measured by us)."
+}

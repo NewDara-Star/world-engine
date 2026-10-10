@@ -1,0 +1,34 @@
+{
+  "id": "yaba",
+  "name": "Yaba, Lagos",
+  "planet": "earth",
+  "drivingSide": "right",
+  "speedUnits": "kmh",
+  "roadRuleSetId": "ng-frsc-highway-code",
+  "gravityMs2": 9.781,
+  "airDensityKgM3": 1.176,
+  "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
+  "skyPosition": { "lat": 6.51, "lon": 3.38 },
+  "allowedVehicleClasses": ["car", "bike", "bus"],
+  "dataSources": [
+    {
+      "name": "Overture Maps (roads and buildings, derived from OpenStreetMap)",
+      "url": "https://docs.overturemaps.org/attribution",
+      "licence": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors, Overture Maps Foundation"
+    },
+    {
+      "name": "Google Open Buildings v3 (building footprints)",
+      "url": "https://sites.research.google/gr/open-buildings/",
+      "licence": "CC-BY-4.0",
+      "attribution": "Google Open Buildings (CC BY 4.0)"
+    },
+    {
+      "name": "Google Open Buildings 2.5D Temporal (building heights)",
+      "url": "https://sites.research.google/gr/open-buildings/temporal",
+      "licence": "CC-BY-4.0",
+      "attribution": "Google Open Buildings 2.5D Temporal (CC BY 4.0), Copernicus Sentinel-2"
+    }
+  ],
+  "constantsNote": "Place centre is the middle of the Yaba box in research/world-drive/03-real-lagos-map-pipeline.md (lat 6.49-6.53, lon 3.36-3.40). Gravity: WGS84 normal gravity (Somigliana formula) at 6.51 N, sea level. Air density: ideal gas law, p = 101325 Pa (ISO 2533 standard sea-level pressure), T = 27 °C (approximate annual mean for Lagos, not measured by us). Ground height is not stored here; it comes from the terrain data."
+}
