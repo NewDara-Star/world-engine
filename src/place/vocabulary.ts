@@ -17,5 +17,10 @@ export const DYNAMICS_TYPES = ["wheeled", "two-wheeler", "hull", "aerodynamic"] 
 // built from it; it is allowed for map data only and flagged for the owner.
 export const LICENCES = ["CC0-1.0", "CC-BY-4.0", "MIT", "Apache-2.0", "ODbL-1.0"] as const;
 
+// The physical constants a place file states, and how far each has been checked
+// against a source that someone actually opened (never guess: say "unverified").
+export const CONSTANT_QUANTITIES = ["gravity", "airDensity"] as const;
+export const VERIFICATION_STATES = ["verified", "partly-verified", "unverified"] as const;
+
 export type VehicleClass = (typeof VEHICLE_CLASSES)[number];
 export type DynamicsType = (typeof DYNAMICS_TYPES)[number];

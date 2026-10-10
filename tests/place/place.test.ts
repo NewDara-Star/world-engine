@@ -142,7 +142,66 @@ describe("place file: tragedy path (limits, scale, old files)", () => {
   });
 
   it("tells an old file, written before a field existed, exactly which field it lacks", () => {
-    const oldFile = withChanges({ constantsNote: undefined, seaLevelDatum: undefined });
-    expect(errorsOf(oldFile).map((e) => e.split(":")[0])).toEqual(["seaLevelDatum", "constantsNote"]);
+    const oldFile = withChanges({ constantsNote: undefined, constantsSources: undefined, seaLevelDatum: undefined });
+    expect(errorsOf(oldFile).map((e) => e.split(":")[0])).toEqual(["seaLevelDatum", "constantsNote", "constantsSources"]);
+  });
+});
+
+// Reference: WGS84 normal gravity by Somigliana's formula, NIMA TR8350.2 (2000);
+// constants as tabulated at https://ahrs.readthedocs.io/en/latest/constants.html
+// (equatorial gravity, Somigliana constant, first eccentricity squared).
+function wgs84NormalGravity(latitudeDegrees: number): number {
+  const equatorial = 9.7803253359;
+  const somigliana = 1.931852652458e-3;
+  const eccentricitySquared = 6.69437999014e-3;
+  const sinSquared = Math.sin((latitudeDegrees * Math.PI) / 180) ** 2;
+  return (equatorial * (1 + somigliana * sinSquared)) / Math.sqrt(1 - eccentricitySquared * sinSquared);
+}
+
+describe("place file: gravity and air density carry their sources (scope 001b)", () => {
+  const files = readdirSync(placesDir).filter((name) => name.endsWith(".json"));
+
+  it.each(files)("%s: stored gravity matches the Somigliana formula at the place's latitude", (file) => {
+    const place = good(file);
+    expect(place.gravityMs2).toBeCloseTo(wgs84NormalGravity(place.skyPosition.lat), 3);
+  });
+
+  it.each(files)("%s: cites a source for gravity and for air density", (file) => {
+    const quantities = good(file).constantsSources.map((source) => source.quantity);
+    expect(quantities).toEqual(expect.arrayContaining(["gravity", "airDensity"]));
+  });
+
+  it("Finglas cites Met Éireann 1991–2020 for air density", () => {
+    const air = good("finglas.json").constantsSources.find((source) => source.quantity === "airDensity");
+    expect(air).toMatchObject({ period: "1991–2020", status: "partly-verified" });
+    expect(air?.source).toContain("Met Éireann");
+  });
+
+  it("Yaba says out loud that its air density is not verified", () => {
+    const air = good("yaba.json").constantsSources.find((source) => source.quantity === "airDensity");
+    expect(air?.status).toBe("unverified");
+  });
+
+  it("refuses a place that gives gravity a source but air density none", () => {
+    const only = (good("yaba.json").constantsSources.filter((source) => source.quantity === "gravity"));
+    expect(errorsOf(withChanges({ constantsSources: only }))).toEqual([
+      'the file: constantsSources has no source for "airDensity"',
+    ]);
+  });
+
+  it("refuses a made-up verification state and a source without a link", () => {
+    const [first, ...rest] = good("yaba.json").constantsSources;
+    const broken = [{ ...first, status: "trust-me", url: "ncei" }, ...rest];
+    expect(errorsOf(withChanges({ constantsSources: broken }))).toHaveLength(2);
+  });
+
+  it("refuses an empty list of sources and sources sent as text", () => {
+    expect(errorsOf(withChanges({ constantsSources: [] }))).toHaveLength(1);
+    expect(errorsOf(withChanges({ constantsSources: "Met Eireann" }))).toHaveLength(1);
+  });
+
+  it("checks gravity at the poles and equator without drifting", () => {
+    expect(wgs84NormalGravity(0)).toBeCloseTo(9.7803253359, 9);
+    expect(wgs84NormalGravity(90)).toBeCloseTo(9.8321849379, 6);
   });
 });
