@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run modules && npm run test",
+    "diagrams": "tsx tools/diagrams/cli.ts",
+    "modules": "depcruise --config .dependency-cruiser.js src tools"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
