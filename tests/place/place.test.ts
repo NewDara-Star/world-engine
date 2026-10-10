@@ -158,6 +158,20 @@ function wgs84NormalGravity(latitudeDegrees: number): number {
   return (equatorial * (1 + somigliana * sinSquared)) / Math.sqrt(1 - eccentricitySquared * sinSquared);
 }
 
+// Reference: ISO 2533 standard atmosphere, troposphere (the standard's defining
+// constants; the standard text itself was not opened) and the ideal gas law for
+// dry air, R = 287.05 J/(kg·K). Worked through in research/30-place-constants.md.
+function isoPressureAt(heightM: number): number {
+  const lapse = 0.0065;
+  const seaLevelK = 288.15;
+  const exponent = (9.80665 * 0.0289644) / (8.31446 * lapse);
+  return 101325 * (1 - (lapse * heightM) / seaLevelK) ** exponent;
+}
+
+function dryAirDensity(celsius: number, pascals: number): number {
+  return pascals / (287.05 * (celsius + 273.15));
+}
+
 describe("place file: gravity and air density carry their sources (scope 001b)", () => {
   const files = readdirSync(placesDir).filter((name) => name.endsWith(".json"));
 
@@ -173,13 +187,33 @@ describe("place file: gravity and air density carry their sources (scope 001b)",
 
   it("Finglas cites Met Éireann 1991–2020 for air density", () => {
     const air = good("finglas.json").constantsSources.find((source) => source.quantity === "airDensity");
-    expect(air).toMatchObject({ period: "1991–2020", status: "partly-verified" });
+    expect(air).toMatchObject({ period: "1991–2020", status: "derived" });
     expect(air?.source).toContain("Met Éireann");
   });
 
-  it("Yaba says out loud that its air density is not verified", () => {
+  it("Yaba's air density is derived from Lagos/Ikeja 1991–2020, and says it is not an official NiMet figure", () => {
     const air = good("yaba.json").constantsSources.find((source) => source.quantity === "airDensity");
-    expect(air?.status).toBe("unverified");
+    expect(air).toMatchObject({ period: "1991–2020", status: "derived" });
+    expect(air?.source).toContain("NOT an official NiMet figure");
+    expect(air?.source).toContain("gaps");
+  });
+
+  it("Yaba's stored air density is the ideal-gas value for 27.8 °C at 40 m in the standard atmosphere", () => {
+    expect(good("yaba.json").airDensityKgM3).toBeCloseTo(dryAirDensity(27.8, isoPressureAt(40)), 3);
+    expect(good("yaba.json").airDensityKgM3).toBe(1.167);
+  });
+
+  it("every constant says whether it is official, derived, or the owner's choice", () => {
+    for (const file of files) {
+      for (const source of good(file).constantsSources) expect(["official", "derived", "owner-choice"]).toContain(source.status);
+    }
+  });
+
+  it("refuses the old status words, so a file from before scope 002 says exactly what to change", () => {
+    const [first, ...rest] = good("yaba.json").constantsSources;
+    const old = [{ ...first, status: "partly-verified" }, ...rest];
+    const [error] = errorsOf(withChanges({ constantsSources: old }));
+    expect(error).toContain('one of "official", "derived", "owner-choice"');
   });
 
   it("refuses a place that gives gravity a source but air density none", () => {

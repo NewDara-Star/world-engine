@@ -38,14 +38,14 @@
       "source": "WGS84 normal gravity (Somigliana formula, k = 1.931852652458e-3, e² = 6.69437999014e-3, equatorial gravity 9.7803253359 m/s²), standard NIMA TR8350.2 (2000). Constants read from the published tables at ahrs.readthedocs.io; the TR8350.2 text itself was not opened. Recomputing the formula at the place's latitude gives the stored value (tested).",
       "url": "https://ahrs.readthedocs.io/en/latest/constants.html",
       "period": "Not a climate value: defining constants of the WGS84 ellipsoid (2000 edition of TR8350.2)",
-      "status": "partly-verified"
+      "status": "derived"
     },
     {
       "quantity": "airDensity",
       "source": "Temperature: Met Éireann Dublin Airport 1991–2020 averages, annual mean temperature 9.7 °C (the nearest long-record station to Finglas; the figure was read from the table's text as shown in a web search result, and the page was not opened in full). Pressure: ISO 2533 standard sea-level pressure 101325 Pa, which is NOT a Met Éireann normal; no 1991–2020 pressure normal was found. Dry air, R = 287.05 J/(kg·K), humidity ignored.",
       "url": "https://www.met.ie/cms/assets/uploads/2023/07/www_met_ie_dublin_9120-1.htm",
       "period": "1991–2020",
-      "status": "partly-verified"
+      "status": "derived"
     }
   ]
 }

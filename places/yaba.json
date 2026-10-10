@@ -6,7 +6,7 @@
   "speedUnits": "kmh",
   "roadRuleSetId": "ng-frsc-highway-code",
   "gravityMs2": 9.781,
-  "airDensityKgM3": 1.176,
+  "airDensityKgM3": 1.167,
   "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
   "skyPosition": {
     "lat": 6.51,
@@ -37,21 +37,21 @@
       "attribution": "Google Open Buildings 2.5D Temporal (CC BY 4.0), Copernicus Sentinel-2"
     }
   ],
-  "constantsNote": "Place centre is the middle of the Yaba box in research/world-drive/03-real-lagos-map-pipeline.md (lat 6.49-6.53, lon 3.36-3.40). Gravity: WGS84 normal gravity (Somigliana formula) at 6.51 N, sea level. Air density: ideal gas law, p = 101325 Pa (ISO 2533 standard sea-level pressure), T = 27 °C (a rounded estimate, UNVERIFIED; see constantsSources). Ground height is not stored here; it comes from the terrain data.",
+  "constantsNote": "Place centre is the middle of the Yaba box in research/world-drive/03-real-lagos-map-pipeline.md (lat 6.49-6.53, lon 3.36-3.40). Gravity: WGS84 normal gravity (Somigliana formula) at 6.51 N, sea level. Air density: ideal gas law for dry air, p = 100845 Pa (ISO 2533 standard atmosphere at the 40 m station elevation), T = 27.8 °C (Lagos/Ikeja 1991–2020 mean, Infoclimat; see constantsSources for its weaknesses). The working is in research/30-place-constants.md. Ground height is not stored here; it comes from the terrain data.",
   "constantsSources": [
     {
       "quantity": "gravity",
       "source": "WGS84 normal gravity (Somigliana formula, k = 1.931852652458e-3, e² = 6.69437999014e-3, equatorial gravity 9.7803253359 m/s²), standard NIMA TR8350.2 (2000). Constants read from the published tables at ahrs.readthedocs.io; the TR8350.2 text itself was not opened. Recomputing the formula at the place's latitude gives the stored value (tested).",
       "url": "https://ahrs.readthedocs.io/en/latest/constants.html",
       "period": "Not a climate value: defining constants of the WGS84 ellipsoid (2000 edition of TR8350.2)",
-      "status": "partly-verified"
+      "status": "derived"
     },
     {
       "quantity": "airDensity",
-      "source": "UNVERIFIED. No official Lagos normal (NiMet, or WMO/NOAA 1991–2020 for Lagos/Ikeja) could be opened. T = 27 °C is a rounded estimate, p = 101325 Pa is the ISO 2533 standard, so 1.176 kg/m³ is a placeholder until the real normal is read. The only 1991–2020 figure found (27.45 °C) was on a travel-weather site that does not name its station, so it is not used.",
-      "url": "https://www.ncei.noaa.gov/products/wmo-climate-normals",
-      "period": "none verified (target: 1991–2020)",
-      "status": "unverified"
+      "source": "Temperature: Lagos/Ikeja (WMO 65201) 1991–2020 mean 27.8 °C at 40 m station elevation, from Infoclimat, which computes its normals from the station's own METAR/SYNOP reports. This is NOT an official NiMet figure, and Infoclimat warns its series may have gaps. The page could not be opened when this was written (the network refused it); 27.8 °C is the figure given in docs/scopes/002-diagram-tool.md. Pressure: ISO 2533 standard atmosphere at 40 m (100845 Pa), not a measured local normal. Dry air, R = 287.05 J/(kg·K), humidity ignored. Working in research/30-place-constants.md.",
+      "url": "https://www.infoclimat.fr/climatologie/normales-records/1991-2020/lagos-ikeja/valeurs/65201.html",
+      "period": "1991–2020",
+      "status": "derived"
     }
   ]
 }

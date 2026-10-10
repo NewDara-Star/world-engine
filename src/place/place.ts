@@ -1,7 +1,7 @@
 // The place file: everything the engine needs to know about a world, as data.
 // The engine never says "Dublin" or "left"; it reads this file.
 import { type Infer, type Parsed, listOf, numberBetween, object, oneOf, refine, shortId, someText, textMatching } from "./parse.js";
-import { CONSTANT_QUANTITIES, DRIVING_SIDES, LICENCES, SPEED_UNITS, VEHICLE_CLASSES, VERIFICATION_STATES } from "./vocabulary.js";
+import { CONSTANT_QUANTITIES, DRIVING_SIDES, LICENCES, SPEED_UNITS, VEHICLE_CLASSES, CONSTANT_STATUSES } from "./vocabulary.js";
 
 const linkPattern = /^https:\/\/\S+$/;
 
@@ -19,14 +19,15 @@ const dataSource = object({
   attribution: someText(),
 });
 
-// Where a physical constant came from, the years it covers, and how far we
-// could check it. A number we could not check says so here, in the file.
+// Where a physical constant came from, the years it covers, and whether it is
+// official, derived from measurements, or the owner's choice. The weaknesses
+// of the source are written in `source`, in the file.
 const constantSource = object({
   quantity: oneOf(CONSTANT_QUANTITIES),
   source: someText(),
   url: textMatching(linkPattern, "a link starting with https://"),
   period: someText(),
-  status: oneOf(VERIFICATION_STATES),
+  status: oneOf(CONSTANT_STATUSES),
 });
 
 const placeShape = object({

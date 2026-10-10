@@ -1,4 +1,4 @@
-# Place constants: gravity and air density (scope 001b)
+# Place constants: gravity and air density (scopes 001b and 002)
 
 Written 2026-10-10. **Honest limit:** this session's network blocked every
 website (met.ie, NOAA, NGA, Wikipedia, ahrs.readthedocs.io all refused the
@@ -18,7 +18,7 @@ from excerpts that a web search returned. Each item says which.
   gives polar gravity as 9.8321849379 m/s².
 - Check we ran ourselves: the formula at 53.396 N gives 9.8137 and at 6.51 N
   gives 9.7810, which are the stored values. A test repeats this.
-- Status: partly verified (constants from a secondary table, not the standard).
+- Status: derived (constants from a secondary table, not the standard).
 
 ## Air density
 
@@ -31,11 +31,30 @@ Pressure is ISO 2533 standard sea-level 101325 Pa (not a local normal).
   (search excerpt). Gives rho = 101325 / (287.05 × 282.85) = 1.248 kg/m³ (was
   1.247 from a guessed 10 °C). Station pressure normal: not found.
   Status: partly verified.
-- **Lagos / Yaba.** Not verified. No NiMet, NOAA or WMO 1991–2020 normal for
-  Lagos (Murtala Muhammed, WMO 65201, or Ikeja) could be read. WMO normals live
-  at https://www.ncei.noaa.gov/products/wmo-climate-normals (found, not
-  opened). A travel-weather site gave 27.45 °C with no named station; not used.
-  The stored 1.176 kg/m³ (27 °C, rounded) stays as a flagged placeholder.
-  Status: unverified. To fix: read the WMO 1991–2020 normal for station 65201.
+- **Lagos / Yaba (scope 002; was an unverified placeholder of 1.176).**
+  Status: derived. Not an official NiMet figure.
+  - Temperature: Lagos/Ikeja (WMO 65201), 1991–2020 mean 27.8 °C, station
+    elevation 40 m, from Infoclimat
+    (https://www.infoclimat.fr/climatologie/normales-records/1991-2020/lagos-ikeja/valeurs/65201.html),
+    which computes its normals from the station's own METAR/SYNOP reports and
+    warns its series may have gaps. **That page could not be opened** when this
+    was written (the network refused it: "CONNECT tunnel failed, response 403");
+    27.8 °C and the elevation are as given in `docs/scopes/002-diagram-tool.md`.
+    Not read by us, so check it when the network allows.
+  - Pressure at 40 m, ISO 2533 standard atmosphere, troposphere formula
+    p = p0 · (1 − L·h/T0)^(g·M/(R·L)) with the standard's defining constants
+    p0 = 101325 Pa, T0 = 288.15 K, L = 0.0065 K/m, g = 9.80665 m/s²,
+    M = 0.0289644 kg/mol, R = 8.31446 J/(mol·K) (the ISO text itself was not
+    opened; these are the standard values). Exponent = 5.2558;
+    p = 101325 · (1 − 0.0065·40/288.15)^5.2558 = **100845 Pa**.
+  - Density: rho = p / (R_dry · T) = 100845 / (287.05 × (27.8 + 273.15)) =
+    100845 / 86384.8 = **1.1674 → 1.167 kg/m³**. (Sea-level pressure with the
+    same temperature would give 1.173; the old placeholder 1.176 used 27 °C.)
+  - Weaknesses: a derived mean temperature, not an official one; the pressure
+    is a standard-atmosphere value, not a Lagos normal; dry air; the annual mean
+    temperature is not the mean of density over the year. A test repeats the
+    computation.
+  - To do better: the NiMet or WMO 1991–2020 normal for the station, and a
+    pressure normal (see PARKING_LOT.md).
 
 Live weather is visual only and never feeds physics (see `src/place/place.ts`).

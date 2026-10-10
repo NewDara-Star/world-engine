@@ -17,10 +17,12 @@ export const DYNAMICS_TYPES = ["wheeled", "two-wheeler", "hull", "aerodynamic"] 
 // the licence of OpenStreetMap and so of every map built from it.
 export const LICENCES = ["CC0-1.0", "CC-BY-4.0", "MIT", "Apache-2.0", "ODbL-1.0"] as const;
 
-// The physical constants a place file states, and how far each has been checked
-// against a source that someone actually opened (never guess: say "unverified").
+// The physical constants a place file states, and where each one comes from
+// (CLAUDE.md, "the data rule"): an official figure; a figure derived from real
+// measurements, with the source and its weaknesses named; or the owner's
+// creative call. Never a silent guess.
 export const CONSTANT_QUANTITIES = ["gravity", "airDensity"] as const;
-export const VERIFICATION_STATES = ["verified", "partly-verified", "unverified"] as const;
+export const CONSTANT_STATUSES = ["official", "derived", "owner-choice"] as const;
 
 export type VehicleClass = (typeof VEHICLE_CLASSES)[number];
 export type DynamicsType = (typeof DYNAMICS_TYPES)[number];
