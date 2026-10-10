@@ -27,3 +27,7 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Vehicle files: refuse controls that don't fit the class (a bike with a
   steering wheel), the same way a car that floats is refused.
 - Keke (three-wheeler) and okada (motorbike taxi) as vehicle classes, for Lagos.
+- Tighten gravity's allowed range (today 0 to 100 m/s²) to what real bodies
+  have, so a slipped digit (98 for 9.8) is caught; owner's call.
+- Code licence notices (MIT/Apache libraries shipped to players, such as
+  jsonc-parser) listed on the About page with the data credits.

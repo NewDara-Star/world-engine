@@ -66,7 +66,7 @@ approved. Do items 3 to 6, with code that matches the approved designs.
    | shortId | requireShortId |
    | repeatedClass | firstRepeatedVehicleClass |
    | missingSource | sourceProblemsForConstants (now returns a list, item 2f) |
-   | placeProblem | crossFieldProblemsInPlace (now returns a list) |
+   | placeProblem | split into two rules, each run as soon as its own field is valid: the repeated-class rule and the source rule (Session A finding; orchestrator decision 2026-10-11) |
    | vehicle.ts module > inner 1 | movementProblemInVehicle |
    | validatePlace, validateVehicle | keep |
 
@@ -102,7 +102,9 @@ approved. Do items 3 to 6, with code that matches the approved designs.
       field's definition ("gravity must be from 1 to 30 m/s², found 98").
       A list that is too short says how many were found and how many are
       needed. A hint where the fix is obvious ("did you mean 9.8?" for a value
-      10 times too big that fits when divided by 10, and only then).
+      10 times too big that fits when divided by 10, and only then; gravity's
+      current range is 0 to 100, so the gravity example cannot happen yet,
+      see `PARKING_LOT.md`).
    f. **Every cross-field problem at once.** Each cross-field rule runs as soon
       as the fields it reads are valid, alongside the field checks, not after
       the whole file is valid. Every broken rule is listed, not just the first.
@@ -124,7 +126,8 @@ approved. Do items 3 to 6, with code that matches the approved designs.
    one message; `rihgt` suggests `right`; `Yaba`, `yaba-`, `a--b` and a
    33-character id are refused; three mistakes in different places are all
    reported in one run; two sources for gravity is refused; invalid JSON names
-   its line; every message names the file and line; a very large place file
+   its line; every message about a field names the file and line (the closing
+   "Fix these first" line names the file only); a very large place file
    (tragedy path) is still checked in under a second.
 
 5. **Diagram gate accepts delegated approval.** `diagram-gate.sh` accepts a

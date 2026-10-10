@@ -1,61 +1,79 @@
 # src/place/place.ts
 
-Status: draft. Waiting for the owner's approval; the approval commit changes this line to `Status: approved`.
+Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/place.md`.
 
-## repeatedClass
+Redrawn for scope 002b: new names (item 1) and the new behaviour (items 2d and 2f). What changed is in `CHANGES-002b.md` next to this file. The place's fields and their checkers are unchanged; only how the file is read and reported changes.
 
-Finds a vehicle class that is listed twice.
+## firstRepeatedVehicleClass
+
+Why the game needs it: a vehicle class listed twice is a slip in the file, so we point at it.
 
 ```mermaid
 flowchart TD
-  s(["repeatedClass"])
+  s(["firstRepeatedVehicleClass in the allowed vehicle classes"])
   a(["return the first class that also appears earlier in the list, or nothing"])
   s --> a
 ```
 
-## missingSource
+## sourceProblemForOneConstant
 
-Finds a constant that has no source.
+Why the game needs it: the owner's data rule says each physical constant has exactly one source, so nobody has to guess which one the number came from.
 
 ```mermaid
 flowchart TD
-  s(["missingSource"])
-  a(["return the first constant (gravity, air density) that no source names, or nothing"])
+  s(["sourceProblemForOneConstant: one constant, such as gravity, and the list of sources"])
+  a["count the sources that name this constant"]
+  b{"how many"}
+  c(["return a problem at constantsSources: has no source for the constant"])
+  d(["return no problem"])
+  e(["return a problem at the second source that names it: constantsSources has that many sources for the constant; each constant needs exactly one"])
+  s --> a
+  a --> b
+  b -->|"none"| c
+  b -->|"exactly one"| d
+  b -->|"more than one"| e
+```
+
+## sourceProblemsForConstants
+
+Why the game needs it: every constant with no source and every constant with more than one is listed in the same report, not just the first.
+
+```mermaid
+flowchart TD
+  s(["sourceProblemsForConstants in the list of sources"])
+  a(["return sourceProblemForOneConstant for every constant the place file must state (gravity, air density), put together"])
   s --> a
 ```
 
-## placeProblem
+## crossFieldProblemsInPlace
 
-Checks the rules that span several fields of a place.
+Why the game needs it: the place's rules that look at more than one value are all checked in the same report as the field checks.
 
 ```mermaid
 flowchart TD
-  s(["placeProblem"])
-  a["look for a repeated vehicle class"]
+  s(["crossFieldProblemsInPlace with the allowed vehicle classes and the constants' sources, once both are good"])
+  a["find firstRepeatedVehicleClass"]
   b{"is there one"}
-  c(["return the sentence saying that class is listed twice"])
-  d["look for a constant with no source"]
-  e{"is there one"}
-  f(["return the sentence saying constantsSources lacks that constant"])
-  g(["return nothing, the place is fine"])
+  c["a problem at allowedVehicleClasses: lists that class twice"]
+  d["no problem for classes"]
+  e(["return that, together with sourceProblemsForConstants"])
   s --> a
   a --> b
   b -->|"yes"| c
   b -->|"no"| d
+  c --> e
   d --> e
-  e -->|"yes"| f
-  e -->|"no"| g
 ```
 
 ## validatePlace
 
-Checks a place file read from JSON.
+Why the game needs it: adding a town is adding a file; this is the referee that checks it, by file name and line.
 
 ```mermaid
 flowchart TD
-  s(["validatePlace"])
-  a(["return success with the place, or failure with every problem found"])
+  s(["validatePlace with the file's name and its text"])
+  a(["return validateJsonFile with the name, the text, and the place checker: the place's shape with crossFieldProblemsInPlace added as a cross-field rule reading allowedVehicleClasses and constantsSources"])
   s --> a
 ```
