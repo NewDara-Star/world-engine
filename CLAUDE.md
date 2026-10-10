@@ -43,6 +43,12 @@ published datasets, game-dev write-ups.
   and the extracted data are published. Game code stays private.
 - Never touch leaked or proprietary source code (for example GTA source on the
   owner's machine). Not to read, not to port, not to "just check".
+- A site whose robots.txt disallows us (for example Pinterest, Nominatim,
+  Overpass) is never fetched by any route: no curl, no other tool, no mirror.
+  Give the owner the link and what to look for, and he opens it himself.
+- Vehicles are invented makes and models, with no real brand names, logos or
+  badges. Common forms (a danfo, a BRT bus, a double-decker) are fine in our
+  own liveries.
 
 ## References at block level
 

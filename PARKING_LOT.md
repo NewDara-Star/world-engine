@@ -24,3 +24,6 @@ never into the scope being built. Each is looked at when a scope is planned.
   dead designs are deleted in the same change.
 - Gate and generator: draw a `finally` after returns and throws too, and run
   the designs through Mermaid's parser in the tests.
+- Vehicle files: refuse controls that don't fit the class (a bike with a
+  steering wheel), the same way a car that floats is refused.
+- Keke (three-wheeler) and okada (motorbike taxi) as vehicle classes, for Lagos.
