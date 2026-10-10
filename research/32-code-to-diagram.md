@@ -45,12 +45,15 @@ dependency-cruiser package installed in `node_modules/` (its `package.json`,
   closest idea, but it is JavaScript-only SVG.
 - **Technique taken (idea only, no code copied from anyone):** the
   "AST, find the function definitions, find the calls" outline in code2flow's
-  README, and a standard way to turn `a && b` / `a || b` / `!a` into branches
+  README, and a standard way to turn `a && b` / `a || b` into branches
   (short-circuit lowering as taught in any compiler text: test `a`, and only
   on the right outcome go on to test `b`). Our own design; the exact rules are
   in `docs/designs/tools/diagrams/`.
 - **Mermaid:** the node and edge syntax used is the common `flowchart TD`
   syntax with quoted labels and `#quot;`-style entity codes. The Mermaid docs
-  page could not be opened, so the syntax was **not** checked against it; the
-  generator's tests check shape (balanced quotes, no raw `"`, `<`, `>`), and
-  the first GitHub render is the real test.
+  page could not be opened, so the syntax was not checked against it. Instead,
+  once, outside the repository, every generated chart was run through the
+  parser of the `mermaid` npm package (11.4.1, opened from the npm registry)
+  in a Node/jsdom scratch folder: 119 of 119 parsed. That is not a GitHub
+  render, which is still the real test. The generator's own tests check the
+  shape (no raw `"`, `<`, `>` or backtick inside a label).

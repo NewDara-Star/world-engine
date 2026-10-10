@@ -5,12 +5,12 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { SOURCE_FOLDERS } from "./generate.js";
+import { SOURCE_FOLDERS, sourceFiles } from "./generate.js";
 
 const NOTE =
   "Which file uses which, drawn by dependency-cruiser from the imports in the code (`npm run diagrams`). Do not edit by hand.";
 
-// depcruise stops with an error on a folder that is not there.
+// depcruise also stops with an error on a folder that is not there.
 function foldersThatExist(root: string): string[] {
   return SOURCE_FOLDERS.filter((folder) => existsSync(join(root, folder)));
 }
@@ -21,7 +21,8 @@ function wrap(picture: string): string {
 
 export function generateModuleMap(root: string, toolRoot: string): string {
   const folders = foldersThatExist(root);
-  if (folders.length === 0) return wrap("flowchart LR");
+  // depcruise stops with an error when there is nothing to read.
+  if (sourceFiles(root).length === 0) return wrap("flowchart LR");
   const depcruise = join(toolRoot, "node_modules", ".bin", "depcruise");
   const config = join(toolRoot, ".dependency-cruiser.js");
   const picture = execFileSync(depcruise, ["--config", config, "--output-type", "mermaid", ...folders], {

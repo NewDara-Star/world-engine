@@ -59,10 +59,28 @@ only joins pieces cites the API it uses.
 ## Diagram first, code from the diagram
 
 - Every scope has a design diagram the owner approved before code is written.
-- Diagrams generated from the code (Scope 002 builds this) must match the
-  approved one. If they differ, either the code or the diagram is wrong: tell
-  the owner, do not quietly change one.
-- The diagram gate (built in Scope 002) blocks everywhere, with no exceptions.
+- **Designs** live in `docs/designs/`, mirroring the source path
+  (`src/place/parse.ts` has `docs/designs/src/place/parse.md`): one `## name`
+  heading per function, the same name the generated flow uses, and one Mermaid
+  flowchart under it. Written before the code, in plain words.
+- **Flows** are drawn from the code by the TypeScript compiler, no AI:
+  `npm run diagrams` writes `docs/flows/` (one chart per function, plus
+  `modules.md`, which file uses which). Run it before every commit that
+  changes TypeScript; commit the result.
+- A design is **approved** when the commit that last changed it has the
+  trailer `Approved-by: Daramola`. The orchestrating session adds that trailer
+  only after the owner approves in chat. **A hook cannot prove who typed it**:
+  the trailer is a record the orchestrator is trusted to keep honest, not a
+  signature. To approve, the orchestrator changes each approved design's
+  `Status:` line from `draft` to `approved` and commits with the trailer. Any
+  later edit to a design is unapproved until it is approved again.
+- Generated flows must match the approved design. If they differ, either the
+  code or the design is wrong: tell the owner, do not quietly change one. The
+  push review's design-match lens checks this for every changed function.
+- The diagram gate (`.claude/hooks/diagram-gate.sh`) blocks every commit
+  whose diagrams are stale, whose functions lack a design, or whose designs
+  are unapproved, with no exceptions. `src/` and `tools/` are covered; shell
+  hooks, tests and `places/` are not.
 
 ## Write code that reads like a diagram
 
@@ -137,6 +155,12 @@ those differ, the change is wrong, however clean the code.
 - Nothing happens to the player's progress behind their back. Anything the
   game does by itself is shown, with the reason.
 - Never invent numbers. Read real ones and say what you checked.
+- **Where a number comes from (the data rule).** In order: (1) an official
+  figure, when one exists; (2) otherwise a figure derived from real
+  measurements, with the source and its weaknesses named; (3) otherwise the
+  owner's creative call, recorded as his. Never a silent guess. A place file
+  records which one each constant is with `status`: `official`, `derived` or
+  `owner-choice`.
 
 ## Tests: four paths
 
@@ -165,14 +189,20 @@ anything is committed or pushed. The hooks in `.claude/hooks/` (wired in
   Claude back to fix it.
 - **Compiler gate:** searches are refused while code is changed and the
   typecheck has not run since.
+- **Diagram gate:** a commit is blocked while the diagrams in `docs/flows/`
+  are out of date, while a function in `src/` or `tools/` has no design in
+  `docs/designs/`, or while a design is not approved (see "Diagram first").
+  Shell hooks are not TypeScript, so they are exempt; the push review reads them.
 - **Story before commit:** a commit that changes `src/` is blocked without a
   `Story:` paragraph.
 - **Second-model review before push:** separate Claudes read this file, the
   commit messages and the diff, and block the push with findings when a rule
   here is broken. A big or risky push (over 400 lines, money or trust code,
   the rules themselves, or a `Scope-complete:` commit) gets one Opus review;
-  any other push gets three Sonnet reviewers, one each for the player's story,
-  the rules, and the tests. The risky paths are listed in
+  any other push gets four Sonnet reviewers, one each for the player's story,
+  the rules, the tests, and the design match (the code's drawn flow against
+  its approved design; this lens runs on every push, and is part of the Opus
+  review when the push is routed there). The risky paths are listed in
   `.claude/hooks/review-risk-paths.txt`. If a finding is wrong, say why in a commit message paragraph
   starting `Review:`. Never work around the review; if it is stuck, tell the
   owner. If the reviewer cannot run, the push is blocked.
@@ -185,6 +215,8 @@ through. Fix the thing.
 - Node 22. `npm install`, then `npm run check`.
 - Scripts: `typecheck`, `lint`, `test`, `check`. Versions are pinned exactly.
 - The hook scripts are POSIX `sh` plus `jq`.
+- `npm run diagrams` redraws `docs/flows/`; `npm run modules` checks that
+  engine code does not import `places/` (part of `npm run check`).
 - Place and vehicle file formats live in `src/place/`; examples in `places/`.
 - Do not push unless the owner or the orchestrating session says so.
 

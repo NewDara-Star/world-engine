@@ -45,6 +45,7 @@ case "$prompt" in
   *"Your lens is ONLY the player"*) lens=story ;;
   *"Your lens is ONLY the rules"*) lens=rules ;;
   *"Your lens is ONLY tests"*) lens=tests ;;
+  *"Your lens is ONLY the design"*) lens=design ;;
   *) lens=all ;;
 esac
 echo "$model $lens" >> "${log}"
@@ -63,11 +64,11 @@ const push = bash("git push origin main");
 const calls = (log: string) => (existsSync(log) ? readFileSync(log, "utf8").trim().split("\n").sort() : []);
 
 describe("review before push: who is asked (happy)", () => {
-  it("asks three Sonnet lenses for a small change, and lets the push through", () => {
+  it("asks four Sonnet lenses (story, rules, tests, design) for a small change, and lets the push through", () => {
     const fake = fakeClaude({});
     const result = runHook("review-before-push.sh", repoAhead("src/car.ts"), push, { PATH: fake.path });
     expect(blocked(result)).toBe(false);
-    expect(calls(fake.log)).toEqual(["sonnet rules", "sonnet story", "sonnet tests"]);
+    expect(calls(fake.log)).toEqual(["sonnet design", "sonnet rules", "sonnet story", "sonnet tests"]);
   });
 
   it("asks one Opus review for a change to the rules", () => {
@@ -75,6 +76,12 @@ describe("review before push: who is asked (happy)", () => {
     const result = runHook("review-before-push.sh", repoAhead(".claude/hooks/new.sh"), push, { PATH: fake.path });
     expect(blocked(result)).toBe(false);
     expect(calls(fake.log)).toEqual(["opus all"]);
+  });
+
+  it("asks the design-match lens even for a change that touches no code", () => {
+    const fake = fakeClaude({});
+    runHook("review-before-push.sh", repoAhead("docs/notes.md"), push, { PATH: fake.path });
+    expect(calls(fake.log)).toContain("sonnet design");
   });
 
   it("asks one Opus review when the change is over 400 lines", () => {
@@ -92,6 +99,14 @@ describe("review before push: blocking (sad)", () => {
     expect(result.stderr).toContain("rules reviewer");
     expect(result.stderr).toContain("tests reviewer");
     expect(result.stderr).not.toContain("story reviewer");
+  });
+
+  it("blocks when the design-match lens finds the code and its approved design disagree", () => {
+    const fake = fakeClaude({ design: "- [design] src/a.ts f: design has an error path the code lacks. Fix: add it.\nVERDICT: BLOCK" });
+    const result = runHook("review-before-push.sh", repoAhead("src/car.ts"), push, { PATH: fake.path });
+    expect(blocked(result)).toBe(true);
+    expect(result.stderr).toContain("design reviewer");
+    expect(result.stderr).not.toContain("rules reviewer");
   });
 
   it("blocks when a reviewer gives no verdict (it could not run)", () => {
@@ -115,7 +130,7 @@ describe("review before push: odd input and repeats (idiot-proof, tragedy)", () 
     const dir = repoAhead("src/car.ts");
     runHook("review-before-push.sh", dir, push, { PATH: fake.path });
     runHook("review-before-push.sh", dir, push, { PATH: fake.path });
-    expect(calls(fake.log)).toHaveLength(3);
+    expect(calls(fake.log)).toHaveLength(4);
   });
 
   it("does not remember a block", () => {
@@ -123,7 +138,7 @@ describe("review before push: odd input and repeats (idiot-proof, tragedy)", () 
     const dir = repoAhead("src/car.ts");
     runHook("review-before-push.sh", dir, push, { PATH: fake.path });
     expect(blocked(runHook("review-before-push.sh", dir, push, { PATH: fake.path }))).toBe(true);
-    expect(calls(fake.log)).toHaveLength(6);
+    expect(calls(fake.log)).toHaveLength(8);
   });
 
   it("asks nobody when the command only mentions a push", () => {
@@ -138,5 +153,22 @@ describe("review before push: odd input and repeats (idiot-proof, tragedy)", () 
     const result = runHook("review-before-push.sh", repoAhead("src/car.ts"), push, { PATH: fake.path });
     expect(blocked(result)).toBe(true);
     expect(result.stderr).toContain("100%s");
+  });
+});
+
+describe("the design-match lens prompt (idiot-proof)", () => {
+  const read = (file: string) => readFileSync(join(import.meta.dirname, "../../.claude/hooks/review", file), "utf8");
+
+  it("says what to block on and what to let through, with examples", () => {
+    const lens = read("lens-design.md");
+    expect(lens).toContain("Block on a real difference");
+    expect(lens).toContain("a case the design has and the code does not");
+    expect(lens).toContain("Do not block on harmless differences");
+    expect(lens).toContain("a helper split out");
+    expect(lens).toContain("renamed variables");
+  });
+
+  it("is also part of the single Opus review", () => {
+    expect(read("all-lenses.md")).toContain("Design match");
   });
 });

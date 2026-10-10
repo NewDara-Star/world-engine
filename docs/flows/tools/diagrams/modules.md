@@ -26,7 +26,7 @@ flowchart TD
 flowchart TD
   n1(["generateModuleMap"])
   n2["const folders = foldersThatExist(root);<br/>calls foldersThatExist"]
-  n3{"folders.length === 0"}
+  n3{"sourceFiles(root).length === 0<br/>calls sourceFiles"}
   n4(["return wrap(#quot;flowchart LR#quot;);<br/>calls wrap"])
   n5["const depcruise = join(toolRoot, #quot;node_modules#quot;, #quot;.bin#quot;, #quot;d…"]
   n6["const config = join(toolRoot, #quot;.dependency-cruiser.js#quot;);"]

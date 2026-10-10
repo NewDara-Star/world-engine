@@ -61,7 +61,7 @@ if [ "${route%% *}" = "opus" ]; then
   prompt_for "$here/review/all-lenses.md" "$state/review-opus.prompt"
   run_reviewer opus opus
 else
-  names="story rules tests"
+  names="story rules tests design"
   for name in $names; do
     prompt_for "$here/review/lens-$name.md" "$state/review-$name.prompt"
     run_reviewer sonnet "$name" &
