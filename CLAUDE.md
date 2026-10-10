@@ -59,8 +59,9 @@ only joins pieces cites the API it uses.
 
 ## Write code that reads like a diagram
 
-- **Small functions.** Each one fits on a screen and does one thing. Lint
-  refuses a function over 30 lines or too many branches. Split it; do not
+- **Small functions.** Each one does one thing and reads as a diagram. Lint
+  refuses a function with too many branches (complexity over 8) or blocks
+  nested more than 3 deep; length alone is not the test. Split it; do not
   loosen the rule.
 - **Names say what things are.** When the name you want is taken, rename the
   existing thing to what it really is, then use the good name. No `name2`,
