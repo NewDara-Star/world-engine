@@ -1,6 +1,6 @@
 # tools/diagrams/functions.ts
 
-Status: draft. Waiting for the owner's approval; the approval commit changes this line to `Status: approved`.
+Status: approved by Daramola in chat, 2026-10-10 (batch approval of the diagram tool's own designs; written after the code, see Scope 002).
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/tools/diagrams/functions.md`.
 
