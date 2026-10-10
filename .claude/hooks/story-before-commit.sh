@@ -3,12 +3,10 @@
 # carries a `Story:` paragraph saying what the player does, expects and sees.
 # Checked against the commit command itself, since the message is in it (-m,
 # or a heredoc / file given to -F).
+. "$(dirname "$0")/lib/runs-git.sh"
 input=$(cat)
 cmd=$(printf "%s" "$input" | jq -r '.tool_input.command // ""')
-case "$cmd" in
-  *"git commit"*) ;;
-  *) exit 0 ;;
-esac
+runs_git commit "$cmd" || exit 0
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 # Everything changed, staged or not: `git add -A && git commit` stages after this runs.
 game=$(git status --porcelain --untracked-files=all -- src | head -1)

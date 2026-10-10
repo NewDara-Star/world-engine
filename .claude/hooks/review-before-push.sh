@@ -7,12 +7,10 @@
 # paths, real references). A pass is remembered per commit, so pushing the
 # same commits twice reviews once. If the reviewer can't run, the push is
 # blocked: a check that quietly doesn't happen is no check.
+. "$(dirname "$0")/lib/runs-git.sh"
 input=$(cat)
 cmd=$(printf "%s" "$input" | jq -r '.tool_input.command // ""')
-case "$cmd" in
-  *"git push"*) ;;
-  *) exit 0 ;;
-esac
+runs_git push "$cmd" || exit 0
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 state=.claude/.state
 mkdir -p "$state"
