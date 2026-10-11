@@ -54,3 +54,4 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Before anyone but the owner plays: the About page built from `dataSources`, and the bake script plus baked chunks published under ODbL in a public place (the game repo is private).
 - Ackermann steering (inner and outer front wheels at different angles) if the car feels wrong in tight turns.
 - Rapier's non-compat build saves about 0.5 MB if the 30 MB budget ever gets tight (research/36 section 1).
+- Small map: names written along their road, and room for a phone's notch (safe-area insets); scope 005b writes names straight and keeps 8 px from the screen's edge.

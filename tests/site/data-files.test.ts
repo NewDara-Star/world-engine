@@ -18,6 +18,7 @@ describe("shipped data files: happy path", () => {
     "places/omole/chunks/index.json",
     "places/omole/chunks/3_-2.json",
     "places/omole/chunks/-14_14.json",
+    "places/omole/streets.json",
   ])("ships %s", (path) => {
     expect(isShippedDataFile(path)).toBe(true);
   });
@@ -39,6 +40,9 @@ describe("shipped data files: nothing private", () => {
     "places/omole/chunks/index.json.bak",
     "places/omole/chunks/old/3_-2.json",
     "places/omole/raw.json",
+    "places/omole/streets.json.bak",
+    "places/omole/chunks/streets.json",
+    "places/streets.json/x.json",
     "planets/earth.json.bak",
     "vehicles/drafts/hatchback.json",
   ])("does not ship %s", (path) => {

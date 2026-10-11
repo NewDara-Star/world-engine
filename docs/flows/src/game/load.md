@@ -213,3 +213,24 @@ flowchart TD
   n13 -->|"yes"| n14
   n13 -->|"no"| n15
 ```
+
+## loadStreetsForPlace
+
+```mermaid
+flowchart TD
+  n1(["loadStreetsForPlace"])
+  n2["const streets = await fetchChecked(#96;places/${place.id}/stre…<br/>calls fetchChecked"]
+  n3{"!streets.ok"}
+  n4(["return streets;"])
+  n5["const problems = streetsProblemsForPlace(streets.value, pla…<br/>calls streetsProblemsForPlace"]
+  n6{"problems.length #gt; 0"}
+  n7(["return { ok: false, failure: { kind: #quot;map-baked-for-somethi…"])
+  n8(["return streets;"])
+  n1 --> n2
+  n2 --> n3
+  n3 -->|"yes"| n4
+  n3 -->|"no"| n5
+  n5 --> n6
+  n6 -->|"yes"| n7
+  n6 -->|"no"| n8
+```

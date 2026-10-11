@@ -1,6 +1,6 @@
 # tools/bake/bake.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 2). The whole bake, from the place file and the
 extract's text to the text of every output file, without touching the disk,
@@ -25,7 +25,7 @@ flowchart TD
   i(["return one problem: the extract has no roads a car can use; check the extract covers the place centre and was cut with the highway ways"])
   j["cut the roads into squares: roadPieces for each, clipped to the square of plus and minus mapHalfSizeM around the centre, then trianglesByCell"]
   k["find the start with carStartOnRoad; the extent is that square, rounded out to whole 100 m squares"]
-  l(["return the files: one chunkFileText per square named east_north.json, and index.json from indexFileText; plus the report notes"])
+  l(["return the files: one chunkFileText per square named east_north.json, and index.json from indexFileText; the street file's text from streetsFileText of the same roads, centre and mapHalfSizeM (Scope 005b); plus the report notes"])
   s --> a --> b
   b -->|"no"| c
   b -->|"yes"| d --> e

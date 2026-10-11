@@ -1,6 +1,6 @@
 # tools/site/data-files.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 4). The game fetches its data (place, planet, car,
 map squares) as files at run time, so they are not baked into the
@@ -31,6 +31,7 @@ flowchart TD
   y(["return yes"])
   b{"is it planets/name.json, vehicles/name.json or places/name.json"}
   c{"is it places/name/chunks/name.json"}
+  d{"is it places/name/streets.json (Scope 005b)"}
   n(["return no"])
   s --> a
   a -->|"yes"| y
@@ -38,5 +39,7 @@ flowchart TD
   b -->|"yes"| y
   b -->|"no"| c
   c -->|"yes"| y
-  c -->|"no"| n
+  c -->|"no"| d
+  d -->|"yes"| y
+  d -->|"no"| n
 ```

@@ -1,6 +1,6 @@
 # src/game/main.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 4). The page's starting point: load, build the world,
 put the car on the street, start the frames. Anything that fails on the way
@@ -22,13 +22,14 @@ flowchart TD
   e["createRenderer"]
   f{"a failure"}
   g["buildGame: scene, physics world, map edge walls, car, controls, camera"]
-  h["show any notes about the link with showNotice; hide the loading line; show touch controls if shouldShowTouchControls; listenForResize, and run it once so the fog and the portrait hint fit the screen from the start"]
+  h["show any notes about the link with showNotice; hide the loading line; show touch controls if shouldShowTouchControls, and on the first touch show them and placeHud; listenForResize, and run it once so the fog, the portrait hint and the small map fit the screen from the start"]
+  j["listenToMiniMapTaps; start loading the streets with loadStreetsForPlace, without waiting, then streetsArrived (Scope 005b)"]
   i(["start the frames with runFrame"])
   s --> a --> b --> c
   c -->|"yes"| d
   c -->|"no"| e --> f
   f -->|"yes"| d
-  f -->|"no"| g --> h --> i
+  f -->|"no"| g --> h --> j --> i
 ```
 
 ## startGameSafely
@@ -59,7 +60,7 @@ flowchart TD
   c["controls: listenToKeyboard and listenToTouches"]
   d["the camera: field of view from chase.ts, placed at its goal at once"]
   e["updateStreaming once at the start, so the ground under the car exists before the first step"]
-  f(["return the game: everything above, with the time left over 0 and flip upright not pressed, and the pose before and the pose now both the start pose"])
+  f(["return the game: everything above, with the time left over 0 and flip upright not pressed, the pose before and the pose now both the start pose, no streets yet, no street name, and the small map small and not yet placed"])
   s --> a --> b --> c --> d --> e --> f
 ```
 
@@ -69,12 +70,13 @@ Why the game needs it: turning the phone sideways or resizing the window keeps t
 
 ```mermaid
 flowchart TD
-  s(["listenForResize with the renderer, the camera, the scene and the portrait hint"])
+  s(["listenForResize with the game (its renderer, camera and scene) and the page"])
   a["on resize: set the renderer to the canvas's new size and the camera's aspect to width over height"]
   b["set the scene's fog from fogRangeForView for the new aspect"]
   c["show the portrait hint, Turn your phone sideways for a wider view., if portraitHintShown; otherwise hide it"]
+  e["placeHud, so the small map moves clear of the controls (Scope 005b)"]
   d(["return a function that removes the listener"])
-  s --> a --> b --> c --> d
+  s --> a --> b --> c --> e --> d
 ```
 
 ## listenForResize > fitToScreen
@@ -87,6 +89,19 @@ flowchart TD
   a["set the renderer to the canvas's new size and the camera's aspect to width over height"]
   b["set the scene's fog from fogRangeForView for the new aspect"]
   c["show the portrait hint if portraitHintShown; otherwise hide it"]
+  e["placeHud (Scope 005b)"]
   d(["return"])
-  s --> a --> b --> c --> d
+  s --> a --> b --> c --> e --> d
+```
+
+## startGame > inner function 1
+
+New in Scope 005b. Why the game needs it: a touch screen on a computer gets the thumb controls once it is touched, and the small map moves clear of them at once.
+
+```mermaid
+flowchart TD
+  s(["on the first touch"])
+  a["show the thumb controls"]
+  b(["placeHud"])
+  s --> a --> b
 ```

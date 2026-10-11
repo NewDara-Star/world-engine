@@ -1,6 +1,6 @@
 # src/game/loop.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 4). One frame of the game, about 60 times a second
 (browser `requestAnimationFrame`). Order: read the controls, flip the car
@@ -130,7 +130,7 @@ flowchart TD
   e["updateStreaming at the car's position"]
   f["blended pose = blendPoses of the game's pose before and pose now; updateCarModel with it"]
   g["moveChaseCamera toward chaseCameraGoal of the blended pose, jumping if the car was flipped or returned to the start"]
-  h(["warnAtMapEdge; measureFrame; draw the scene"])
+  h(["warnAtMapEdge; updateHud at the car's position (Scope 005b); measureFrame; draw the scene"])
   s --> a --> b --> c --> r
   r -->|"yes"| r1 --> d
   r -->|"no"| d

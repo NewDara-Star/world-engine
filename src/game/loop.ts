@@ -16,6 +16,7 @@ import { canFlipUpright, carRescueNeeded, driveCar, flipCarUpright, returnCarToS
 import { cellKey, cellOfPoint } from "../world/grid.js";
 import { failureMessage, showFailure, showNotice } from "./failure.js";
 import type { Game } from "./game.js";
+import { updateHud } from "./hud.js";
 import { PHYSICS_STEP_S, blendPoses, physicsStepsForFrame } from "./physics.js";
 import { updateCarModel } from "./scene.js";
 import { updateStreaming } from "./streaming.js";
@@ -128,6 +129,7 @@ export function playFrame(game: Game, nowMs: number): void {
   game.camera.position.set(game.aim.cameraPoint.x, game.aim.cameraPoint.y, game.aim.cameraPoint.z);
   game.camera.lookAt(game.aim.lookPoint.x, game.aim.lookPoint.y, game.aim.lookPoint.z);
   warnAtMapEdge(game, here.x, -here.z, nowMs);
+  updateHud(game, { eastM: here.x, northM: -here.z }, nowMs);
   measureFrame(game, frameS, nowMs);
   game.renderer.render(game.parts.scene, game.camera);
 }

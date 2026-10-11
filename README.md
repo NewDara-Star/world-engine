@@ -24,7 +24,9 @@ what comes next is in `docs/roadmap.md`.
   owner approves before code.
 - `tools/diagrams/`: the program that draws them.
 - `places/`: the places, as data. `places/omole/chunks/`: Omole's baked map
-  (ODbL, © OpenStreetMap contributors), one file per 100 m square.
+  (ODbL, © OpenStreetMap contributors), one file per 100 m square;
+  `places/omole/streets.json`: every road's name and centre line, for the
+  street-name line and the small map.
 - `vehicles/`, `planets/`, `start.json`: the car, the planets, and which
   place and car the game opens with.
 - `src/place/`: the place and vehicle file format and its checker.
@@ -94,7 +96,8 @@ nodes come out without positions. Then:
 
     npm run bake -- --place places/omole.json --extract raw-data/omole/omole-highways.opl
 
-It replaces `places/omole/chunks/` and prints how many roads and squares it
-made and where the car starts. The same extract always gives the same files,
-byte for byte. `raw-data/` stays out of git; the baked squares are published
+It replaces `places/omole/chunks/` and `places/omole/streets.json` and prints
+how many roads and squares it made, the street file's size and where the car
+starts. The same extract always gives the same files, byte for byte.
+`raw-data/` stays out of git; the baked squares and street file are published
 under ODbL with the bake script.

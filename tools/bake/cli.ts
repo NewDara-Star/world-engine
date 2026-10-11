@@ -10,7 +10,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type FileCheck, type Planet, validatePlanet } from "../../src/place/index.js";
 import { bakePlace } from "./bake.js";
-import { writeBakeFiles } from "./write.js";
+import { writeBakeFiles, writeStreetsFile } from "./write.js";
 
 const USAGE = "usage: npm run bake -- --place places/<id>.json --extract raw-data/<extract>.opl";
 const PLANETS_FOLDER = "planets";
@@ -58,7 +58,9 @@ export async function runBake(words: readonly string[]): Promise<number> {
   }
   const folder = join(dirname(args.placePath), baked.placeId, "chunks");
   const written = await writeBakeFiles(folder, baked.files);
+  const streetsPath = await writeStreetsFile(dirname(folder), baked.streetsText);
   console.log(`Baked ${baked.roadCount} roads into ${written - 1} squares in ${folder}, plus index.json.`);
+  console.log(`Wrote the street names and centre lines to ${streetsPath} (${Buffer.byteLength(baked.streetsText)} bytes).`);
   console.log(`The car starts ${baked.start.eastM.toFixed(2)} m east and ${baked.start.northM.toFixed(2)} m north of the centre, heading ${baked.start.headingDeg.toFixed(0)}°, on a ${baked.start.roadWidthM} m ${baked.start.oneWay ? "one-way" : "two-way"} road.`);
   for (const note of baked.notes) console.log(`Note: ${note}`);
   return 0;

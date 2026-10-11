@@ -89,3 +89,28 @@ flowchart TD
   n15 --> n16
   n16 --> n17
 ```
+
+## nearestPointOnSegment
+
+```mermaid
+flowchart TD
+  n1(["nearestPointOnSegment"])
+  n2["const alongEast = b.eastM - a.eastM;"]
+  n3["const alongNorth = b.northM - a.northM;"]
+  n4["const lengthSquared = alongEast * alongEast + alongNorth * …"]
+  n5{"lengthSquared === 0"}
+  n6(["return { point: a, distanceM: Math.hypot(point.eastM - a.ea…"])
+  n7["const shadow = ((point.eastM - a.eastM) * alongEast + (poin…"]
+  n8["const fraction = Math.min(1, Math.max(0, shadow));"]
+  n9["const nearest = { eastM: a.eastM + fraction * alongEast, no…"]
+  n10(["return { point: nearest, distanceM: Math.hypot(point.eastM …"])
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 -->|"yes"| n6
+  n5 -->|"no"| n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+```

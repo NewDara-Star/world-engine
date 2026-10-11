@@ -199,9 +199,10 @@ flowchart TD
   n18["game.camera.position.set(game.aim.cameraPoint.x, game.aim.c…"]
   n19["game.camera.lookAt(game.aim.lookPoint.x, game.aim.lookPoint…"]
   n20["warnAtMapEdge(game, here.x, -here.z, nowMs);<br/>calls warnAtMapEdge"]
-  n21["measureFrame(game, frameS, nowMs);<br/>calls measureFrame"]
-  n22["game.renderer.render(game.parts.scene, game.camera);"]
-  n23(["end"])
+  n21["updateHud(game, { eastM: here.x, northM: -here.z }, nowMs);<br/>calls updateHud"]
+  n22["measureFrame(game, frameS, nowMs);<br/>calls measureFrame"]
+  n23["game.renderer.render(game.parts.scene, game.camera);"]
+  n24(["end"])
   n1 --> n2
   n2 -->|"yes"| n3
   n2 -->|"no"| n4
@@ -226,6 +227,7 @@ flowchart TD
   n20 --> n21
   n21 --> n22
   n22 --> n23
+  n23 --> n24
 ```
 
 ## runFrame

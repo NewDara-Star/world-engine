@@ -1,6 +1,6 @@
 # src/world/grid.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (items 2 and 4). The 100 m squares the world is cut into
 (D-0008, owner, 2026-10-10: "plain 100 m grid chunks"). Used by the bake to
@@ -69,4 +69,20 @@ flowchart TD
   b["keep those whose distanceToCell is at most the radius"]
   c(["return them nearest first; equal distances in key order, so the order never changes between runs"])
   s --> a --> b --> c
+```
+
+## nearestPointOnSegment
+
+Moved here from `tools/bake/start.ts` in Scope 005b, unchanged, so the bake's start and the game's street finder (`streets.md`) use the same sum (one source of truth). Why the game needs it: a point is rarely exactly on a road line; the nearest point of a segment says how far it is.
+
+```mermaid
+flowchart TD
+  s(["nearestPointOnSegment from a point to the segment A to B"])
+  a{"are A and B the same point"}
+  b(["return A and its distance"])
+  c["how far along the segment the point's shadow falls, as a fraction, kept between 0 and 1"]
+  d(["return the point at that fraction, and its distance from the given point"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c --> d
 ```

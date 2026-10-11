@@ -14,7 +14,7 @@ const checkPlaceId = requireShortId();
 // files are deleted, nothing else is touched.
 export async function writeBakeFiles(folder: string, files: readonly BakedFile[]): Promise<number> {
   const placeFolder = dirname(folder);
-  if (basename(folder) !== "chunks" || !checkPlaceId(basename(placeFolder), []).ok || basename(dirname(placeFolder)) !== "places") {
+  if (basename(folder) !== "chunks" || !isPlaceFolder(placeFolder)) {
     throw new Error(`the bake only writes to places/<id>/chunks, and ${folder} is not such a folder; nothing was written.`);
   }
   const old = await readdir(folder).catch(() => []);
@@ -25,4 +25,21 @@ export async function writeBakeFiles(folder: string, files: readonly BakedFile[]
     await writeFile(join(folder, file.name), file.text);
   }
   return files.length;
+}
+
+// places/<id>/streets.json, replaced whole (scope 005b). The same guard as the
+// squares, so a typo cannot write anywhere else.
+export async function writeStreetsFile(placeFolder: string, text: string): Promise<string> {
+  if (!isPlaceFolder(placeFolder)) {
+    throw new Error(`the bake only writes streets.json into places/<id>, and ${placeFolder} is not such a folder; nothing was written.`);
+  }
+  const path = join(placeFolder, "streets.json");
+  await mkdir(placeFolder, { recursive: true });
+  await writeFile(path, text);
+  return path;
+}
+
+// A folder named like a place id, inside a folder named places.
+export function isPlaceFolder(folder: string): boolean {
+  return checkPlaceId(basename(folder), []).ok && basename(dirname(folder)) === "places";
 }
