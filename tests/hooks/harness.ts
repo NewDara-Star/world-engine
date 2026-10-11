@@ -15,7 +15,10 @@ export interface HookResult {
 }
 
 function withoutRole(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
-  const { WE_ROLE: _role, WE_LOCK: _lock, WE_BASE: _base, ...rest } = env;
+  const rest = { ...env };
+  delete rest.WE_ROLE;
+  delete rest.WE_LOCK;
+  delete rest.WE_BASE;
   return rest;
 }
 
