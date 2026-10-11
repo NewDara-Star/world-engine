@@ -2,7 +2,9 @@
 
 Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
 
-New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/fl## validateJsonFile
+New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/flows/src/place/check-file.md`.
+
+## validateJsonFile
 
 Why the game needs it: whoever writes a place file gets one report naming every mistake by file and line, whether the file is a place or a vehicle. A field written twice is reported in the same report, first, because it explains which copy the other messages are about.
 
@@ -14,7 +16,7 @@ flowchart TD
   b{"could the text be read as JSON"}
   c(["return failure with one message: the file name, lineAtOffset of the syntax error, syntaxProblemInWords"])
   d["run the checker on the values, starting at the top of the file"]
-  r["find problemsForRepeatedFields in the whole tree, starting at the top of the file"]
+  r["find problemsForRepeatedFields in the whole tree, starting at the top of the file; if that walk runs out of room, the one problem is: nested too deeply, at line 1"]
   e{"is there any problem, from either"}
   f(["return success with the checked place or vehicle"])
   g["make messageForProblem for every problem: the repeated fields first, then the checker's"]
@@ -32,10 +34,6 @@ flowchart TD
   e -->|"yes"| g
   g --> h
   h -->|"yes"| i
-  h -->|"no"| j
-  i --> j
-```
-
   h -->|"no"| j
   i --> j
 ```
