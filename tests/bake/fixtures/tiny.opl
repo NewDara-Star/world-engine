@@ -1,0 +1,16 @@
+n1 T x3.358 y6.63005
+w22 Thighway=trunk,name=Long%20%Trunk%20%Road Nn40x3.353y6.629,n41x3.37y6.629
+w10 Thighway=residential,name=Test%20%Street%2c%%20%One Nn1x3.358y6.63005,n2x3.3601y6.63005,n3x3.362y6.63005
+w14 Thighway=primary,width=12%20%m Nn10x3.359y6.6295,n11x3.359y6.6299
+w11 Thighway=residential,oneway=yes Nn4x3.361y6.629,n5x3.361y6.6315
+w12 Thighway=footway Nn6x3.36225y6.63225,n7x3.3624y6.6324
+w13 Thighway=residential,area=yes Nn8x3.3577y6.6322,n9x3.3577y6.6324,n12x3.3575y6.6324,n8x3.3577y6.6322
+w15 Thighway=service,access=no Nn13x3.35745y6.62745,n14x3.3576y6.6276
+w16 Thighway=service,access=no,motorcar=yes Nn15x3.36245y6.62745,n16x3.3626y6.6276
+w17 Thighway=residential Nn17x3.3605y6.6305
+w18 Thighway=residential,junction=roundabout Nn18x3.3603y6.6282,n19x3.3605y6.6283,n20x3.3606y6.6282,n18x3.3603y6.6282
+w19 Thighway=residential,lanes=abc Nn21x3.3585y6.6285,n22x3.3595y6.6285
+w20 Thighway=residential,width=10%20%ft Nn23x3.3585y6.631,n24x3.3592y6.631
+w21 Thighway=residential,vehicle=no Nn25x3.3612y6.631,n26x3.3612y6.6312
+w23 Thighway=track Nn27x3.357y6.629,n28x3.3572y6.6292
+r1 Ttype=route Mw10@,w11@
