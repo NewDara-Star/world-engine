@@ -1,6 +1,6 @@
 # src/game/scene.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (item 4). What is drawn: sky colour, simple light, the flat
 ground per square, the grey roads, and a grey-box car. three.js 0.186.1 with
@@ -40,7 +40,7 @@ flowchart TD
   s(["createScene with the load radius and the camera's aspect"])
   a["background = sky colour; fog of the same colour, from fogRangeForView, so squares appear inside the fog, never at a hard edge"]
   b["a hemisphere light, sky colour above and ground colour below, and one directional light from high up"]
-  c(["return the scene, and the shared ground and road materials: neither writes depth; the ground is drawn first, the roads second"])
+  c(["return the scene, and the shared ground, road and building materials: ground and road write no depth, the ground is drawn first, the roads second; the buildings material colours each corner by its own colour (scope 006)"])
   s --> a --> b --> c
 ```
 
@@ -80,6 +80,20 @@ flowchart TD
   n["every corner's normal points straight up, because MeshLambertMaterial lights by the normals and draws a shape without them black (approver's F16)"]
   c(["return a mesh of that shape, placed at the square's south-west corner, drawn after the ground"])
   s --> a --> b --> n --> c
+```
+
+## buildingMeshFromChunk
+
+Why the game needs it (scope 006): a square's buildings drawn in one go, one family of painted-render colours (four shades, cream to pale sand) with a darker flat roof, so the streets do not look like one mass and edges read. Colours are our own choice until the look is chosen (D-0023).
+
+```mermaid
+flowchart TD
+  s(["buildingMeshFromChunk with a square's buildings and the building material"])
+  a["the walls and roofs from buildingSurfaces"]
+  b["each corner's colour: its shade's colour, or the roof colour, times its tone"]
+  c["one shape with positions, normals, colours and triangles"]
+  d(["return it as a mesh placed at the square's south-west corner, drawn after the flat layers and writing depth like any solid"])
+  s --> a --> b --> c --> d
 ```
 
 ## carModel

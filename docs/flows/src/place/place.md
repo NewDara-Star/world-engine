@@ -126,7 +126,7 @@ flowchart TD
   n1(["placeCheckerFor"])
   n2["const shape = { ...placeShape, planet: requireKnownId({ one…<br/>calls requireKnownId"]
   n3["const rules: CrossFieldRule#lt;PlaceFields#gt;[] = [ { reads: [#quot;a…<br/>calls planetRangeRule"]
-  n4(["return addCrossFieldRules(shape, rules);<br/>calls addCrossFieldRules"])
+  n4(["return addCrossFieldRules(shape, rules, OPTIONAL_PLACE_FIEL…<br/>calls addCrossFieldRules"])
   n1 --> n2
   n2 --> n3
   n3 --> n4

@@ -101,9 +101,9 @@ describe("bake: happy path", () => {
     expect(cells).toEqual(sorted);
   });
 
-  it("records format 1, 100 m squares and the centre exactly as the place file writes it", () => {
+  it("records index format 2, 100 m squares and the centre exactly as the place file writes it", () => {
     const index = indexOf(filesOf(bakeTiny()));
-    expect(index.format).toBe(1);
+    expect(index.format).toBe(2);
     expect(index.cellSizeM).toBe(100);
     expect(index.centre).toEqual({ lat: 6.63, lon: 3.36 });
   });

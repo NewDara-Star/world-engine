@@ -18,6 +18,7 @@ describe("shipped data files: happy path", () => {
     "places/omole/chunks/index.json",
     "places/omole/chunks/3_-2.json",
     "places/omole/chunks/-14_14.json",
+    "places/omole/chunks/buildings_3_-2.json",
     "places/omole/streets.json",
   ])("ships %s", (path) => {
     expect(isShippedDataFile(path)).toBe(true);

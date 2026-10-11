@@ -8,8 +8,9 @@
 // digits, single dashes between), so no path can climb out with "..".
 const NAME = "[a-z0-9]+(?:-[a-z0-9]+)*";
 const TOP_DATA_FILE = new RegExp(`^(?:planets|vehicles|places)/${NAME}\\.json$`);
-// A chunk is named east_north, such as -14_14, and the index is index.json.
-const MAP_FILE = new RegExp(`^places/${NAME}/chunks/(?:index|-?\\d+_-?\\d+)\\.json$`);
+// A chunk is named east_north, such as -14_14, a square's buildings
+// buildings_east_north (scope 006), and the index is index.json.
+const MAP_FILE = new RegExp(`^places/${NAME}/chunks/(?:index|(?:buildings_)?-?\\d+_-?\\d+)\\.json$`);
 // The street names and centre lines for the small map (scope 005b).
 const STREETS_FILE = new RegExp(`^places/${NAME}/streets\\.json$`);
 

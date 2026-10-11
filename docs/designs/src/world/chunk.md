@@ -1,6 +1,6 @@
 # src/world/chunk.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (items 2 and 4). The two map file formats the bake writes
 and the game reads, and their checkers. Checked like every other file: a bad
@@ -17,7 +17,10 @@ corner (0 to 10000). Triangles list three corner numbers each, anticlockwise
 from above.
 
 **Index file** `places/<id>/chunks/index.json`:
-`{"format":1,"cellSizeM":100,"centre":{"lat":…,"lon":…},"extent":{"westM":…,"southM":…,"eastM":…,"northM":…},"start":{"eastM":…,"northM":…,"headingDeg":…},"cells":["3_-2",…]}`.
+`{"format":2,"cellSizeM":100,"centre":{"lat":…,"lon":…},"extent":{"westM":…,"southM":…,"eastM":…,"northM":…},"start":{"eastM":…,"northM":…,"headingDeg":…},"cells":["3_-2",…],"buildingCells":["3_-2",…]}`.
+Format 2 (scope 006) added `buildingCells`, the squares that have a buildings
+file (`src/world/buildings.ts`); an index of format 1 is refused with "bake
+again", like any other old bake.
 
 ## validateChunk
 
@@ -117,10 +120,10 @@ Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10
 flowchart TD
   s(["checkSquareNames a value at a path"])
   a["check it with the list checker"]
-  bproblems
+  b{"problems"}
   c(["return them"])
-  dis a name listed twice
-  e(["return one problem at the second one: cells lists that name twice"])
+  d{"is a name listed twice"}
+  e(["return one problem at the second one: the list, by its own name (cells or buildingCells), lists that name twice"])
   f(["return the names"])
   s --> a --> b
   b -->|"yes"| c

@@ -1,6 +1,6 @@
 # tools/bake/chunk-text.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (item 2). Writes the chunk files and the index as text, the
 same bytes every time for the same input (the scope's determinism rule, and
@@ -50,12 +50,23 @@ flowchart TD
 
 ## indexFileText
 
-Why the game needs it: the game must know which squares have road (so it never asks for a file that does not exist), what centre and square size the map was baked for (so an old bake is caught, not drawn in the wrong place), how far the map goes (the place file's `mapHalfSizeM`, not the extract's reach; approver's F20), and where the car starts, on how wide a road and whether it is one-way (F7).
+Why the game needs it: the game must know which squares have road and which have buildings (scope 006) (so it never asks for a file that does not exist), what centre and square size the map was baked for (so an old bake is caught, not drawn in the wrong place), how far the map goes (the place file's `mapHalfSizeM`, not the extract's reach; approver's F20), and where the car starts, on how wide a road and whether it is one-way (F7).
 
 ```mermaid
 flowchart TD
-  s(["indexFileText with the squares that have road, the place centre, the map's extent (the square of plus and minus mapHalfSizeM around the centre) and the car's start"])
-  a["sort the squares: south row first, then west to east"]
-  b(["return the JSON text: format 1, the square size 100, the centre's latitude and longitude as written in the place file, the extent as west, south, east, north metres rounded out to whole squares, the start as metres east and metres north rounded to whole centimetres (as every other baked number is, for the same bytes every time), compass heading in whole degrees, the road's width in metres rounded to whole centimetres, and whether it is one-way, and the list of squares"])
+  s(["indexFileText with the squares that have road, the squares that have buildings, the place centre, the map's extent (the square of plus and minus mapHalfSizeM around the centre) and the car's start"])
+  a["sort both lists of squares with southRowFirst"]
+  b(["return the JSON text: format 2 (format 1 had no buildings), the square size 100, the centre's latitude and longitude as written in the place file, the extent as west, south, east, north metres rounded out to whole squares, the start as metres east and metres north rounded to whole centimetres (as every other baked number is, for the same bytes every time), compass heading in whole degrees, the road's width in metres rounded to whole centimetres, and whether it is one-way, the list of squares with road, and the list of squares with buildings"])
   s --> a --> b
+```
+
+## southRowFirst
+
+Why the game needs it: the index lists squares in one fixed order, so the file is the same every time.
+
+```mermaid
+flowchart TD
+  s(["southRowFirst with squares"])
+  a(["return them sorted by east, then stably by north: south row first, west to east in each row"])
+  s --> a
 ```

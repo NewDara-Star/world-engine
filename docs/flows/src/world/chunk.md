@@ -24,7 +24,7 @@ flowchart TD
   n5["const repeated = names.value.findIndex((key, at) =#gt; names.v…"]
   n6{"repeated #lt; 0"}
   n7(["return names;"])
-  n8(["return { ok: false, problems: [problemAt([...path, repeated…<br/>calls problemAt"])
+  n8(["return { ok: false, problems: [problemAt([...path, repeated…<br/>calls problemAt, labelForPath"])
   n1 --> n2
   n2 --> n3
   n3 -->|"yes"| n4

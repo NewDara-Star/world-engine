@@ -11,7 +11,10 @@
 //   anticlockwise from above.
 // Index file places/<id>/chunks/index.json:
 //   {"format":1,"cellSizeM":100,"centre":{"lat","lon"},"extent":{"westM","southM","eastM","northM"},
-//    "start":{"eastM","northM","headingDeg","roadWidthM","oneWay"},"cells":["3_-2",…]}
+//    "start":{"eastM","northM","headingDeg","roadWidthM","oneWay"},"cells":["3_-2",…],
+//    "buildingCells":["3_-2",…]}
+//   Format 2 (scope 006) added buildingCells, the squares with a buildings
+//   file (src/world/buildings.ts).
 import { type FileCheck, validateJsonFile } from "../place/check-file.js";
 import {
   type FieldPath,
@@ -20,6 +23,7 @@ import {
   type Parser,
   type Problem,
   addCrossFieldRules,
+  labelForPath,
   problemAt,
   requireListOf,
   requireNumberAbove,
@@ -33,6 +37,7 @@ import type { Place } from "../place/place.js";
 import { type Cell, cellKey } from "./grid.js";
 
 const FORMAT = 1;
+const INDEX_FORMAT = 2;
 // A square is 100 m, so a corner is 0 to 10000 cm from its south-west corner.
 const LARGEST_CORNER_CM = 10_000;
 // The farthest a map may reach (place.ts, mapHalfSizeM).
@@ -55,13 +60,13 @@ function requireSquareNames(): Parser<string[]> {
     if (!names.ok) return names;
     const repeated = names.value.findIndex((key, at) => names.value.indexOf(key) !== at);
     if (repeated < 0) return names;
-    return { ok: false, problems: [problemAt([...path, repeated], `\`cells\` lists \`${names.value[repeated]}\` twice.`)], crossCheckWaited: false };
+    return { ok: false, problems: [problemAt([...path, repeated], `${labelForPath(path)} lists \`${names.value[repeated]}\` twice.`)], crossCheckWaited: false };
   }
   return checkSquareNames;
 }
 
 const indexShape = {
-  format: requireNumberBetween(FORMAT, FORMAT),
+  format: requireNumberBetween(INDEX_FORMAT, INDEX_FORMAT),
   cellSizeM: requireNumberAbove(0, "m"),
   centre: requireRecord({
     lat: requireNumberBetween(-90, 90, "degrees"),
@@ -81,6 +86,7 @@ const indexShape = {
     oneWay: requireTrueOrFalse(),
   }),
   cells: requireSquareNames(),
+  buildingCells: requireSquareNames(),
 };
 
 type IndexFields = Fields<typeof indexShape>;

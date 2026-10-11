@@ -64,6 +64,18 @@ const numberSource = requireRecord({
   status: requireOneOf(CONSTANT_STATUSES),
 });
 
+// How tall the place's buildings are drawn when OpenStreetMap gives no
+// height and no levels (scope 006): a storey height for `building:levels`, a
+// height for each building type, and a height for the rest, with where the
+// numbers came from under the data rule. 1 to 300 m and 2 to 6 m a storey are
+// sanity ranges, our own choice (docs/designs/src/place/place.md).
+const buildingHeights = requireRecord({
+  metresPerLevel: requireNumberBetween(2, 6, "m"),
+  defaultM: requireNumberBetween(1, 300, "m"),
+  byType: requireListOf(requireRecord({ type: requireText(), heightM: requireNumberBetween(1, 300, "m") }), 0),
+  source: numberSource,
+});
+
 // The shape every place has. `planet` is written as an id here; placeCheckerFor
 // puts in its place the check against the planets handed in, keeping the
 // field's position, so messages come in the file's order.
@@ -97,6 +109,8 @@ const placeShape = {
   // ways that cross its box (approver's F20). 100 to 50,000 m is a sanity range.
   mapHalfSizeM: requireNumberBetween(100, 50_000, "m"),
   mapHalfSizeSource: numberSource,
+  // Only a place with buildings to bake needs these (scope 006).
+  buildingHeights,
   allowedVehicleClasses: requireListOf(requireOneOf(VEHICLE_CLASSES), 1),
   dataSources: requireListOf(dataSource, 1),
   // How gravity and air density were worked out, so the numbers can be checked.
@@ -104,7 +118,12 @@ const placeShape = {
   constantsSources: requireListOf(constantSource, 1),
 };
 
-type PlaceFields = Fields<typeof placeShape>;
+// Fields a place may leave out.
+const OPTIONAL_PLACE_FIELDS = ["buildingHeights"] as const;
+
+type PlaceFields = Fields<typeof placeShape, (typeof OPTIONAL_PLACE_FIELDS)[number]>;
+
+export type BuildingHeights = NonNullable<PlaceFields["buildingHeights"]>;
 
 // The place field that holds each constant.
 const PLACE_FIELD_FOR_CONSTANT = {
@@ -180,7 +199,7 @@ function placeCheckerFor(planets: readonly Planet[]) {
     { reads: ["constantsSources"], problems: sourceProblemsForConstants },
     ...CONSTANT_QUANTITIES.map((quantity) => planetRangeRule(planets, quantity)),
   ];
-  return addCrossFieldRules(shape, rules);
+  return addCrossFieldRules(shape, rules, OPTIONAL_PLACE_FIELDS);
 }
 
 export type Place = PlaceFields;

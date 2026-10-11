@@ -18,12 +18,13 @@ function chunkMessages(text: string): string[] {
 
 function goodIndex(): Record<string, unknown> {
   return {
-    format: 1,
+    format: 2,
     cellSizeM: 100,
     centre: { lat: 6.63, lon: 3.36 },
     extent: { westM: -300, southM: -300, eastM: 300, northM: 300 },
     start: { eastM: 0, northM: 5.53, headingDeg: 90, roadWidthM: 7, oneWay: false },
     cells: ["-1_0", "0_0", "3_-2"],
+    buildingCells: ["0_0", "3_-2"],
   };
 }
 
@@ -159,8 +160,8 @@ describe("map index: sad path (file, line, what to fix)", () => {
     expect(messages[0]).toContain(field);
   });
 
-  it("refuses a format other than 1", () => {
-    expect(indexMessages(indexText({ format: 2 }))).toEqual([expect.stringContaining("`format`")]);
+  it("refuses an index made before buildings (format 1), naming the format", () => {
+    expect(indexMessages(indexText({ format: 1 }))).toEqual([expect.stringContaining("`format`")]);
   });
 
   it("refuses an extent whose west edge is not west of its east edge", () => {
@@ -176,6 +177,10 @@ describe("map index: sad path (file, line, what to fix)", () => {
 
   it("refuses a square name that is not east_north", () => {
     expect(indexMessages(indexText({ cells: ["0_0", "3-2"] }))).toEqual([expect.stringContaining("`cells[1]`")]);
+  });
+
+  it("refuses a buildings square listed twice, naming the list it is in", () => {
+    expect(indexMessages(indexText({ buildingCells: ["0_0", "0_0"] }))).toEqual([expect.stringContaining("`buildingCells` lists `0_0` twice")]);
   });
 
   it("says a missing start is missing", () => {

@@ -94,10 +94,18 @@ OPL with the node positions on each way:
 The last step must be `add-locations-to-ways`, not `osmium cat`, or the
 nodes come out without positions. Then:
 
-    npm run bake -- --place places/omole.json --extract raw-data/omole/omole-highways.opl
+    npm run bake -- --place places/omole.json --extract raw-data/omole/omole-highways.opl --buildings raw-data/omole/omole-buildings.opl
+
+The buildings extract (scope 006) is cut the same way with
+`osmium tags-filter raw-data/omole/omole.osm.pbf nwr/building`, which also
+keeps the untagged ways that make the rings of courtyard buildings, then
+`add-locations-to-ways` as above. (This command was not run in scope 006;
+the file in `raw-data/` was already there.) `--buildings` is optional;
+without it the map has roads only. Building heights come from the place
+file's `buildingHeights`.
 
 It replaces `places/omole/chunks/` and `places/omole/streets.json` and prints
-how many roads and squares it made, the street file's size and where the car
+how many roads, buildings and files it made, the street file's size and where the car
 starts. The same extract always gives the same files, byte for byte.
 `raw-data/` stays out of git; the baked squares and street file are published
 under ODbL with the bake script.

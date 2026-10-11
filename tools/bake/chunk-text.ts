@@ -10,6 +10,8 @@ import type { CarStart } from "./start.js";
 
 const CENTIMETRES_PER_METRE = 100;
 const CHUNK_FORMAT = 1;
+// Format 2 added the squares with buildings (scope 006).
+const INDEX_FORMAT = 2;
 
 // A triangle corner in whole centimetres from the square's south-west corner.
 interface Corner {
@@ -49,14 +51,12 @@ export function chunkFileText(cell: Cell, triangles: readonly (readonly MapPoint
 }
 
 // The index: which squares have road (south row first, then west to east),
-// what centre and square size the map was baked for, how far it goes (rounded
-// out to whole squares) and where the car starts, in whole centimetres and
-// whole degrees.
-export function indexFileText(cells: readonly Cell[], centre: LatLon, extent: CellBounds, start: CarStart): string {
-  // Two stable sorts (ECMA-262 since 2019): by east, then by north.
-  const sorted = cells.toSorted((a, b) => a.east - b.east).toSorted((a, b) => a.north - b.north);
+// which have buildings, what centre and square size the map was baked for,
+// how far it goes (rounded out to whole squares) and where the car starts, in
+// whole centimetres and whole degrees.
+export function indexFileText(cells: readonly Cell[], buildingCells: readonly Cell[], centre: LatLon, extent: CellBounds, start: CarStart): string {
   const index = {
-    format: CHUNK_FORMAT,
+    format: INDEX_FORMAT,
     cellSizeM: CELL_SIZE_M,
     centre: { lat: centre.lat, lon: centre.lon },
     extent: {
@@ -72,7 +72,13 @@ export function indexFileText(cells: readonly Cell[], centre: LatLon, extent: Ce
       roadWidthM: Math.round(start.roadWidthM * CENTIMETRES_PER_METRE) / CENTIMETRES_PER_METRE,
       oneWay: start.oneWay,
     },
-    cells: sorted.map(cellKey),
+    cells: southRowFirst(cells).map(cellKey),
+    buildingCells: southRowFirst(buildingCells).map(cellKey),
   };
   return `${JSON.stringify(index, null, 2)}\n`;
+}
+
+// Two stable sorts (ECMA-262 since 2019): by east, then by north.
+export function southRowFirst(cells: readonly Cell[]): Cell[] {
+  return cells.toSorted((a, b) => a.east - b.east).toSorted((a, b) => a.north - b.north);
 }
