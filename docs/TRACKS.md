@@ -163,8 +163,11 @@ hooks every track uses, and keeping the build fast.
 At most four at once, because the owner tests every track on his phone and
 makes the product calls.
 
-- **Active now:** 1 World data, 3 Assets, 5 Gameplay, 6 Server.
-- **Next:** 2 World look, 4 Vehicles and movement, 7 Traffic and people.
+- **Active now:** 1 World data, 4 Vehicles and movement, 3 Assets; then
+  2 World look once buildings and terrain are in. The world and the car come
+  first (owner, 2026-10-11).
+- **Next:** 5 Gameplay and 6 Server, once Omole looks like Omole and the car
+  drives like a real car; then 7 Traffic and people.
 - **Later:** 8 Audio, 9 Screens, 10 Economy, 11 Shared world,
   12 Universe and places, 13 Platform. Until 12 and 13 start, the World data
   chat keeps the shared core and this chat (the first orchestrator) keeps

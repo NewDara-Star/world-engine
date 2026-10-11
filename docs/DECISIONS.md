@@ -334,3 +334,11 @@ rather than guess one.
 - Tags: process, tracks
 - Replaces: D-0022
 
+## D-0041
+
+- Date: 2026-10-11
+- Decision: The world and the car come before gameplay: active tracks are World data, Vehicles and movement, Assets, then World look; Gameplay and Server start once Omole looks like Omole and the car drives like a real car. Boats, planes and space wait until after the core game.
+- Why: There is no point building jobs on a grey box in an empty world.
+- Decided by: owner
+- Tags: process, tracks
+

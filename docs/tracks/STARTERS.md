@@ -1,22 +1,51 @@
 # Starting the track chats
 
 Copy one block as the first message of a new chat in the "real world"
-project, with the world-engine repo connected. Order (owner, 2026-10-11):
+project, with the world-engine repo connected.
 
-1. **Gameplay** first: the delivery run is the biggest step to a real game.
-2. **Assets** second: Meshy is being set up.
-3. **Server** after Gameplay has a delivery run to check and pay for.
+**Order (owner, 2026-10-11): the world and the car first, the game on top.**
+Before any gameplay, two things must be true: Omole looks like Omole (your
+street recognisable, buildings, ground shape, landmarks) and the car drives
+like a real car (and looks like one, not a box). So the active tracks are:
 
-The first orchestrator chat stays on **World data**. At most four tracks run
-at once. Before starting any chat, make sure GitHub is up to date
-(`git push` in the world-engine folder).
+1. **World data**: the first orchestrator chat (this one keeps going).
+2. **Vehicles and movement**: start now. Car feel first; boats, planes and
+   space later, not before the game.
+3. **Assets**: start now. The car's body first, then street props.
+4. **World look**: start when the buildings and terrain are in.
+
+**Gameplay** and **Server** start when the two conditions above are met. Their
+starters are below, ready for then. At most four tracks run at once. Before
+starting any chat, make sure GitHub is up to date (`git push`).
 
 One-time set-up so the chats can push their own branches: install the Claude
 GitHub App on the repo (github.com/apps/claude, Configure, NewDara-Star,
 Repository access: world-engine), then connect the repo when starting each
 chat.
 
-## Gameplay (track 5)
+## Vehicles and movement (track 4)
+
+```
+You are the orchestrator for track 4, Vehicles and movement, of world-engine.
+Read docs/TRACKS.md, CLAUDE.md, docs/DECISIONS.md and docs/tracks/ first.
+Work on the branch track/vehicles; push it when npm run check passes;
+open a pull request into main when something is ready to drive.
+
+First job: make the car feel like a real small hatchback on my phone and Mac.
+Research first: how good driving games and simulators model cars (tyres and
+grip, weight transfer, steering feel, suspension, arcade versus sim
+trade-offs), and what open projects and papers exist (licences checked).
+Write it to research/. Then drive the current car (src/vehicle, vehicles/
+hatchback.json) and list what feels wrong, a short plan in
+docs/tracks/vehicles.md for me to approve, then fix it. Physics changes use
+the full process (designs, blind tests, approver). Every number has a source
+or is my recorded choice; never tune a number just to pass a test.
+Boats, planes and space come later; keep the design ready for them (the
+medium's numbers come from the place and planet files) but do not build them yet.
+End with something I can drive on my link and one line on what to try.
+```
+
+## Gameplay (track 5) — after the world and the car are ready
 
 ```
 You are the orchestrator for track 5, Gameplay, of world-engine.
@@ -65,7 +94,7 @@ Notes: the Meshy key goes in the cloud environment's settings as a secret
 API addresses go on that environment's allowed-domains list; the chat names
 them.
 
-## Server (track 6)
+## Server (track 6) — after Gameplay has a delivery run
 
 ```
 You are the orchestrator for track 6, Server, of world-engine.
