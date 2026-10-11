@@ -8,7 +8,8 @@ Before any gameplay, two things must be true: Omole looks like Omole (your
 street recognisable, buildings, ground shape, landmarks) and the car drives
 like a real car (and looks like one, not a box). So the active tracks are:
 
-1. **World data**: the first orchestrator chat (this one keeps going).
+1. **World data**: start a fresh chat (the first one could not push or use
+   newly allowed domains). Starter below.
 2. **Vehicles and movement**: start now. Car feel first; boats, planes and
    space later, not before the game.
 3. **Assets**: start now. The car's body first, then street props.
@@ -22,6 +23,30 @@ One-time set-up so the chats can push their own branches: install the Claude
 GitHub App on the repo (github.com/apps/claude, Configure, NewDara-Star,
 Repository access: world-engine), then connect the repo when starting each
 chat.
+
+## World data (track 1)
+
+```
+You are the orchestrator for track 1, World data, of world-engine.
+Read docs/TRACKS.md, CLAUDE.md, docs/DECISIONS.md and docs/tracks/ first,
+especially docs/tracks/world-data.md (what the first chat did and found).
+Work on the branch track/world-data; push it when npm run check passes;
+open a pull request into main when something is ready to see.
+
+Goal: Omole looks like Omole. OpenStreetMap has almost no buildings near
+Babatunde Ladega Street, so:
+1. Fill in buildings from Overture Maps (it includes Google Open Buildings;
+   take only the Omole box, about 3 km, with DuckDB over Overture's open S3
+   bucket; ODbL), merged with the OpenStreetMap ones without duplicates, and
+   use any real heights it has.
+2. The real ground shape from Copernicus GLO-30 (tile N06 E003), with roads
+   and buildings sitting on it.
+3. Landmarks I will point to on the small map: Fasta International School,
+   St. Jude's Church, Foursquare Church.
+Research first, then build in one session. Tell me if any download address
+is blocked, and which domain to allow. End with screenshots and something
+I can drive on my link.
+```
 
 ## Vehicles and movement (track 4)
 
@@ -88,6 +113,10 @@ First jobs:
 Tell me which API key and allowed domains you need. Don't ask me to paste
 the key into the chat.
 ```
+
+Allowed domains the World data chat needs (add them in the cloud
+environment's settings before starting it): `copernicus-dem-30m.s3.amazonaws.com`,
+`overturemaps-us-west-2.s3.amazonaws.com`, `storage.googleapis.com`.
 
 Notes: the Meshy key goes in the cloud environment's settings as a secret
 (Pro and Max plans call this a "network secret"), never in the chat. Meshy's
