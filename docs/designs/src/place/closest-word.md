@@ -1,6 +1,6 @@
 # src/place/closest-word.ts
 
-Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
 
 New in scope 002b (item 2b). Finds the word someone most likely meant, for "Did you mean `name`?". The distance is the optimal string alignment distance, the restricted form of Damerau–Levenshtein; the sources and their limits are in `research/33-json-lines.md`. The pictures drawn from the code will be in `docs/flows/src/place/closest-word.md`.
 

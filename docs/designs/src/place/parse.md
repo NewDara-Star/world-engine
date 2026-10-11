@@ -1,10 +1,10 @@
 # src/place/parse.ts
 
-Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/parse.md`.
 
-Redrawn for scope 002b: new names (item 1) and the new behaviour (item 2). What changed, design by design, is in `CHANGES-002b.md` next to this file.
+Redrawn for scope 002b: new names (item 1) and the new behaviour (item 2). What changed, design by design, is in `docs/reviews/002b/CHANGES.md`.
 
 How the pieces fit, in plain words:
 

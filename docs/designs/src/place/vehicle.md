@@ -1,10 +1,10 @@
 # src/place/vehicle.ts
 
-Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/vehicle.md`.
 
-Redrawn for scope 002b: new names (item 1) and the same shape as `validatePlace` (item 2h). What changed is in `CHANGES-002b.md` next to this file.
+Redrawn for scope 002b: new names (item 1) and the same shape as `validatePlace` (item 2h). What changed is in `docs/reviews/002b/CHANGES.md`.
 
 ## movementProblemInVehicle
 

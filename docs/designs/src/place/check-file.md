@@ -1,6 +1,6 @@
 # src/place/check-file.ts
 
-Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
 
 New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/flows/src/place/check-file.md`.
 
