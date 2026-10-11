@@ -292,3 +292,20 @@ rather than guess one.
 - Why: The 1-second test failed on unchanged code when the build machine slowed; it measured the machine, not the code.
 - Decided by: orchestrator
 - Tags: tests
+
+## D-0036
+
+- Date: 2026-10-11
+- Decision: The car has real gears from the maker's figures, a 0.3 s gear change (owner may retune), and the rotating-mass factor (Gillespie 1992); Flip upright works only when stopped or tipped over; the phone works upright or sideways with a hint.
+- Why: The car should feel like a real small hatchback, and a slipped thumb must not slam it to a stop.
+- Decided by: orchestrator
+- Tags: vehicles, physics, controls
+
+## D-0037
+
+- Date: 2026-10-11
+- Decision: The game is published as a Cloudflare Worker named world-engine from the owner's Mac (npx wrangler deploy); no domain until it is shown to other people.
+- Why: The connector cannot upload sites; a free workers.dev link is enough for testing.
+- Decided by: owner (on the orchestrator's recommendation)
+- Tags: platform, server
+
