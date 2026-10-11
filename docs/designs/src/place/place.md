@@ -153,22 +153,3 @@ flowchart TD
   a(["return validateJsonFile with the name, the text, and placeCheckerFor the planets"])
   s --> a
 ```
-
-## sourceProblemForOneConstant
-
-Removed by the coder in Scope 005 (its job moves to `sourceCountProblem`); this entry goes with the function. Why it was needed: the owner's data rule says each physical constant has exactly one source, so nobody has to guess which one the number came from.
-
-```mermaid
-flowchart TD
-  s(["sourceProblemForOneConstant: one constant, such as gravity, and the list of sources"])
-  a["count the sources that name this constant"]
-  b{"how many"}
-  c(["return a problem at constantsSources: has no source for the constant"])
-  d(["return no problem"])
-  e(["return a problem at the second source that names it: constantsSources has that many sources for the constant; each constant needs exactly one"])
-  s --> a
-  a --> b
-  b -->|"none"| c
-  b -->|"exactly one"| d
-  b -->|"more than one"| e
-```

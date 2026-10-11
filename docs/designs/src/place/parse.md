@@ -722,3 +722,55 @@ flowchart TD
   b -->|"exactly one"| d
   b -->|"more than one"| e
 ```
+
+## requireNumberFromBelow
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `chunk.md` (`validateChunkIndex`) asks for "headingDeg from 0 to below 360"; `requireNumberBetween` includes its top end, and a heading of 360 is the same as 0, so a second way to write north must be refused (tests/world/chunk.test.ts, "refuses a heading of 360"). Why the game needs it: a number that wraps round, such as a compass heading, has one way to be written.
+
+```mermaid
+flowchart TD
+  s(["requireNumberFromBelow with the lowest value, the value it must stay below, and the unit"])
+  a(["return checkNumberFromBelow, which keeps all three"])
+  s --> a
+```
+
+## requireNumberFromBelow > checkNumberFromBelow
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. Why the game needs it: says the range and the unit when a heading is out of range, such as "a number from 0 up to but not including 360 degrees; found 360".
+
+```mermaid
+flowchart TD
+  s(["checkNumberFromBelow a value at a path"])
+  ais it a number, finite, at least the lowest value and below the top
+  b(["return accept the value"])
+  c(["return reject: wanted a number from the lowest value up to but not including the top, then the unit"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+```
+
+## requireTrueOrFalse
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `chunk.md` (`validateChunkIndex`) asks for "oneWay true or false". Why the game needs it: a yes-or-no field means one thing; the text "yes" in quote marks is refused (tests/world/chunk.test.ts, "one-way written as text").
+
+```mermaid
+flowchart TD
+  s(["requireTrueOrFalse"])
+  a(["return checkTrueOrFalse"])
+  s --> a
+```
+
+## checkTrueOrFalse
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. Why the game needs it: says what was wanted and shows what was found, quote marks and all.
+
+```mermaid
+flowchart TD
+  s(["checkTrueOrFalse a value at a path"])
+  ais it true or false, not text
+  b(["return accept the value"])
+  c(["return reject: wanted true or false, without quote marks"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+```

@@ -57,7 +57,8 @@ describe("place file: happy path", () => {
   });
 
   it("names each place file after the place inside it", () => {
-    for (const file of readdirSync(placesDir)) expect(good(file).id).toBe(file.replace(".json", ""));
+    // Only the place files themselves: a place's baked map lives in a folder beside it (places/omole/chunks/).
+    for (const file of readdirSync(placesDir).filter((name) => name.endsWith(".json"))) expect(good(file).id).toBe(file.replace(".json", ""));
   });
 
   it("accepts a file saved on Windows, and one that starts with an invisible byte-order mark", () => {

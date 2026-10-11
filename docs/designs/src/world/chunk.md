@@ -96,3 +96,54 @@ flowchart TD
   b -->|"no"| b1 --> c
   b -->|"yes"| c
 ```
+
+## requireSquareNames
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `validateChunkIndex` asks for "cells a list of square keys, none repeated". The repeat check sits inside the list's own check, not in a cross-field rule: a cross-field rule waits when a name is misspelt and adds "Fix these first" to a file with only that one mistake, which tests/world/chunk.test.ts ("refuses a square name that is not east_north") does not expect. Why the game needs it: a square listed twice would be loaded twice and drawn on top of itself.
+
+```mermaid
+flowchart TD
+  s(["requireSquareNames"])
+  a["the list checker: a list of square names, east, an underscore, north, such as 3_-2"]
+  b(["return checkSquareNames, which keeps it"])
+  s --> a --> b
+```
+
+## requireSquareNames > checkSquareNames
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. Why the game needs it: every badly written name is reported first; only a list of good names is looked at for repeats, and the repeat is named.
+
+```mermaid
+flowchart TD
+  s(["checkSquareNames a value at a path"])
+  a["check it with the list checker"]
+  bproblems
+  c(["return them"])
+  dis a name listed twice
+  e(["return one problem at the second one: cells lists that name twice"])
+  f(["return the names"])
+  s --> a --> b
+  b -->|"yes"| c
+  b -->|"no"| d
+  d -->|"yes"| e
+  d -->|"no"| f
+```
+
+## extentOrderProblems
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `validateChunkIndex` asks for "extent four numbers in metres with west below east and south below north"; this is that cross-field rule, reading `extent` (tests/world/chunk.test.ts, "refuses an extent whose west edge is not west of its east edge"). Why the game needs it: a map whose west edge is not west of its east edge has no inside.
+
+```mermaid
+flowchart TD
+  s(["extentOrderProblems with the extent, once it is good"])
+  ais west below east
+  a1["add a problem at extent.westM: must be west of, so below, extent.eastM"]
+  bis south below north
+  b1["add a problem at extent.southM: must be south of, so below, extent.northM"]
+  c(["return the problems found"])
+  s --> a
+  a -->|"no"| a1 --> b
+  a -->|"yes"| b
+  b -->|"no"| b1 --> c
+  b -->|"yes"| c
+```

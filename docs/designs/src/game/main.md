@@ -76,3 +76,17 @@ flowchart TD
   d(["return a function that removes the listener"])
   s --> a --> b --> c --> d
 ```
+
+## listenForResize > fitToScreen
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `listenForResize` says "on resize: …"; this is the function the browser calls on each resize, holding exactly those steps. Why the game needs it: the same steps run on every resize and once at the start.
+
+```mermaid
+flowchart TD
+  s(["fitToScreen"])
+  a["set the renderer to the canvas's new size and the camera's aspect to width over height"]
+  b["set the scene's fog from fogRangeForView for the new aspect"]
+  c["show the portrait hint if portraitHintShown; otherwise hide it"]
+  d(["return"])
+  s --> a --> b --> c --> d
+```

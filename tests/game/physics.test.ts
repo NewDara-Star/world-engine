@@ -85,7 +85,8 @@ describe("the physics world", () => {
   it("pulls down with the place's own gravity, and steps 1/60 s", () => {
     const world = createPhysicsWorld(checkedPlace("tiny.json", tinyPlaceTextWith({})));
     expect(world.gravity).toEqual({ x: 0, y: expect.closeTo(-9.781, 6), z: 0 });
-    expect(world.timestep).toBeCloseTo(STEP, 9);
+    // Rapier keeps the step as a 32-bit float (about 7 significant digits), so 1/60 reads back as 0.0166666675.
+    expect(world.timestep).toBeCloseTo(STEP, 7);
   });
 
   it("gives each square flat ground at height 0 you can stand on, anywhere in the square", () => {

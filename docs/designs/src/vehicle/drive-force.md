@@ -103,10 +103,21 @@ flowchart TD
   a{"is a gear change under way"}
   b(["return 0: no drive while the gear changes"])
   c["the gear's ratio from forwardGearRatios; engine speed from engineRpm"]
-  d(["return throttle times engineTorqueNm at that speed, times the gear's ratio, times final drive, times efficiency, over the wheel radius"])
+  d(["return throttle times engineTorqueNm at that speed, times the gear's ratio, times final drive, times efficiency, over the wheel radius, divided by rotatingMassFactor for that gear's ratio times final drive"])
   s --> a
   a -->|"yes"| b
   a -->|"no"| c --> d
+```
+
+## rotatingMassFactor
+
+Why the game needs it: a real car's engine, gearbox and wheels have to be spun up too, which makes it feel heavier when accelerating, most of all in first gear. Without this the car reached 100 km/h in 9.9 s against the published 12.9 s. Source: T. D. Gillespie, Fundamentals of Vehicle Dynamics (SAE, 1992), section 2, the "mass factor" approximation 1 + 0.04 + 0.0025 × (overall ratio)². Added by the orchestrator, 2026-10-11, after the coder measured the gap; not a number tuned to pass the test.
+
+```mermaid
+flowchart TD
+  s(["rotatingMassFactor for an overall ratio (gear ratio times final drive)"])
+  a(["return 1.04 plus 0.0025 times the overall ratio squared"])
+  s --> a
 ```
 
 ## reverseDriveForceN
