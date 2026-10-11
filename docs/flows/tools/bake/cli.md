@@ -65,14 +65,16 @@ flowchart TD
   n23(["return 1;"])
   n24["const folder = join(dirname(args.placePath), baked.placeId,…"]
   n25["const written = await writeBakeFiles(folder, baked.files);<br/>calls writeBakeFiles"]
-  n26["console.log(#96;Baked ${baked.roadCount} roads into ${written …"]
-  n27{"baked.start.oneWay"}
-  n28["#quot;one-way#quot;"]
-  n29["#quot;two-way#quot;"]
-  n30["console.log(#96;The car starts ${baked.start.eastM.toFixed(2)}…"]
-  n31{"for each const note of baked.notes"}
-  n32["console.log(#96;Note: ${note}#96;);"]
-  n33(["return 0;"])
+  n26["const streetsPath = await writeStreetsFile(dirname(folder),…<br/>calls writeStreetsFile"]
+  n27["console.log(#96;Baked ${baked.roadCount} roads into ${written …"]
+  n28["console.log(#96;Wrote the street names and centre lines to ${s…"]
+  n29{"baked.start.oneWay"}
+  n30["#quot;one-way#quot;"]
+  n31["#quot;two-way#quot;"]
+  n32["console.log(#96;The car starts ${baked.start.eastM.toFixed(2)}…"]
+  n33{"for each const note of baked.notes"}
+  n34["console.log(#96;Note: ${note}#96;);"]
+  n35(["return 0;"])
   n1 --> n2
   n2 --> n3
   n3 -->|"yes"| n4
@@ -101,12 +103,14 @@ flowchart TD
   n24 --> n25
   n25 --> n26
   n26 --> n27
-  n27 -->|"yes"| n28
-  n27 -->|"no"| n29
-  n28 --> n30
-  n29 --> n30
-  n30 --> n31
-  n31 -->|"next item"| n32
-  n32 --> n31
-  n31 -->|"done"| n33
+  n27 --> n28
+  n28 --> n29
+  n29 -->|"yes"| n30
+  n29 -->|"no"| n31
+  n30 --> n32
+  n31 --> n32
+  n32 --> n33
+  n33 -->|"next item"| n34
+  n34 --> n33
+  n33 -->|"done"| n35
 ```

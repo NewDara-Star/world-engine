@@ -142,3 +142,24 @@ flowchart TD
   n11 -->|"no"| n14
   n12 -->|"no"| n14
 ```
+
+## roadSize
+
+```mermaid
+flowchart TD
+  n1(["roadSize"])
+  n2{"tags[#quot;highway#quot;] is missing?"}
+  n3["#quot;#quot;"]
+  n4{"MAJOR_HIGHWAYS.includes(tags[#quot;highway#quot;] ?? #quot;#quot;)"}
+  n5["#quot;major#quot;"]
+  n6["#quot;minor#quot;"]
+  n7(["return MAJOR_HIGHWAYS.includes(tags[#quot;highway#quot;] ?? #quot;#quot;) ? #quot;ma…"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n2 -->|"no"| n4
+  n3 --> n4
+  n4 -->|"yes"| n5
+  n4 -->|"no"| n6
+  n5 --> n7
+  n6 --> n7
+```

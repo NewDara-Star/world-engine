@@ -45,13 +45,23 @@
       #loading {
         top: 45%;
       }
-      #notice {
-        top: 12px;
+      /* The notice and the portrait hint sit in the left half, under the
+         street name, so they never cover the small map on the right
+         (scope 005b); they ignore touches, so the thumb still steers. */
+      #notice,
+      #portrait-hint {
+        left: max(8px, env(safe-area-inset-left));
+        transform: none;
+        max-width: calc(50vw - 16px);
+        box-sizing: border-box;
+        text-align: left;
         pointer-events: none;
       }
+      #notice {
+        top: 52px;
+      }
       #portrait-hint {
-        top: 56px;
-        pointer-events: none;
+        top: 150px;
         font-size: 14px;
       }
       #panel {
@@ -79,6 +89,33 @@
         background: rgba(255, 255, 255, 0.9);
         font-size: 13px;
         pointer-events: none;
+      }
+      /* The street-name line (scope 005b): one line at the top, 8 px down
+         and about 36 px tall, which hud-layout.ts's MINI_MAP_TOP_PX (52)
+         keeps the small map below; it ignores touches, like the notice. */
+      #street-name {
+        position: fixed;
+        top: max(8px, env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: rgba(29, 39, 51, 0.82);
+        color: #ffffff;
+        font: 600 17px/24px system-ui, sans-serif;
+        max-width: 90vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        pointer-events: none;
+      }
+      /* The small map: placed by hud.ts, clear of the thumb controls; a tap
+         makes it bigger or smaller. */
+      #mini-map {
+        position: fixed;
+        border-radius: 50%;
+        touch-action: manipulation;
+        cursor: pointer;
       }
       /* Thumb controls (approver's F11): no scrolling or zooming under the
          thumbs, no text selection, no long-press menu. */
@@ -139,6 +176,8 @@
       <button type="button" data-role="brake">Brake</button>
       <button type="button" data-role="accelerate">Go</button>
     </div>
+    <div id="street-name" hidden aria-live="polite"></div>
+    <canvas id="mini-map" hidden aria-label="Small map, north up; tap to make it bigger or smaller"></canvas>
     <div id="loading" hidden></div>
     <div id="notice" hidden role="status"></div>
     <div id="portrait-hint" hidden></div>

@@ -1,6 +1,6 @@
 # tools/bake/cli.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 2). The command the orchestrator runs on a computer:
 
@@ -49,8 +49,8 @@ flowchart TD
   g["bake with bakePlace"]
   h{"problems"}
   i(["print every problem with its file and line, and end with failure; nothing is written"])
-  j["write with writeBakeFiles into places/id/chunks"]
-  k(["print: how many roads, how many squares, the start, and the report notes; end with success"])
+  j["write with writeBakeFiles into places/id/chunks, and the street file with writeStreetsFile into places/id"]
+  k(["print: how many roads, how many squares, where the street file went and its size in bytes, the start, and the report notes; end with success"])
   s --> a --> b
   b -->|"yes"| c
   b -->|"no"| d --> e

@@ -11,11 +11,12 @@ import { type Actions, cleanActions, pressedJustNow, strongestActions } from "..
 import { gamepadActions } from "../controls/gamepad.js";
 import { keyboardActions } from "../controls/keyboard.js";
 import { touchActions } from "../controls/touch.js";
-import { bytesBeforeDriving, frameRateSummary, measureReportLines, recordFrame } from "../measure/measure.js";
+import { bytesBeforeDriving, frameRateSummary, measureReportLines, recordFrame, serverSizes } from "../measure/measure.js";
 import { canFlipUpright, carRescueNeeded, driveCar, flipCarUpright, returnCarToStart } from "../vehicle/car.js";
 import { cellKey, cellOfPoint } from "../world/grid.js";
 import { failureMessage, showFailure, showNotice } from "./failure.js";
 import type { Game } from "./game.js";
+import { updateHud } from "./hud.js";
 import { PHYSICS_STEP_S, blendPoses, physicsStepsForFrame } from "./physics.js";
 import { updateCarModel } from "./scene.js";
 import { updateStreaming } from "./streaming.js";
@@ -102,10 +103,22 @@ export function measureFrame(game: Game, frameS: number, nowMs: number): void {
   if (!recorder.finished) return;
   // Shown once: measuring ends with the report.
   game.measuring = undefined;
-  const page = performance.getEntriesByType("navigation")[0] as PerformanceResourceTiming | undefined;
+  const page = performance.getEntriesByType("navigation") as PerformanceResourceTiming[];
   const files = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-  const bytes = bytesBeforeDriving(page ?? { transferSize: 0, decodedBodySize: 0, responseEnd: 0 }, files, Number(recorder.drivableAtMs));
-  const lines = measureReportLines(bytes, frameRateSummary(recorder.lengthsMs));
+  const bytes = bytesBeforeDriving([...page, ...files], Number(recorder.drivableAtMs));
+  const frames = frameRateSummary(recorder.lengthsMs);
+  showMeasureReport(game, measureReportLines(bytes, undefined, frames));
+  if (bytes.unsizedUrls.length === 0) return;
+  // The browser hid some sizes: the report says it is asking, then gives the
+  // server's figures (Fetch API, MDN).
+  void serverSizes(bytes.unsizedUrls, (url, init) => fetch(url, init)).then((server) =>
+    showMeasureReport(game, measureReportLines(bytes, server, frames)),
+  );
+}
+
+// The report replaces what the measure panel showed before (DOM
+// replaceChildren, MDN).
+export function showMeasureReport(game: Game, lines: readonly string[]): void {
   game.page.measurePanel.replaceChildren(...lines.map((line) => Object.assign(document.createElement("p"), { textContent: line })));
   game.page.measurePanel.hidden = false;
 }
@@ -128,6 +141,7 @@ export function playFrame(game: Game, nowMs: number): void {
   game.camera.position.set(game.aim.cameraPoint.x, game.aim.cameraPoint.y, game.aim.cameraPoint.z);
   game.camera.lookAt(game.aim.lookPoint.x, game.aim.lookPoint.y, game.aim.lookPoint.z);
   warnAtMapEdge(game, here.x, -here.z, nowMs);
+  updateHud(game, { eastM: here.x, northM: -here.z }, nowMs);
   measureFrame(game, frameS, nowMs);
   game.renderer.render(game.parts.scene, game.camera);
 }

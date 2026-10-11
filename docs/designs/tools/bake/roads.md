@@ -1,6 +1,6 @@
 # tools/bake/roads.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 2). Decides which OSM ways are roads a car may use and
 how wide each one is. Sources: osm2lanes (Apache-2.0, `locale.rs` lane widths
@@ -119,4 +119,19 @@ flowchart TD
   a -->|"no"| c
   c -->|"yes"| d
   c -->|"no"| e
+```
+
+## roadSize
+
+New in Scope 005b. Why the game needs it: the small map draws the bigger roads wider and writes their names (the scope's "road names on the bigger roads"). Major is a tertiary road and up, with their link roads: tertiary is the smallest kind that links towns or districts rather than serving houses (OSM wiki, Key:highway). Every other drivable road is minor.
+
+```mermaid
+flowchart TD
+  s(["roadSize from a way's tags"])
+  a{"is highway motorway, trunk, primary, secondary or tertiary, or one of their links"}
+  b(["return major"])
+  c(["return minor"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
 ```

@@ -10,6 +10,7 @@ import { type LatLon, localProjection } from "./projection.js";
 import { roadPieces } from "./ribbons.js";
 import { isDrivableRoad, roadWidthMetres } from "./roads.js";
 import { type CarStart, type RoadInMetres, carStartOnRoad } from "./start.js";
+import { streetsFileText } from "./streets.js";
 
 export interface BakedFile {
   name: string;
@@ -17,7 +18,7 @@ export interface BakedFile {
 }
 
 export type BakeResult =
-  | { ok: true; placeId: string; files: BakedFile[]; notes: string[]; roadCount: number; start: CarStart }
+  | { ok: true; placeId: string; files: BakedFile[]; streetsText: string; notes: string[]; roadCount: number; start: CarStart }
   | { ok: false; problems: string[] };
 
 // A square whose triangles all rounded away has nothing to draw.
@@ -65,6 +66,7 @@ export function bakePlace(placeFileName: string, placeText: string, planets: rea
     ok: true,
     placeId: place.value.id,
     files: [...chunks.map((file) => ({ name: file.name, text: file.text })), { name: "index.json", text: indexFileText(cells, centre, extent, start) }],
+    streetsText: streetsFileText(drivable.roads, centre, mapHalfSizeM),
     notes: [...read.notes, ...drivable.notes],
     roadCount: drivable.roads.length,
     start,

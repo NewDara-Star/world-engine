@@ -1,11 +1,12 @@
 // The bake's geometry: map projection, road shapes, cutting into squares,
 // and where the car starts. Designs: tools/bake/projection.md, ribbons.md,
-// clip.md and start.md. Points are metres east and north of the place centre.
+// clip.md and start.md; nearestPointOnSegment, src/world/grid.md. Points are metres east and north of the place centre.
 import { describe, expect, it } from "vitest";
 import { localProjection } from "../../tools/bake/projection.js";
 import { nodeOctagon, roadPieces, segmentRectangle } from "../../tools/bake/ribbons.js";
 import { cellsUnderPiece, clipPieceToCell, fanTriangles, trianglesByCell } from "../../tools/bake/clip.js";
-import { carStartOnRoad, compassHeading, nearestPointOnSegment } from "../../tools/bake/start.js";
+import { carStartOnRoad, compassHeading } from "../../tools/bake/start.js";
+import { nearestPointOnSegment } from "../../src/world/grid.js";
 import { crossOf, metresPerDegree } from "./tiny.js";
 
 interface Point {

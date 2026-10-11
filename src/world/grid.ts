@@ -73,3 +73,17 @@ export function cellsWithin(point: MapPoint, radiusM: number): Cell[] {
   near.sort((a, b) => a.distance - b.distance);
   return near.map((one) => one.cell);
 }
+
+// The point's shadow on the line, as a fraction kept between 0 and 1
+// (vector projection; moved here from tools/bake/start.ts in scope 005b so the
+// bake's start and the game's street names use the same sum).
+export function nearestPointOnSegment(point: MapPoint, a: MapPoint, b: MapPoint): { point: MapPoint; distanceM: number } {
+  const alongEast = b.eastM - a.eastM;
+  const alongNorth = b.northM - a.northM;
+  const lengthSquared = alongEast * alongEast + alongNorth * alongNorth;
+  if (lengthSquared === 0) return { point: a, distanceM: Math.hypot(point.eastM - a.eastM, point.northM - a.northM) };
+  const shadow = ((point.eastM - a.eastM) * alongEast + (point.northM - a.northM) * alongNorth) / lengthSquared;
+  const fraction = Math.min(1, Math.max(0, shadow));
+  const nearest = { eastM: a.eastM + fraction * alongEast, northM: a.northM + fraction * alongNorth };
+  return { point: nearest, distanceM: Math.hypot(point.eastM - nearest.eastM, point.northM - nearest.northM) };
+}

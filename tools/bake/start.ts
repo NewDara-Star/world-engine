@@ -4,7 +4,7 @@
 // game can move the car to the driving side on a two-way road and keep it in
 // the middle of a one-way one (approver's F7). Our own design.
 // Design: docs/designs/tools/bake/start.md.
-import type { MapPoint } from "../../src/world/grid.js";
+import { type MapPoint, nearestPointOnSegment } from "../../src/world/grid.js";
 import { type Tags, isOneWay } from "./roads.js";
 
 // A drivable road in metres from the place centre, as the bake keeps it.
@@ -41,18 +41,6 @@ export function carStartOnRoad(roads: readonly RoadInMetres[]): CarStart {
   // oneway=-1: one-way against the drawing direction, so the car faces the legal way.
   if (best.road.tags["oneway"] === "-1") headingDeg = (headingDeg + 180) % 360;
   return { eastM: best.point.eastM, northM: best.point.northM, headingDeg, roadWidthM: best.road.widthM, oneWay: isOneWay(best.road.tags) };
-}
-
-// The point's shadow on the line, as a fraction kept between 0 and 1.
-export function nearestPointOnSegment(point: MapPoint, a: MapPoint, b: MapPoint): { point: MapPoint; distanceM: number } {
-  const alongEast = b.eastM - a.eastM;
-  const alongNorth = b.northM - a.northM;
-  const lengthSquared = alongEast * alongEast + alongNorth * alongNorth;
-  if (lengthSquared === 0) return { point: a, distanceM: Math.hypot(point.eastM - a.eastM, point.northM - a.northM) };
-  const shadow = ((point.eastM - a.eastM) * alongEast + (point.northM - a.northM) * alongNorth) / lengthSquared;
-  const fraction = Math.min(1, Math.max(0, shadow));
-  const nearest = { eastM: a.eastM + fraction * alongEast, northM: a.northM + fraction * alongNorth };
-  return { point: nearest, distanceM: Math.hypot(point.eastM - nearest.eastM, point.northM - nearest.northM) };
 }
 
 // Degrees clockwise from north, from 0 up to but not including 360.

@@ -1,6 +1,6 @@
 # src/game/loop.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (measure fix after the owner's 0.0 MB report, 2026-10-11).
 
 New in scope 005 (item 4). One frame of the game, about 60 times a second
 (browser `requestAnimationFrame`). Order: read the controls, flip the car
@@ -103,15 +103,32 @@ flowchart TD
   d["mark the drivable moment as now"]
   e["recordFrame with the length"]
   f{"did the recorder just finish"}
-  g(["show measureReportLines of bytesBeforeDriving and frameRateSummary in the measure panel"])
+  g["showMeasureReport: measureReportLines of bytesBeforeDriving (the page's entry and every file's) and frameRateSummary, with no server sizes yet"]
+  h{"did the browser give a size for every file"}
+  i(["return"])
+  j(["serverSizes for the files with no size; when they come, showMeasureReport again with them"])
   s --> a
   a -->|"no"| b
   a -->|"yes"| c
   c -->|"yes"| d --> e
   c -->|"no"| e
   e --> f
-  f -->|"yes"| g
+  f -->|"yes"| g --> h
   f -->|"no"| b
+  h -->|"yes"| i
+  h -->|"no"| j
+```
+
+## showMeasureReport
+
+Why the game needs it: the report replaces what the measure panel showed before, so "asking the server" becomes the total when the sizes come.
+
+```mermaid
+flowchart TD
+  s(["showMeasureReport with the game and the lines"])
+  a["replace the panel's contents with one paragraph per line"]
+  b(["show the panel"])
+  s --> a --> b
 ```
 
 ## playFrame
@@ -130,7 +147,7 @@ flowchart TD
   e["updateStreaming at the car's position"]
   f["blended pose = blendPoses of the game's pose before and pose now; updateCarModel with it"]
   g["moveChaseCamera toward chaseCameraGoal of the blended pose, jumping if the car was flipped or returned to the start"]
-  h(["warnAtMapEdge; measureFrame; draw the scene"])
+  h(["warnAtMapEdge; updateHud at the car's position (Scope 005b); measureFrame; draw the scene"])
   s --> a --> b --> c --> r
   r -->|"yes"| r1 --> d
   r -->|"no"| d

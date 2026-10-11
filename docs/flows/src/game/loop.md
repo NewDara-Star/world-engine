@@ -141,14 +141,14 @@ flowchart TD
   n10{"!recorder.finished"}
   n11(["return;"])
   n12["game.measuring = undefined;"]
-  n13["const page = performance.getEntriesByType(#quot;navigation#quot;)[0] …"]
+  n13["const page = performance.getEntriesByType(#quot;navigation#quot;) as …"]
   n14["const files = performance.getEntriesByType(#quot;resource#quot;) as P…"]
-  n15{"page is missing?"}
-  n16["{ transferSize: 0, decodedBodySize: 0, responseEnd: 0 }"]
-  n17["const bytes = bytesBeforeDriving(page ?? { transferSize: 0,…<br/>calls bytesBeforeDriving"]
-  n18["const lines = measureReportLines(bytes, frameRateSummary(re…<br/>calls measureReportLines, frameRateSummary"]
-  n19["game.page.measurePanel.replaceChildren(...lines.map((line) …"]
-  n20["game.page.measurePanel.hidden = false;"]
+  n15["const bytes = bytesBeforeDriving([...page, ...files], Numbe…<br/>calls bytesBeforeDriving"]
+  n16["const frames = frameRateSummary(recorder.lengthsMs);<br/>calls frameRateSummary"]
+  n17["showMeasureReport(game, measureReportLines(bytes, undefined…<br/>calls showMeasureReport, measureReportLines"]
+  n18{"bytes.unsizedUrls.length === 0"}
+  n19(["return;"])
+  n20["void serverSizes(bytes.unsizedUrls, (url, init) =#gt; fetch(ur…<br/>calls serverSizes, showMeasureReport, measureReportLines"]
   n21(["end"])
   n1 --> n2
   n2 --> n3
@@ -166,13 +166,25 @@ flowchart TD
   n12 --> n13
   n13 --> n14
   n14 --> n15
-  n15 -->|"yes"| n16
-  n15 -->|"no"| n17
+  n15 --> n16
   n16 --> n17
   n17 --> n18
-  n18 --> n19
-  n19 --> n20
+  n18 -->|"yes"| n19
+  n18 -->|"no"| n20
   n20 --> n21
+```
+
+## showMeasureReport
+
+```mermaid
+flowchart TD
+  n1(["showMeasureReport"])
+  n2["game.page.measurePanel.replaceChildren(...lines.map((line) …"]
+  n3["game.page.measurePanel.hidden = false;"]
+  n4(["end"])
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ## playFrame
@@ -199,9 +211,10 @@ flowchart TD
   n18["game.camera.position.set(game.aim.cameraPoint.x, game.aim.c…"]
   n19["game.camera.lookAt(game.aim.lookPoint.x, game.aim.lookPoint…"]
   n20["warnAtMapEdge(game, here.x, -here.z, nowMs);<br/>calls warnAtMapEdge"]
-  n21["measureFrame(game, frameS, nowMs);<br/>calls measureFrame"]
-  n22["game.renderer.render(game.parts.scene, game.camera);"]
-  n23(["end"])
+  n21["updateHud(game, { eastM: here.x, northM: -here.z }, nowMs);<br/>calls updateHud"]
+  n22["measureFrame(game, frameS, nowMs);<br/>calls measureFrame"]
+  n23["game.renderer.render(game.parts.scene, game.camera);"]
+  n24(["end"])
   n1 --> n2
   n2 -->|"yes"| n3
   n2 -->|"no"| n4
@@ -226,6 +239,7 @@ flowchart TD
   n20 --> n21
   n21 --> n22
   n22 --> n23
+  n23 --> n24
 ```
 
 ## runFrame

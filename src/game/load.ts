@@ -12,6 +12,7 @@ import { type Planet, validatePlanet } from "../place/planet.js";
 import { startChoiceFromLink, validateStartChoice } from "../place/start.js";
 import { type Vehicle, validateVehicle } from "../place/vehicle.js";
 import { type ChunkIndex, indexProblemsForPlace, validateChunkIndex } from "../world/chunk.js";
+import { type StreetMap, streetsProblemsForPlace, validateStreetsFile } from "../world/streets.js";
 import { CELL_SIZE_M } from "../world/grid.js";
 import type { GameFailure } from "./failure.js";
 
@@ -131,4 +132,15 @@ export async function loadGameData(query: string): Promise<Loaded<GameData>> {
   const mapIndex = await loadMapIndexForPlace(placed.value.place);
   if (!mapIndex.ok) return mapIndex;
   return { ok: true, value: { ...placed.value, vehicle: vehicle.value, mapIndex: mapIndex.value, notes: choice.notes } };
+}
+
+// The street names and the small map's roads (scope 005b). They are not
+// needed to drive, so the game starts without waiting for them and a failure
+// only takes the names and the map away; the failure says why.
+export async function loadStreetsForPlace(place: Place): Promise<Loaded<StreetMap>> {
+  const streets = await fetchChecked(`places/${place.id}/streets.json`, validateStreetsFile);
+  if (!streets.ok) return streets;
+  const problems = streetsProblemsForPlace(streets.value, place);
+  if (problems.length > 0) return { ok: false, failure: { kind: "map-baked-for-something-else", problems } };
+  return streets;
 }

@@ -10,12 +10,14 @@ import { FIELD_OF_VIEW_DEG, CAMERA_BEHIND_M, chaseCameraGoal } from "../camera/c
 import { listenToKeyboard } from "../controls/keyboard.js";
 import { listenToTouches, noTouches, portraitHintShown, shouldShowTouchControls } from "../controls/touch.js";
 import { carStartPose, createCar } from "../vehicle/car.js";
+import { noStreetName } from "../world/streets.js";
 import { failureMessage, showFailure, showNotice } from "./failure.js";
 import type { Game, GamePage } from "./game.js";
-import { type GameData, loadGameData } from "./load.js";
+import { listenToMiniMapTaps, placeHud, streetsArrived } from "./hud.js";
+import { type GameData, loadGameData, loadStreetsForPlace } from "./load.js";
 import { runFrame } from "./loop.js";
 import { addMapEdgeWalls, createPhysicsWorld, startPhysicsEngine } from "./physics.js";
-import { type SceneParts, carModel, createRenderer, createScene, fogRangeForView } from "./scene.js";
+import { carModel, createRenderer, createScene, fogRangeForView } from "./scene.js";
 import { LOAD_RADIUS_M, updateStreaming } from "./streaming.js";
 
 // The camera sees from 10 cm to 2 km; the fog ends far nearer than that.
@@ -36,10 +38,21 @@ export async function startGame(page: GamePage): Promise<void> {
   for (const note of loaded.value.notes) showNotice(page, note);
   page.loading.hidden = true;
   page.controls.hidden = !shouldShowTouchControls(window.matchMedia("(pointer: coarse)").matches, false);
-  // A touch screen on a computer gets the thumb controls once it is touched.
-  window.addEventListener("touchstart", () => (page.controls.hidden = false), { once: true });
-  listenForResize(game.renderer, game.camera, game.parts, page);
+  // A touch screen on a computer gets the thumb controls once it is touched,
+  // and the small map moves clear of them.
+  window.addEventListener(
+    "touchstart",
+    () => {
+      page.controls.hidden = false;
+      placeHud(game);
+    },
+    { once: true },
+  );
+  listenForResize(game, page);
   window.dispatchEvent(new Event("resize"));
+  // The street names follow without holding up the drive (scope 005b).
+  listenToMiniMapTaps(game);
+  void loadStreetsForPlace(game.data.place).then((streets) => streetsArrived(game, streets));
   requestAnimationFrame((now) => runFrame(game, now));
 }
 
@@ -96,6 +109,9 @@ export function buildGame(data: GameData, renderer: WebGLRenderer, page: GamePag
     poseNow: pose,
     edgeNoticeAtMs: undefined,
     measuring,
+    streets: undefined,
+    streetName: noStreetName,
+    miniMap: { big: false, box: undefined, drawnAtMs: undefined },
   };
   updateStreaming(game, { eastM: pose.position.x, northM: -pose.position.z }, performance.now());
   return game;
@@ -103,9 +119,11 @@ export function buildGame(data: GameData, renderer: WebGLRenderer, page: GamePag
 
 // Turning the phone or resizing the window keeps the picture filling the
 // screen without stretching; the fog depends on the screen's shape
-// (approver's F13) and the portrait hint shows only while the phone is held
-// upright (decision E3 (a)).
-export function listenForResize(renderer: WebGLRenderer, camera: PerspectiveCamera, parts: SceneParts, page: GamePage): () => void {
+// (approver's F13), the portrait hint shows only while the phone is held
+// upright (decision E3 (a)), and the small map moves clear of the controls
+// (scope 005b).
+export function listenForResize(game: Game, page: GamePage): () => void {
+  const { renderer, camera, parts } = game;
   function fitToScreen(): void {
     const width = page.canvas.clientWidth;
     const height = Math.max(1, page.canvas.clientHeight);
@@ -115,6 +133,7 @@ export function listenForResize(renderer: WebGLRenderer, camera: PerspectiveCame
     Object.assign(parts.fog, fogRangeForView(LOAD_RADIUS_M, CAMERA_BEHIND_M, FIELD_OF_VIEW_DEG, camera.aspect));
     page.portraitHint.textContent = PORTRAIT_HINT;
     page.portraitHint.hidden = !portraitHintShown(!page.controls.hidden, window.innerWidth, window.innerHeight);
+    placeHud(game);
   }
   window.addEventListener("resize", fitToScreen);
   return () => window.removeEventListener("resize", fitToScreen);
@@ -130,4 +149,6 @@ void startGameSafely({
   notice: byId("notice") as HTMLElement,
   portraitHint: byId("portrait-hint") as HTMLElement,
   measurePanel: byId("measure") as HTMLElement,
+  streetName: byId("street-name") as HTMLElement,
+  miniMap: byId("mini-map") as HTMLCanvasElement,
 });

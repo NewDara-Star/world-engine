@@ -98,3 +98,24 @@ export function roadWidthMetres(wayId: number, tags: Tags, laneWidthM: number): 
   }
   return { widthM, notes };
 }
+
+// The road kinds drawn bigger and named on the small map (scope 005b): a
+// tertiary road and up, with its link roads (OSM wiki, Key:highway: tertiary
+// is the smallest road that links towns or districts rather than serving
+// houses). Every other drivable road is minor.
+const MAJOR_HIGHWAYS: readonly string[] = [
+  "motorway",
+  "trunk",
+  "primary",
+  "secondary",
+  "tertiary",
+  "motorway_link",
+  "trunk_link",
+  "primary_link",
+  "secondary_link",
+  "tertiary_link",
+];
+
+export function roadSize(tags: Tags): "major" | "minor" {
+  return MAJOR_HIGHWAYS.includes(tags["highway"] ?? "") ? "major" : "minor";
+}

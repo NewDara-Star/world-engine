@@ -1,6 +1,6 @@
 # src/game/load.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
 
 New in scope 005 (item 4). Loads the files the game needs before the player
 can drive, and checks each with the checker that already exists for it. Any
@@ -178,4 +178,25 @@ flowchart TD
   f -->|"no"| g --> h
   h -->|"yes"| z
   h -->|"no"| i
+```
+
+## loadStreetsForPlace
+
+New in Scope 005b. Why the game needs it: the street names and the small map's roads are not needed to drive, so they load after the game has started (`main.md`) and a failure only takes them away, with the reason (`hud.md`, `streetsFailureNotice`).
+
+```mermaid
+flowchart TD
+  s(["loadStreetsForPlace with the place"])
+  a["fetchChecked places/id/streets.json with validateStreetsFile"]
+  b{"a failure"}
+  c(["return it"])
+  d["problems from streetsProblemsForPlace"]
+  e{"any"}
+  f(["return failure: map baked for something else, with the problems"])
+  g(["return the streets"])
+  s --> a --> b
+  b -->|"yes"| c
+  b -->|"no"| d --> e
+  e -->|"yes"| f
+  e -->|"no"| g
 ```

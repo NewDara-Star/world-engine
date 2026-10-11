@@ -24,7 +24,7 @@ flowchart TD
   n16["const start = carStartOnRoad(drivable.roads);<br/>calls carStartOnRoad"]
   n17["const chunks = [...byCell.entries()] .map(([key, triangles]…<br/>calls chunkFileText"]
   n18["const cells: Cell[] = chunks.map((file) =#gt; file.cell);"]
-  n19(["return { ok: true, placeId: place.value.id, files: [...chun…<br/>calls indexFileText"])
+  n19(["return { ok: true, placeId: place.value.id, files: [...chun…<br/>calls indexFileText, streetsFileText"])
   n1 --> n2
   n2 --> n3
   n3 -->|"yes"| n4

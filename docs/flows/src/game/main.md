@@ -22,11 +22,13 @@ flowchart TD
   n14["showNotice(page, note);<br/>calls showNotice"]
   n15["page.loading.hidden = true;"]
   n16["page.controls.hidden = !shouldShowTouchControls(window.matc…<br/>calls shouldShowTouchControls"]
-  n17["window.addEventListener(#quot;touchstart#quot;, () =#gt; (page.controls.…"]
-  n18["listenForResize(game.renderer, game.camera, game.parts, pag…<br/>calls listenForResize"]
+  n17["window.addEventListener( #quot;touchstart#quot;, () =#gt; { page.control…"]
+  n18["listenForResize(game, page);<br/>calls listenForResize"]
   n19["window.dispatchEvent(new Event(#quot;resize#quot;));"]
-  n20["requestAnimationFrame((now) =#gt; runFrame(game, now));<br/>calls runFrame"]
-  n21(["end"])
+  n20["listenToMiniMapTaps(game);<br/>calls listenToMiniMapTaps"]
+  n21["void loadStreetsForPlace(game.data.place).then((streets) =#gt;…<br/>calls loadStreetsForPlace, streetsArrived"]
+  n22["requestAnimationFrame((now) =#gt; runFrame(game, now));<br/>calls runFrame"]
+  n23(["end"])
   n1 --> n2
   n2 --> n3
   n3 --> n4
@@ -48,6 +50,21 @@ flowchart TD
   n18 --> n19
   n19 --> n20
   n20 --> n21
+  n21 --> n22
+  n22 --> n23
+```
+
+## startGame > inner function 1
+
+```mermaid
+flowchart TD
+  n1(["startGame #gt; inner function 1"])
+  n2["page.controls.hidden = false;"]
+  n3["placeHud(game);<br/>calls placeHud"]
+  n4(["end"])
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ## startGameSafely
@@ -127,10 +144,12 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["listenForResize"])
-  n2["window.addEventListener(#quot;resize#quot;, fitToScreen);"]
-  n3(["return () =#gt; window.removeEventListener(#quot;resize#quot;, fitToScre…"])
+  n2["const { renderer, camera, parts } = game;"]
+  n3["window.addEventListener(#quot;resize#quot;, fitToScreen);"]
+  n4(["return () =#gt; window.removeEventListener(#quot;resize#quot;, fitToScre…"])
   n1 --> n2
   n2 --> n3
+  n3 --> n4
 ```
 
 ## listenForResize > fitToScreen
@@ -146,7 +165,8 @@ flowchart TD
   n7["Object.assign(parts.fog, fogRangeForView(LOAD_RADIUS_M, CAM…<br/>calls fogRangeForView"]
   n8["page.portraitHint.textContent = PORTRAIT_HINT;"]
   n9["page.portraitHint.hidden = !portraitHintShown(!page.control…<br/>calls portraitHintShown"]
-  n10(["end"])
+  n10["placeHud(game);<br/>calls placeHud"]
+  n11(["end"])
   n1 --> n2
   n2 --> n3
   n3 --> n4
@@ -156,4 +176,5 @@ flowchart TD
   n7 --> n8
   n8 --> n9
   n9 --> n10
+  n10 --> n11
 ```
