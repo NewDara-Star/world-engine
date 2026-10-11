@@ -1,6 +1,6 @@
 # src/place/parse.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/parse.md`.
 
@@ -305,6 +305,8 @@ flowchart TD
   j{"are any ids known at all"}
   k["add: a full stop, then: The known, the kind in the plural, are, every known id in back-quotes, joined by commas, and a full stop"]
   l["add: a comma, then: and no, the kind, file was found, and a full stop"]
+  n{"is exactly one id known"}
+  o["add: a full stop, then: The only known, the kind, is, that id in back-quotes, and a full stop"]
   m(["return failure with problemAt the path with that sentence, no cross-check waiting"])
   s --> a
   a --> b
@@ -316,18 +318,21 @@ flowchart TD
   g --> h
   h -->|"yes"| i
   h -->|"no"| j
-  j -->|"yes"| k
+  j -->|"yes"| n
+  n -->|"yes"| o
+  n -->|"no"| k
   j -->|"no"| l
   i --> m
   k --> m
   l --> m
+  o --> m
 ```
 
 Examples, for a place's `planet`:
 
 > yaba.json line 4: `planet` is `eart`; there is no such planet. Did you mean `earth`?
 >
-> yaba.json line 4: `planet` is `mars`; there is no such planet. The known planets are `earth`.
+> yaba.json line 4: `planet` is `mars`; there is no such planet. The only known planet is `earth`.
 >
 > yaba.json line 4: `planet` is `earth`; there is no such planet, and no planet file was found.
 

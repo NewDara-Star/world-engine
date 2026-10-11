@@ -1,6 +1,6 @@
 # src/place/json-text.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
 
 New in scope 002b (item 2d). Reads the raw text of a place, vehicle or planet file once, with jsonc-parser 3.3.1 (MIT, see `research/33-json-lines.md`), and keeps where every field sits so each message can name its line. The pictures drawn from the code will be in `docs/flows/src/place/json-text.md`.
 

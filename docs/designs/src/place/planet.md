@@ -1,6 +1,6 @@
 # src/place/planet.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
 
 New in scope 002c (items 1 and 2). The planet file: for each physical constant
 a place states (gravity, air density), the range any place on that planet's

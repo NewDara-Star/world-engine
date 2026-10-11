@@ -1,6 +1,6 @@
 # src/place/place.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/place.md`.
 
@@ -78,20 +78,14 @@ Why the game needs it: 98 for gravity is 9.8 with the point one place off, and 9
 ```mermaid
 flowchart TD
   s(["decimalPointSlipHint for a number outside the range, with the range's min and max"])
-  a["move the point one place left, written without rounding noise"]
-  b{"is that at least min and at most max"}
-  c(["return that number as the hint"])
-  d["move the point two places left instead, written without rounding noise"]
-  e{"is that at least min and at most max"}
-  f(["return that number as the hint"])
-  g(["return nothing: no hint"])
+  a["move the point one place left, and two places left, each written without rounding noise"]
+  b{"does exactly one of the two land at least min and at most max"}
+  c(["return that one as the hint"])
+  g(["return nothing: no hint, because none or both fit and a wrong hint is worse than none"])
   s --> a
   a --> b
   b -->|"yes"| c
-  b -->|"no"| d
-  d --> e
-  e -->|"yes"| f
-  e -->|"no"| g
+  b -->|"no"| g
 ```
 
 A value too small (0.98 for 9.8) gets no hint in this scope.
