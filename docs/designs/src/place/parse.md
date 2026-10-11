@@ -1,6 +1,6 @@
 # src/place/parse.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 (Before scope 005: approved, judged by the delegated approver, docs/reviews/002c/, with the owner's decision of 2026-10-11. Scope 005 adds `requireNumberAbove` and `sourceCountProblem` at the end of this file; nothing above them changes.)
 

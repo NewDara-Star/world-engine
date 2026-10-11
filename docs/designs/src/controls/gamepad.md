@@ -1,6 +1,6 @@
 # src/controls/gamepad.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 6, "gamepad if simple": it is). Only pads the browser
 reports with `mapping` "standard" are used, so the buttons are where the W3C
@@ -27,16 +27,19 @@ flowchart TD
 
 ## gamepadActions
 
-Why the game needs it: a player with a controller on the Mac drives with the stick and triggers, the same actions as keys and thumbs.
+Why the game needs it: a player with a controller on the Mac drives with the stick and triggers, the same actions as keys and thumbs. Some browsers hide `getGamepads` on plain `http://`, which is how the phone opens the dev link, and asking can throw; then there is simply no pad, never an error every frame (approver's F10).
 
 ```mermaid
 flowchart TD
-  s(["gamepadActions with the list of pads the browser gives"])
+  s(["gamepadActions with the browser's navigator"])
+  z{"does the browser have getGamepads, and does asking it not throw"}
   a["find the first pad that is connected and has the standard mapping"]
   b{"is there one"}
   c(["return noActions"])
-  d(["return steer = withDeadZone of axis 0; accelerate = button 7's value; brake = button 6's value; putBack = button 3 pressed; a missing axis or button reads as 0"])
-  s --> a --> b
+  d(["return steer = withDeadZone of axis 0; accelerate = button 7's value; brake = button 6's value; flipUpright = button 3 pressed; a missing axis or button reads as 0"])
+  s --> z
+  z -->|"no"| c
+  z -->|"yes"| a --> b
   b -->|"no"| c
   b -->|"yes"| d
 ```

@@ -1,6 +1,6 @@
 # tools/bake/cli.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 2). The command the orchestrator runs on a computer:
 
@@ -10,8 +10,12 @@ The extract is cut beforehand with osmium (osmium-tool, GPL-3.0, run only,
 never copied; research/36 section 2), for example
 `osmium extract --bbox W,S,E,N nigeria-latest.osm.pbf -o omole.osm.pbf`, then
 `osmium tags-filter omole.osm.pbf w/highway -o omole-roads.osm.pbf`, then
-`osmium cat omole-roads.osm.pbf -f opl,add_metadata=false,locations_on_ways=true -o omole-roads.opl`.
-These steps go in the README. The pictures drawn from the code will be in
+`osmium add-locations-to-ways omole-roads.osm.pbf -f opl,add_metadata=false,locations_on_ways=true -o omole-roads.opl`.
+The third step must be `add-locations-to-ways`, not `osmium cat`: `cat` has
+no location index, and the writer option `locations_on_ways` only writes
+positions a way already has, so with `cat` the nodes come out as `n1xy`, with
+no position (approver's F18, measured with pyosmium, which uses the same
+libosmium OPL writer). These steps go in the README. The pictures drawn from the code will be in
 `docs/flows/tools/bake/cli.md`.
 
 ## readBakeArguments

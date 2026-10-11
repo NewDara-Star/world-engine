@@ -1,12 +1,12 @@
 # src/controls/keyboard.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 6). Keys to actions. Keys are read by `code`, the
 physical key, so WASD sits in the same place on an AZERTY keyboard (MDN
 `KeyboardEvent.code`, research/36). Keys: ArrowLeft or KeyA steers left,
 ArrowRight or KeyD steers right, ArrowUp or KeyW accelerates, ArrowDown, KeyS
-or Space brakes and reverses, KeyR puts the car back. The pictures drawn from
+or Space brakes and reverses, KeyR flips the car upright. The pictures drawn from
 the code will be in `docs/flows/src/controls/keyboard.md`.
 
 ## keyboardActions
@@ -18,7 +18,7 @@ flowchart TD
   s(["keyboardActions with the set of keys held down"])
   a["steer = 1 if a right key is held, minus 1 if a left key is held; both held gives 0"]
   b["accelerate = 1 if an up key is held, else 0; brake = 1 if a down key or Space is held, else 0"]
-  c(["return those, with putBack when KeyR is held"])
+  c(["return those, with flipUpright when KeyR is held"])
   s --> a --> b --> c
 ```
 
@@ -37,13 +37,13 @@ flowchart TD
 
 ## listenToKeyboard > holdKey
 
-Why the game needs it: the arrows and Space would otherwise scroll the page while driving.
+Why the game needs it: the arrows and Space would otherwise scroll the page while driving. A key held with Ctrl, Cmd or Alt is a browser shortcut, not driving, so Cmd+R reloads instead of flipping the car (approver's F9).
 
 ```mermaid
 flowchart TD
   s(["holdKey with a key-down event"])
-  a{"is it one of the driving keys"}
-  b(["ignore it: other keys keep their normal meaning, such as reload"])
+  a{"is it one of the driving keys, with no Ctrl, Cmd or Alt held"}
+  b(["ignore it: other keys and shortcuts keep their normal meaning, such as Cmd+R or Ctrl+R to reload"])
   c["stop the browser's own action for it, such as scrolling"]
   d(["add its code to the held keys; a repeat of a held key changes nothing"])
   s --> a

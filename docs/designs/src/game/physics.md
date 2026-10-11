@@ -1,6 +1,6 @@
 # src/game/physics.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (items 4 and 5). The physics world: Rapier, started once,
 pulling down with the place's gravity (D-0009), the flat ground one collider

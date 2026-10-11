@@ -1,6 +1,6 @@
 # src/game/failure.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 4, "a plain-words message if loading fails"; the
 player's story: "he is told so in plain words, not left with a blank
@@ -19,6 +19,7 @@ flowchart TD
   s(["failureMessage of a failure"])
   a{"which kind"}
   b(["no connection: The game could not reach its files. Check the Wi-Fi or mobile data, then reload the page."])
+  t(["too slow: The game's files are taking too long. The signal may be weak; reload to try again."])
   c(["file missing: A file the game needs is missing: the path. If you typed a link by hand, check the spelling."])
   d(["map not baked: The map for the place has not been made yet. On the computer, run the bake for it (see the README)."])
   e(["map baked for something else: The map files do not match the place file, so roads would be in the wrong place. Run the bake again. Then the reasons."])
@@ -27,6 +28,7 @@ flowchart TD
   h(["vehicle not allowed here, cannot draw 3D, physics did not start, or something unexpected: messageForStartProblem"])
   s --> a
   a -->|"no connection"| b
+  a -->|"too slow"| t
   a -->|"file missing"| c
   a -->|"map not baked"| d
   a -->|"map baked for something else"| e
@@ -69,12 +71,12 @@ flowchart TD
 
 ## showNotice
 
-Why the game needs it: anything the game does by itself (putting the car back, part of the map not loading, the map's edge) is shown with the reason, and goes away by itself (CLAUDE.md: nothing happens behind the player's back).
+Why the game needs it: anything the game does by itself (flipping the car upright, returning it to the start, part of the map not loading, the map's edge) is shown with the reason, and goes away by itself (CLAUDE.md: nothing happens behind the player's back).
 
 ```mermaid
 flowchart TD
   s(["showNotice on the page, with a line of text"])
-  a["write the text into the notice strip and show it; if a notice is already showing, it is replaced"]
+  a["write the text into the notice strip and show it; if a notice is already showing, it is replaced; the notice strip (and the measure panel) ignore touches, pointer-events none, so a notice that appears under a thumb never swallows a pedal press (approver's F15)"]
   b["after 4 seconds, hide it, unless a newer notice has replaced it since"]
   c(["return"])
   s --> a --> b --> c

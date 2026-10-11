@@ -1,6 +1,6 @@
 # src/game/load.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 4). Loads the files the game needs before the player
 can drive, and checks each with the checker that already exists for it. Any
@@ -15,12 +15,14 @@ the planet → the vehicle → the map index. Paths: `places/<id>.json`,
 
 ## fetchText
 
-Why the game needs it: every way a download can fail is told apart, because "no connection" and "file missing" need different advice for the player.
+Why the game needs it: every way a download can fail is told apart, because "no connection" and "file missing" need different advice for the player. A download that never ends is a failure too: on weak Lagos mobile data a stalled request would otherwise leave "Loading the map" on screen forever, the blank-screen story the scope rules out (approver's F14).
 
 ```mermaid
 flowchart TD
   s(["fetchText of a path"])
-  a["ask the browser for the file"]
+  a["ask the browser for the file, giving up after 30 s (a named constant, owner-choice, proposed)"]
+  t{"was there no answer within 30 s"}
+  u(["return failure: too slow, with the path"])
   b{"did the request itself fail, with no answer"}
   c(["return failure: no connection, with the path"])
   d{"was the answer 404"}
@@ -28,7 +30,9 @@ flowchart TD
   f{"was the answer anything else but OK"}
   g(["return failure: server error, with the path and the status number"])
   h(["return the text"])
-  s --> a --> b
+  s --> a --> t
+  t -->|"yes"| u
+  t -->|"no"| b
   b -->|"yes"| c
   b -->|"no"| d
   d -->|"yes"| e

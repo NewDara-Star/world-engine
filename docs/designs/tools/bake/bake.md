@@ -1,6 +1,6 @@
 # tools/bake/bake.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 2). The whole bake, from the place file and the
 extract's text to the text of every output file, without touching the disk,
@@ -9,7 +9,7 @@ pictures drawn from the code will be in `docs/flows/tools/bake/bake.md`.
 
 ## bakePlace
 
-Why the game needs it: the map the player drives on is made from open map data in one repeatable step, and anything wrong with the input is reported, not baked into a broken map.
+Why the game needs it: the map the player drives on is made from open map data in one repeatable step, and anything wrong with the input is reported, not baked into a broken map. The map's size comes from the place file's `mapHalfSizeM`, not from the extract: `osmium extract` keeps every node of a way that crosses its box (its default `complete_ways`), so one trunk road could stretch the map, its ground and its edge walls kilometres past the place (approver's F20). A way with fewer than two nodes is skipped with a note, not a problem (F19).
 
 ```mermaid
 flowchart TD
@@ -17,14 +17,14 @@ flowchart TD
   a["check the place with validatePlace"]
   b{"is the place file good"}
   c(["return the place file's problems; nothing is baked"])
-  d["read the extract with readOplRoadWays"]
+  d["read the extract with readOplRoadWays; its notes (ways skipped for fewer than two nodes) go into the report notes"]
   e{"were there broken lines"}
   f(["return those problems with their line numbers; nothing is baked, because a missing road would look like a real gap"])
   g["turn the ways into roads with drivableRoadsInMetres"]
   h{"is at least one road left"}
   i(["return one problem: the extract has no roads a car can use; check the extract covers the place centre and was cut with the highway ways"])
-  j["cut the roads into squares: roadPieces for each, then trianglesByCell"]
-  k["find the start with carStartOnRoad and the extent from the squares"]
+  j["cut the roads into squares: roadPieces for each, clipped to the square of plus and minus mapHalfSizeM around the centre, then trianglesByCell"]
+  k["find the start with carStartOnRoad; the extent is that square, rounded out to whole 100 m squares"]
   l(["return the files: one chunkFileText per square named east_north.json, and index.json from indexFileText; plus the report notes"])
   s --> a --> b
   b -->|"no"| c

@@ -1,6 +1,6 @@
 # src/vehicle/rapier-settings.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 5). The vehicle file holds real-world figures in SI
 units; Rapier's vehicle controller wants its own numbers. This file is the
@@ -26,7 +26,10 @@ frequency ω = 2πf; wheel rate k = ω² × corner mass; critical damping
 c = 2ζ√(k m) = 2ζ ω m; static sag = g ÷ ω²; a box's moments of inertia
 m(b² + c²) ÷ 12 (a solid box, a stated weakness: a real car's mass sits lower
 and nearer the middle); steering angle from the turning circle with the
-bicycle model, sin δ = wheelbase ÷ (turning circle ÷ 2); deceleration from a
+bicycle model, sin δ = wheelbase ÷ (turning circle ÷ 2 − track ÷ 2), because
+the published kerb-to-kerb circle is traced by the outer front wheel, not the
+middle of the front axle (approver's F3: 10.6 m against the published 10.2 m,
+where the plain half circle gave 12.2 m, measured on Rapier 0.21.0); deceleration from a
 brake test a = v² ÷ 2d.
 
 ## cornerMassKg
@@ -82,20 +85,22 @@ flowchart TD
   a["the chassis box: the car's length and width; from axle height (wheel radius) up to the roof (height)"]
   b["the box's middle, measured from the centre of mass: up by (radius plus height) over 2 minus the centre-of-mass height"]
   c["moments of inertia of a solid box of the car's mass and size"]
-  d(["return the box's half sizes, its offset, the mass, the centre of mass at the body's origin, and the three moments"])
+  d(["return the box's half sizes, its offset, the mass, the centre of mass given in the box collider's own frame: minus the box's offset, so it lands at the body's origin (Rapier reads it in the collider's frame; approver's F5, measured on 0.21.0), and the three moments"])
   s --> a --> b --> c --> d
 ```
 
 ## maxSteerAngleRad
 
-Why the game needs it: the car turns as tightly as the real one, worked out from the turning circle the maker publishes.
+Why the game needs it: the car turns as tightly as the real one, worked out from the turning circle the maker publishes. That circle is traced by the outer front wheel, so half the track comes off its radius (approver's F3).
 
 ```mermaid
 flowchart TD
   s(["maxSteerAngleRad for the vehicle"])
-  a(["return the arcsine of wheelbase over half the turning circle; the vehicle checker has already made sure half the turning circle is longer than the wheelbase"])
+  a(["return the arcsine of wheelbase over (half the turning circle minus half the track); the vehicle checker has already made sure that is longer than the wheelbase"])
   s --> a
 ```
+
+A test the test-writer adds (F3): at full lock and walking pace, the turning circle is within ±10 % of the published one.
 
 ## maxBrakeForceN
 

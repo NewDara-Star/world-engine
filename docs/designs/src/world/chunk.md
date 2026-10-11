@@ -1,6 +1,6 @@
 # src/world/chunk.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (items 2 and 4). The two map file formats the bake writes
 and the game reads, and their checkers. Checked like every other file: a bad
@@ -74,7 +74,7 @@ Why the game needs it: the index decides what the player can drive; it is checke
 ```mermaid
 flowchart TD
   s(["validateChunkIndex with the file's name and its text"])
-  a(["return validateJsonFile with the name, the text and the index checker: format exactly 1; cellSizeM a number; centre lat and lon in degrees; extent four numbers in metres with west below east and south below north; start east, north and headingDeg from 0 to below 360; cells a list of square keys, none repeated"])
+  a(["return validateJsonFile with the name, the text and the index checker: format exactly 1; cellSizeM a number; centre lat and lon in degrees; extent four numbers in metres with west below east and south below north; start east, north and headingDeg from 0 to below 360, roadWidthM above 0, and oneWay true or false; cells a list of square keys, none repeated"])
   s --> a
 ```
 

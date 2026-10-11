@@ -1,6 +1,6 @@
 # Scope 005 overview: how slice 1 fits together
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 One picture of the whole slice, for the owner, before the per-function
 designs. Each box names the file that does it; each file has its own design in
@@ -13,7 +13,7 @@ designs. Each box names the file that does it; each file has its own design in
 flowchart TD
   subgraph mac["On a computer, once per map (tools/bake)"]
     osm[("OSM extract of Omole, cut with osmium as an OPL file (raw-data/, not in git)")]
-    placefile[("places/omole.json: centre, drives on the right, km/h, gravity, air, lane width, credits")]
+    placefile[("places/omole.json: centre, map size, drives on the right, km/h, gravity, air, lane width, credits")]
     bake["bake: keep the roads a car may use, turn each into flat grey road shapes, cut them into 100 m squares"]
     chunks[("places/omole/chunks/: one file per 100 m square with road in it, plus index.json: which squares, the centre they were baked for, where the car starts")]
     osm --> bake
@@ -37,7 +37,7 @@ flowchart TD
   chunks -.->|"fetched as the car moves"| stream
 
   subgraph frame["Every frame, about 60 times a second"]
-    controls["controls: keys, thumbs or a gamepad become the same four actions: steer, accelerate, brake or reverse, put the car back"]
+    controls["controls: keys, thumbs or a gamepad become the same four actions: steer, accelerate, brake or reverse, flip upright"]
     physics["physics: the car's wheels, engine, brakes, air and road resistance, in fixed 1/60 s steps"]
     stream["streaming: load the 100 m squares near the car (ground, a ground collider, grey road), let go of far ones"]
     camera["chase camera: behind and above the car, following smoothly"]
@@ -53,7 +53,7 @@ flowchart TD
 
 1. **On the computer (once).** The orchestrator cuts an OpenStreetMap extract
    around Babatunde Ladega Street with `osmium` and gives it to the bake. The
-   bake reads the place file for the centre and the lane width, keeps only the
+   bake reads the place file for the centre, the map's size and the lane width, keeps only the
    roads a car can drive on, works out how wide each one is, turns each into
    flat pieces of grey road, and cuts them into 100 m squares. Each square
    with road becomes a small file; `index.json` lists them and says where the
@@ -137,6 +137,12 @@ flowchart TD
 | `src/measure/measure.ts` | download size and frame rate | `src/measure/measure.md` |
 
 Data files the coder writes (no designs; checked by the checkers above):
-`places/omole.json`, `vehicles/hatchback.json`, `start.json`, and the
-cascade into `places/finglas.json` and `places/yaba.json` (`skyPosition`
-becomes `centre`; lane width added).
+`places/omole.json`, `vehicles/hatchback.json` and `start.json`.
+
+The cascade (`skyPosition` becomes `centre`; lane width and map size added;
+vehicle files gain their driving figures): before the test-writer starts, the
+orchestrator removes, in its own commit, the old tests whose meaning changes:
+every test naming `skyPosition`, and every vehicle test whose fixture lacks
+the new figures. The test-writer writes their replacements in new test files,
+which fail first. The coder changes `places/finglas.json` and
+`places/yaba.json`.

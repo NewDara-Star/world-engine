@@ -1,6 +1,6 @@
 # src/camera/chase.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 4). A chase camera behind and above the car. It
 follows the car's position smoothly instead of being bolted to the body, so
@@ -27,12 +27,12 @@ flowchart TD
 
 ## chaseCameraGoal
 
-Why the game needs it: where the camera wants to be: behind the car along its heading, at a fixed height, and what it looks at.
+Why the game needs it: where the camera wants to be: behind the car along its heading, at a fixed height, and what it looks at. The goal is worked out from the blended pose the car is drawn at (`loop.md`), not the last physics pose, so camera and car never disagree. The heading comes from `flatHeading` (`car.md`), the same function Flip upright uses, with its fallback: a car standing on its nose has no flat forward direction, and without the fallback the camera would be at "not a number", a blank screen (approver's F12).
 
 ```mermaid
 flowchart TD
-  s(["chaseCameraGoal with the car's position and its heading on the ground"])
-  a["the car's forward direction flat on the ground, ignoring pitch and roll, so the horizon stays level"]
+  s(["chaseCameraGoal with the car's blended position and turn"])
+  a["forward = flatHeading of the car's turn: flat on the ground, ignoring pitch and roll, so the horizon stays level"]
   b["camera point = car position minus forward times the distance behind, at the camera height above the ground"]
   c(["return the camera point and the look point: car position plus forward times the look-ahead, at the look height"])
   s --> a --> b --> c
@@ -40,12 +40,12 @@ flowchart TD
 
 ## moveChaseCamera
 
-Why the game needs it: the camera glides toward its goal each frame and never jumps, except when the car is put back, where gliding across the map would be confusing.
+Why the game needs it: the camera glides toward its goal each frame and never jumps, except when the car is flipped upright or returned to the start, where gliding across the map would be confusing.
 
 ```mermaid
 flowchart TD
-  s(["moveChaseCamera with the camera's point and look point, the goal, the frame's length, and whether the car was just put back"])
-  a{"was the car just put back"}
+  s(["moveChaseCamera with the camera's point and look point, the goal, the frame's length, and whether the car was just flipped upright or returned to the start"])
+  a{"was the car just flipped upright or returned to the start"}
   b(["return the goal itself"])
   c["fraction = followFraction of the following rate and the frame's length"]
   d(["return the camera point and the look point each moved that fraction of the way to the goal"])

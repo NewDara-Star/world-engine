@@ -1,16 +1,27 @@
 # src/controls/touch.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 6). Thumbs to actions. Layout: the left half of the
 screen is the stick area: the stick appears where the left thumb lands and
 only its sideways movement steers (nipplejs `dynamic` mode, technique;
 research/36). On the right, a large accelerate button at the bottom right,
-the brake/reverse button beside it to its left, and a smaller "put the car
-back" button above them. Nothing needs two fingers on one side (scope item 6).
+the brake/reverse button beside it to its left, and a smaller "Flip upright"
+button above them (its notice says "Flipped upright.", the same word as the
+button; approver's F8). Nothing needs two fingers on one side (scope item 6).
 Every finger is followed by its own `pointerId` (MDN Pointer Events), so the
 stick and a pedal work at the same time; the controls have
-`touch-action: none` so the browser does not scroll or zoom under the thumbs.
+`touch-action: none` so the browser does not scroll or zoom under the thumbs,
+and `user-select: none` and `-webkit-touch-callout: none`, with `contextmenu`
+prevented, so a held button never selects its label text and the selection
+handles never take the next touch (approver's F11).
+
+The phone works held either way (orchestrator's decision E3 (a), 2026-10-11).
+Held upright, the stick area is narrow and so is the view, so a one-line hint
+shows while the touch controls are shown and the screen is taller than wide:
+"Turn your phone sideways for a wider view." It is a hint, never a block, and
+it goes as soon as the phone is turned (`portraitHintShown`, called from
+`listenForResize`, `main.md`).
 
 The decisions are in pure functions over a small **touch state** (which
 finger holds the stick and where it started and is now; which finger holds
@@ -45,7 +56,7 @@ flowchart TD
   a{"did it land on the stick area"}
   b{"is a finger already on the stick"}
   c(["return the state unchanged"])
-  d(["return the state with the stick held by this finger, started and now at this point"])
+  d(["return the state with the stick held by this finger, now at this point, and started at this point moved inward to at least one stick radius from the screen's edges, so full left and full right are always reachable"])
   e{"did it land on a button"}
   f(["return the state with this finger on that button"])
   g(["return the state unchanged: it landed on nothing"])
@@ -60,17 +71,21 @@ flowchart TD
 
 ## fingerMoved
 
-Why the game needs it: the stick follows the thumb; a finger sliding off a button keeps the button held until it lifts, as on a real pedal, because the browser keeps sending its moves to the button (pointer capture).
+Why the game needs it: the stick follows the thumb. A thumb rocked from one pedal onto the other holds the one it is now on, as a foot does; without this, a thumb rocked from brake onto accelerate keeps braking, and once stopped the car reverses while the thumb is on "accelerate" (approver's F11). Off every button a finger keeps what it had, as on a real pedal. It never slides onto Flip upright, which needs its own press. What is under the finger is found by `passPointerEvent`, because pointer capture keeps the event's target fixed.
 
 ```mermaid
 flowchart TD
-  s(["fingerMoved with the state and the event"])
+  s(["fingerMoved with the state and the event, with what is under the finger now"])
   a{"is this the stick's finger"}
   b(["return the state with the stick's now-point at this point"])
-  c(["return the state unchanged"])
+  c{"does this finger hold a pedal, and is it now over the other pedal (accelerate and brake)"}
+  d(["return the state with this finger on that other pedal instead"])
+  e(["return the state unchanged: off every button, or over Flip upright, it keeps what it had"])
   s --> a
   a -->|"yes"| b
   a -->|"no"| c
+  c -->|"yes"| d
+  c -->|"no"| e
 ```
 
 ## fingerLifted
@@ -111,7 +126,7 @@ flowchart TD
   a{"is a finger on the stick"}
   b["steer = stickSteer"]
   c["steer = 0"]
-  d(["return steer; accelerate 1 if any finger holds accelerate, else 0; brake 1 if any finger holds brake, else 0; putBack if any finger holds put-back"])
+  d(["return steer; accelerate 1 if any finger holds accelerate, else 0; brake 1 if any finger holds brake, else 0; flipUpright if any finger holds Flip upright"])
   s --> a
   a -->|"yes"| b --> d
   a -->|"no"| c --> d
@@ -128,21 +143,34 @@ flowchart TD
   s --> a
 ```
 
+## portraitHintShown
+
+New in scope 005 (orchestrator's decision E3 (a)). Why the game needs it: held upright the phone still works, but the view is narrow, so the player is told once, plainly, how to get a wider one.
+
+```mermaid
+flowchart TD
+  s(["portraitHintShown with whether the touch controls are shown and the screen's width and height"])
+  a(["return yes only when the touch controls are shown and the height is greater than the width"])
+  s --> a
+```
+
 ## listenToTouches
 
-Why the game needs it: joins the phone's pointer events to the touch state.
+Why the game needs it: joins the phone's pointer events to the touch state. A call coming in or a switch to another app does not always send `pointercancel`, so the touch state is also emptied when the page is hidden or the window loses focus, as the keyboard does (approver's F11).
 
 ```mermaid
 flowchart TD
   s(["listenToTouches on the controls layer, with a place to keep the state"])
   a["on pointer down, move, up and cancel, call passPointerEvent"]
-  b(["return a function that removes these listeners"])
-  s --> a --> b
+  b["on the page becoming hidden (visibilitychange) and on the window's blur, empty the touch state: no stick, no buttons"]
+  c["on contextmenu on the controls layer, prevent it, so a long press opens no menu"]
+  d(["return a function that removes these listeners"])
+  s --> a --> b --> c --> d
 ```
 
 ## listenToTouches > passPointerEvent
 
-Why the game needs it: each event becomes one call to touchStateAfter, with what it landed on read from the element's role (stick area or which button).
+Why the game needs it: each event becomes one call to touchStateAfter, with what is under the finger read from the element's role (stick area or which button). The element is found with `document.elementFromPoint` at the finger's point, not from the event's target, because pointer capture keeps the target fixed on the element the finger first landed on (approver's F11).
 
 ```mermaid
 flowchart TD
@@ -150,9 +178,10 @@ flowchart TD
   a{"is it a down event"}
   b["capture the pointer on the element it landed on, so its moves and its lift come back here even off the element"]
   c["stop the browser's own handling of it"]
-  d(["keep touchStateAfter of the kept state and this event, with the target's role"])
+  e["what is under the finger: the role of document.elementFromPoint at the event's point"]
+  d(["keep touchStateAfter of the kept state and this event, with that role"])
   s --> a
   a -->|"yes"| b --> c
   a -->|"no"| c
-  c --> d
+  c --> e --> d
 ```

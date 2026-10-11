@@ -1,6 +1,6 @@
 # tools/bake/clip.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 2). Cuts the road pieces into the 100 m squares the
 game streams (D-0008), and turns each cut piece into triangles the phone can

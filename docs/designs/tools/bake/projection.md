@@ -1,6 +1,6 @@
 # tools/bake/projection.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 2). Turns latitude and longitude into metres east and
 north of the place centre. For a 3 km place, a flat map using the Earth's

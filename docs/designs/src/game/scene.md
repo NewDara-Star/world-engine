@@ -1,6 +1,6 @@
 # src/game/scene.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (item 4). What is drawn: sky colour, simple light, the flat
 ground per square, the grey roads, and a grey-box car. three.js 0.186.1 with
@@ -37,10 +37,23 @@ Why the game needs it: a plain, readable world: a sky, soft light from above, on
 
 ```mermaid
 flowchart TD
-  s(["createScene with the load radius"])
-  a["background = sky colour; fog of the same colour, starting at half the load radius and complete at the load radius, so squares appear inside the fog, never at a hard edge"]
+  s(["createScene with the load radius and the camera's aspect"])
+  a["background = sky colour; fog of the same colour, from fogRangeForView, so squares appear inside the fog, never at a hard edge"]
   b["a hemisphere light, sky colour above and ground colour below, and one directional light from high up"]
   c(["return the scene, and the shared ground and road materials: neither writes depth; the ground is drawn first, the roads second"])
+  s --> a --> b --> c
+```
+
+## fogRangeForView
+
+New in scope 005 (approver's F13). Why the game needs it: three.js fogs by depth straight ahead of the camera, not by distance (in 0.186.1, `vFogDepth = - mvPosition.z`), so at the side of a wide screen a square far away has a small depth and pops in nearly unfogged. On a 20:9 phone held sideways, a square 294 m away at the screen edge has a depth of only 181 m. So the fog is pulled in by the cosine of half the widest view angle, and worked out again whenever the screen's shape changes. The load radius stays the owner's performance number; the clear view on a wide phone becomes shorter (about 180 m), which the frame-rate measurement can trade against a bigger radius.
+
+```mermaid
+flowchart TD
+  s(["fogRangeForView with the load radius, the camera's distance behind the car, its vertical field of view and its aspect"])
+  a["horizontal view angle = 2 times the arctangent of (the tangent of half the vertical angle, times the aspect); the widest view angle is the larger of the two"]
+  b["complete = (load radius minus the distance behind) times the cosine of half the widest view angle"]
+  c(["return the fog starting at half of complete, and complete at complete"])
   s --> a --> b --> c
 ```
 
@@ -64,8 +77,9 @@ flowchart TD
   s(["roadMeshFromChunk with a checked chunk and the shared road material"])
   a["corner positions: east centimetres over 100 becomes x, north centimetres over 100 becomes minus z, height 0; all relative to the square's south-west corner"]
   b["triangles as given; anticlockwise in map words stays anticlockwise seen from above after north becomes minus z, so every triangle faces up"]
+  n["every corner's normal points straight up, because MeshLambertMaterial lights by the normals and draws a shape without them black (approver's F16)"]
   c(["return a mesh of that shape, placed at the square's south-west corner, drawn after the ground"])
-  s --> a --> b --> c
+  s --> a --> b --> n --> c
 ```
 
 ## carModel

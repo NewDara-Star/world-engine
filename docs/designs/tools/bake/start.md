@@ -1,11 +1,13 @@
 # tools/bake/start.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
 
 New in scope 005 (items 2 and 3). Finds where the car is parked when the game
 opens: on the road nearest the place centre (the place file's centre is on the
-owner's street, taken from the map), facing along it. The game then moves it
-to the place's driving side (`src/vehicle/car.ts`). The pictures drawn from
+owner's street, taken from the map), facing along it. The start also records
+the road's width and whether it is one-way, so the game can move the car to
+the place's driving side on a two-way road and keep it in the middle of a
+one-way one (`src/vehicle/car.ts`; approver's F7). The pictures drawn from
 the code will be in `docs/flows/tools/bake/start.md`.
 
 ## carStartOnRoad
@@ -20,7 +22,7 @@ flowchart TD
   c["heading = compassHeading from the segment's first point to its second"]
   d{"is the road one-way against its drawing direction, oneway is -1"}
   e["turn the heading round by 180 degrees, so the car faces the legal way"]
-  f(["return the start: metres east, metres north, compass heading"])
+  f(["return the start: metres east, metres north, compass heading, the road's width in metres, and whether it is one-way, by isOneWay"])
   s --> a --> b --> c --> d
   d -->|"yes"| e --> f
   d -->|"no"| f
