@@ -1,6 +1,6 @@
 # Scope 004: tests written blind, and a decision log
 
-Status: approved by Daramola (owner) in chat, 2026-10-12 ("approve Scope 004,
+Status: approved by Daramola (owner) in chat, 2026-10-11 ("approve Scope 004,
 then build slice 1").
 Architecture: V5, "How we build" (proposed Scope 004).
 

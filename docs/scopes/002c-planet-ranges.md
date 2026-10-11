@@ -1,6 +1,6 @@
 # Scope 002c: sensible ranges per planet
 
-Status: approved by Daramola (owner) in chat, 2026-10-12 ("go with your
+Status: approved by Daramola (owner) in chat, 2026-10-11 ("go with your
 recommendation": ranges per planet, in a small scope).
 Architecture: V5, "Place file format"; CLAUDE.md "The engine knows no place".
 
