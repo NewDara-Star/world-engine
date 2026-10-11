@@ -178,3 +178,18 @@ TypeScript's `computeLineStarts` (`node_modules/typescript/lib/typescript.js`,
 read on disk) counts `\r\n` as one break, `\r` or `\n` alone as one each, and
 also U+2028 and U+2029. The design takes the first three only; see
 `lineStartOffsets`.
+
+## Session B (code), 2026-10-11
+
+- jsonc-parser 3.3.1 installed in `dependencies`, pinned exactly. It has no
+  `exports` map; Node 22 imports `parseTree`, `getNodeValue` and
+  `printParseErrorCode` by name from its UMD build without trouble (run).
+- `printParseErrorCode` names codes 1 to 16 as in the table above; code 0 is
+  `<unknown ParseErrorCode>`, which `readJsonText` uses for "no tree and no
+  error" so it falls to "the file is not valid JSON here."
+- Run under tsx on Node 22: a place file of objects nested 2,550 deep is read,
+  and the repeated-field walk finishes on it; the walk's own "nested too
+  deeply" guard could not be triggered, because the reader gives out first.
+  The guard stays (a browser's stack may differ); it is untested.
+- ESLint 10's `complexity` counts `?.` as a branch, so the code reads optional
+  values inside callbacks or through `Number(...)` to stay under 8.

@@ -2,46 +2,56 @@
 
 Drawn from the code by `npm run diagrams` (TypeScript compiler, no AI). Do not edit by hand: change the code, then run it again.
 
-## repeatedClass
+## firstRepeatedVehicleClass
 
 ```mermaid
 flowchart TD
-  n1(["repeatedClass"])
+  n1(["firstRepeatedVehicleClass"])
   n2(["return classes.find((name, index) =#gt; classes.indexOf(name) …"])
   n1 --> n2
 ```
 
-## missingSource
+## sourceProblemForOneConstant
 
 ```mermaid
 flowchart TD
-  n1(["missingSource"])
-  n2(["return CONSTANT_QUANTITIES.find((quantity) =#gt; !sources.some…"])
-  n1 --> n2
-```
-
-## placeProblem
-
-```mermaid
-flowchart TD
-  n1(["placeProblem"])
-  n2["const repeated = repeatedClass(place.allowedVehicleClasses);<br/>calls repeatedClass"]
-  n3{"repeated !== undefined"}
-  n4(["return #96;allowedVehicleClasses lists #quot;${repeated}#quot; twice#96;;"])
-  n5["const missing = missingSource(place.constantsSources);<br/>calls missingSource"]
-  n6{"missing === undefined"}
-  n7["undefined"]
-  n8["#96;constantsSources has no source for #quot;${missing}#quot;#96;"]
-  n9(["return missing === undefined ? undefined : #96;constantsSource…"])
+  n1(["sourceProblemForOneConstant"])
+  n2["const positions = sources .map((source, index) =#gt; ({ quanti…"]
+  n3{"positions.length === 0"}
+  n4(["return [problemAt([#quot;constantsSources#quot;], #96;\#96;constantsSources…<br/>calls problemAt"])
+  n5{"positions.length === 1"}
+  n6(["return [];"])
+  n7(["return [ problemAt( [#quot;constantsSources#quot;, ...positions.slice…<br/>calls problemAt"])
   n1 --> n2
   n2 --> n3
   n3 -->|"yes"| n4
   n3 -->|"no"| n5
-  n5 --> n6
-  n6 -->|"yes"| n7
-  n6 -->|"no"| n8
-  n7 --> n9
-  n8 --> n9
+  n5 -->|"yes"| n6
+  n5 -->|"no"| n7
+```
+
+## sourceProblemsForConstants
+
+```mermaid
+flowchart TD
+  n1(["sourceProblemsForConstants"])
+  n2(["return CONSTANT_QUANTITIES.flatMap((quantity) =#gt; sourceProb…<br/>calls sourceProblemForOneConstant"])
+  n1 --> n2
+```
+
+## repeatedClassProblemsInPlace
+
+```mermaid
+flowchart TD
+  n1(["repeatedClassProblemsInPlace"])
+  n2["const repeated = firstRepeatedVehicleClass(place.allowedVeh…<br/>calls firstRepeatedVehicleClass"]
+  n3{"repeated !== undefined"}
+  n4(["return [problemAt([#quot;allowedVehicleClasses#quot;], #96;\#96;allowedVehi…<br/>calls problemAt"])
+  n5(["return [];"])
+  n1 --> n2
+  n2 --> n3
+  n3 -->|"yes"| n4
+  n3 -->|"no"| n5
 ```
 
 ## validatePlace
@@ -49,6 +59,6 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["validatePlace"])
-  n2(["return placeParser(json, #quot;#quot;);<br/>calls placeParser"])
+  n2(["return validateJsonFile(fileName, text, placeChecker);<br/>calls validateJsonFile"])
   n1 --> n2
 ```

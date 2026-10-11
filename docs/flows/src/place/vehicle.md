@@ -2,20 +2,21 @@
 
 Drawn from the code by `npm run diagrams` (TypeScript compiler, no AI). Do not edit by hand: change the code, then run it again.
 
-## module > inner function 1
+## movementProblemInVehicle
 
 ```mermaid
 flowchart TD
-  n1(["module #gt; inner function 1"])
-  n2{"dynamicsFor[vehicle.class].includes(vehicle.dynamics)"}
-  n3["undefined"]
-  n4["#96;a ${vehicle.class} cannot move as #quot;${vehicle.dynamics}#quot; (i…"]
-  n5(["return dynamicsFor[vehicle.class].includes(vehicle.dynamics) ? und"])
+  n1(["movementProblemInVehicle"])
+  n2["const allowed = dynamicsFor[vehicle.class];"]
+  n3{"allowed.includes(vehicle.dynamics)"}
+  n4(["return [];"])
+  n5["const ways = allowed.map((way) =#gt; #96;\#96;${way}\#96;#96;).join(#quot;, #quot;);"]
+  n6(["return [problemAt([#quot;dynamics#quot;], #96;a ${vehicle.class} cannot …<br/>calls problemAt"])
   n1 --> n2
-  n2 -->|"yes"| n3
-  n2 -->|"no"| n4
-  n3 --> n5
-  n4 --> n5
+  n2 --> n3
+  n3 -->|"yes"| n4
+  n3 -->|"no"| n5
+  n5 --> n6
 ```
 
 ## validateVehicle
@@ -23,6 +24,6 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["validateVehicle"])
-  n2(["return vehicleParser(json, #quot;#quot;);<br/>calls vehicleParser"])
+  n2(["return validateJsonFile(fileName, text, vehicleChecker);<br/>calls validateJsonFile"])
   n1 --> n2
 ```

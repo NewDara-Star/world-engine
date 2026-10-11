@@ -31,3 +31,6 @@ never into the scope being built. Each is looked at when a scope is planned.
   have, so a slipped digit (98 for 9.8) is caught; owner's call.
 - Code licence notices (MIT/Apache libraries shipped to players, such as
   jsonc-parser) listed on the About page with the data credits.
+- "Did you mean" ten-times hint: with today's wide ranges it is often wrong
+  (gravity 980 gives "Did you mean 98?", latitude 91 gives "9.1?"); offer it
+  only when the tenth is near a typical value, or after the ranges tighten.
