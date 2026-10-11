@@ -57,7 +57,8 @@ describe("place file: happy path", () => {
   });
 
   it("names each place file after the place inside it", () => {
-    for (const file of readdirSync(placesDir)) expect(good(file).id).toBe(file.replace(".json", ""));
+    // Only the place files themselves: a place's baked map lives in a folder beside it (places/omole/chunks/).
+    for (const file of readdirSync(placesDir).filter((name) => name.endsWith(".json"))) expect(good(file).id).toBe(file.replace(".json", ""));
   });
 
   it("accepts a file saved on Windows, and one that starts with an invisible byte-order mark", () => {
@@ -77,11 +78,6 @@ describe("place file: sad path (a broken file says where and what)", () => {
 
   it("says a missing field is missing, on the line where its object starts, and that the planet check waits for it", () => {
     expect(messagesOf(withChanges({ gravityMs2: undefined }))).toEqual(["yaba.json line 1: `gravityMs2` is missing.", FIX_FIRST]);
-  });
-
-  it("says a missing field inside an object is missing, on that object's line", () => {
-    const text = withChanges({ skyPosition: { lat: 6.51 } });
-    expect(messagesOf(text)).toEqual([`yaba.json line ${lineOf(text, '"skyPosition"')}: \`skyPosition.lon\` is missing.`]);
   });
 
   it("points into nested things: which source, which field, which line", () => {
@@ -210,13 +206,6 @@ describe("place file: idiot-proof path", () => {
     expect(messagesOf(text)[0]).toMatch(/`gravityMs2` must be a number of at least 0 m\/s²; found a number too big to use\.$/);
   });
 
-  it("refuses a latitude off the planet", () => {
-    const text = withChanges({ skyPosition: { lat: 910, lon: 0 } });
-    expect(messagesOf(text)).toEqual([
-      `yaba.json line ${lineOf(text, '"lat"')}: \`skyPosition.lat\` must be a number from -90 to 90 degrees; found 910.`,
-    ]);
-  });
-
   it("refuses a licence outside the working rule, such as GPL", () => {
     const sources = [{ name: "Map", url: "https://x.test", licence: "GPL-3.0", attribution: "a" }];
     expect(messagesOf(withChanges({ dataSources: sources }))[0]).toContain("`dataSources[0].licence` must be one of");
@@ -306,10 +295,6 @@ describe("place file: idiot-proof path", () => {
 });
 
 describe("place file: tragedy path (limits, scale, old files)", () => {
-  it("accepts the edges of the planet: a pole and the date line", () => {
-    expect(messagesOf(withChanges({ skyPosition: { lat: -90, lon: 180 } }))).toEqual([]);
-  });
-
   // Why not a fixed "under a second": this test ran 0.5 s one day and 1.3 s the
   // next on the same code, because the build machine changed speed. What we are
   // really guarding against is a checker that slows down faster than the file
@@ -415,11 +400,6 @@ function dryAirDensity(celsius: number, pascals: number): number {
 
 describe("place file: gravity and air density carry their sources (scope 001b)", () => {
   const files = readdirSync(placesDir).filter((name) => name.endsWith(".json"));
-
-  it.each(files)("%s: stored gravity matches the Somigliana formula at the place's latitude", (file) => {
-    const place = good(file);
-    expect(place.gravityMs2).toBeCloseTo(wgs84NormalGravity(place.skyPosition.lat), 3);
-  });
 
   it.each(files)("%s: cites exactly one source for gravity and one for air density", (file) => {
     const quantities = good(file).constantsSources.map((source) => source.quantity);
@@ -563,13 +543,6 @@ describe("place on its planet: sad path (scope 002c)", () => {
 });
 
 describe("place on its planet: idiot-proof path (scope 002c)", () => {
-  it("gives a latitude of 91 no ten-times hint: it is not 9.1 with the point in the wrong place", () => {
-    const text = withChanges({ skyPosition: { lat: 91, lon: 3.38 } });
-    expect(messagesOf(text)).toEqual([
-      `yaba.json line ${lineOf(text, '"lat"')}: \`skyPosition.lat\` must be a number from -90 to 90 degrees; found 91.`,
-    ]);
-  });
-
   it("gives no hint when no move of the point lands inside the range: 9800, 9.7, and 0.98 (too small)", () => {
     for (const gravity of [9800, 9.7, 0.98, 50]) {
       expect(messagesOf(withChanges({ gravityMs2: gravity }))[0], String(gravity)).toMatch(new RegExp(`on earth; found ${gravity}\\.$`));

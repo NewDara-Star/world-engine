@@ -1,6 +1,8 @@
 # src/place/parse.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+
+(Before scope 005: approved, judged by the delegated approver, docs/reviews/002c/, with the owner's decision of 2026-10-11. Scope 005 adds `requireNumberAbove` and `sourceCountProblem` at the end of this file; nothing above them changes.)
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/parse.md`.
 
@@ -450,7 +452,7 @@ Why the game needs it: finds every field the file should have and does not, by t
 ```mermaid
 flowchart TD
   s(["missingFields of a record, for a shape"])
-  a(["return every field name of the shape that the record does not have as its own field"])
+  a(["return every field name of the shape that the record does not have as its own field, except the fields that may be left out"])
   s --> a
 ```
 
@@ -506,7 +508,7 @@ Why the game needs it: a place file, and parts of it like the sky position, are 
 
 ```mermaid
 flowchart TD
-  s(["requireRecord a shape: each field name with its checker"])
+  s(["requireRecord a shape: each field name with its checker, and optionally the names of fields that may be left out"])
   a(["return checkRecord"])
   s --> a
 ```
@@ -633,8 +635,8 @@ flowchart TD
   s(["valuesReadByRule with a value, the shape, the fields the rule reads and the path"])
   a{"is the value a record"}
   b(["return nothing: the rule must wait"])
-  c["check each field the rule reads with its own checker from the shape, if the record has it as its own field"]
-  d{"is every one of them present and good"}
+  c["check each field the rule reads with its own checker from the shape, if the record has it as its own field; a field that may be left out and is absent is handed to the rule as absent"]
+  d{"is every one of them good, or absent where it may be left out"}
   e(["return those fields with their checked values"])
   s --> a
   a -->|"no"| b
@@ -675,4 +677,100 @@ flowchart TD
   b --> c
   c -->|"yes"| d
   c -->|"no"| e
+```
+
+## requireNumberAbove
+
+New in scope 005. Why the game needs it: a car's mass, size or power of exactly 0 is never real and would divide by zero in the physics; "at least 0" is not enough, and a made-up ceiling would be a guess.
+
+```mermaid
+flowchart TD
+  s(["requireNumberAbove a minimum and a unit"])
+  a(["return checkNumberAbove"])
+  s --> a
+```
+
+## requireNumberAbove > checkNumberAbove
+
+Why the game needs it: says the floor and the unit, such as "a number above 0 kg", when the value is not a number or is not above the floor.
+
+```mermaid
+flowchart TD
+  s(["checkNumberAbove a value at a path"])
+  a{"is it a number, finite, and above the minimum"}
+  b(["return accept the value"])
+  c(["return reject: wanted a number above the minimum, then the unit; no hint"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+```
+
+## sourceCountProblem
+
+New in scope 005, moved from `place.ts` (`sourceProblemForOneConstant`) so the place's constants and the vehicle's figures use one rule. Why the game needs it: the owner's data rule says each number has exactly one source.
+
+```mermaid
+flowchart TD
+  s(["sourceCountProblem: one quantity, such as gravity or body.massKg, the list of sources, the list's field name, and the word for the thing (constant or figure)"])
+  a["count the sources that name this quantity"]
+  b{"how many"}
+  c(["return a problem at the list: the list has no source for the quantity"])
+  d(["return no problem"])
+  e(["return a problem at the second source that names it: the list has that many sources for the quantity; each thing needs exactly one"])
+  s --> a --> b
+  b -->|"none"| c
+  b -->|"exactly one"| d
+  b -->|"more than one"| e
+```
+
+## requireNumberFromBelow
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `chunk.md` (`validateChunkIndex`) asks for "headingDeg from 0 to below 360"; `requireNumberBetween` includes its top end, and a heading of 360 is the same as 0, so a second way to write north must be refused (tests/world/chunk.test.ts, "refuses a heading of 360"). Why the game needs it: a number that wraps round, such as a compass heading, has one way to be written.
+
+```mermaid
+flowchart TD
+  s(["requireNumberFromBelow with the lowest value, the value it must stay below, and the unit"])
+  a(["return checkNumberFromBelow, which keeps all three"])
+  s --> a
+```
+
+## requireNumberFromBelow > checkNumberFromBelow
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. Why the game needs it: says the range and the unit when a heading is out of range, such as "a number from 0 up to but not including 360 degrees; found 360".
+
+```mermaid
+flowchart TD
+  s(["checkNumberFromBelow a value at a path"])
+  ais it a number, finite, at least the lowest value and below the top
+  b(["return accept the value"])
+  c(["return reject: wanted a number from the lowest value up to but not including the top, then the unit"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+```
+
+## requireTrueOrFalse
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. `chunk.md` (`validateChunkIndex`) asks for "oneWay true or false". Why the game needs it: a yes-or-no field means one thing; the text "yes" in quote marks is refused (tests/world/chunk.test.ts, "one-way written as text").
+
+```mermaid
+flowchart TD
+  s(["requireTrueOrFalse"])
+  a(["return checkTrueOrFalse"])
+  s --> a
+```
+
+## checkTrueOrFalse
+
+Added by the coder in Scope 005 slice 1, approved by the orchestrator on 2026-10-11 (common sense: the check the approved design already asked for): the approved design asked for this check (see below) but named no function for it, and the diagram gate needs one heading per function. Why the game needs it: says what was wanted and shows what was found, quote marks and all.
+
+```mermaid
+flowchart TD
+  s(["checkTrueOrFalse a value at a path"])
+  ais it true or false, not text
+  b(["return accept the value"])
+  c(["return reject: wanted true or false, without quote marks"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
 ```

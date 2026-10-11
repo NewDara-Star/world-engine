@@ -1,6 +1,8 @@
 # src/place/place.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
+Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+
+(Before scope 005: approved, judged by the delegated approver, docs/reviews/002c/, with the owner's decision of 2026-10-11, ranges per planet. The scope 005 change below makes the file a draft again.)
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/place.md`.
 
@@ -13,6 +15,12 @@ Changed for scope 002c (item 3): a place is checked against its planet. What cha
 - `gravityMs2` and `airDensityKgM3` on their own only need to be a number of at least 0 in their unit (`requireNumberAtLeast`); the old 0 to 100 limit, which let 98 through, is gone. Their real range is the planet's, checked by one rule per constant (`planetRangeRule`). A table in the file says which place field holds which constant (`gravity` in `gravityMs2`, `airDensity` in `airDensityKgM3`); units come from the vocabulary's one table of units, the same one the planet file is checked against.
 - When `planet` is wrong, the range rules wait (there is no range to check against), and the report ends with "Fix these first; some cross-checks run after.", as for any waiting rule, so gravity is never silently passed.
 
+Changed for scope 005 (items 2, 3 and 4): two field changes, and one function moved to `parse.ts` (below, `sourceProblemsForConstants`). In plain words:
+
+- **`skyPosition` becomes `centre`.** The map is now centred on a point of the place (the bake measures every road in metres from it, and the car starts on the road nearest it), and the sky is seen from a point of the place. Two fields could disagree, so there is one: `centre`, latitude and longitude, "where the map is centred and the sky is seen from". Same checker as before (`position`). Cascade: `places/finglas.json`, `places/yaba.json`, and the old tests. Before the test-writer starts, the orchestrator removes, in its own commit, the old tests whose meaning changes: every test naming `skyPosition`, and every vehicle test whose fixture lacks the new figures. The test-writer writes their replacements in new test files, which fail first. The coder changes `places/finglas.json` and `places/yaba.json`.
+- **New `laneWidthM` and `laneWidthSource`.** How wide one traffic lane is in this place, in metres, used by the bake when a road has no `width` tag. Lane width is a fact about the country's road standard (osm2lanes `locale.rs`: 3.5 m by default, 3.0 m in the UK; research/36), so it lives in the place file, never in engine code. `laneWidthM` is a number from 2 to 5 metres (`requireNumberBetween`, unit "m"; the range is a sanity check against slips such as 30 for 3.0, our own choice, recorded here). `laneWidthSource` is `{source, url, status}` with the same checkers as a constant's source, so the data rule applies: official, derived or owner-choice, never silent. Cascade: Finglas (Ireland's DMURS lane widths, research/world-drive/28) and Yaba and Omole (the Nigerian Highway Manual if the owner finds the figure; otherwise his recorded choice, see the scope 005 report).
+- **New `mapHalfSizeM` and `mapHalfSizeSource`** (approver's F20). How far the map reaches from the centre in every direction, in metres. The bake clips every road to the square of ± this size around the centre, and the map index's extent is that square. It is needed because `osmium extract` keeps every node of a way that crosses the cut box (its default `complete_ways`), so one long trunk road would otherwise stretch the map, its ground and its edge walls kilometres past the place. `mapHalfSizeM` is a number from 100 to 50,000 m (`requireNumberBetween`, unit "m"; the range is a sanity check, our own choice, recorded here). `mapHalfSizeSource` is `{source, url, status}` with the same checkers as `laneWidthSource`, so the data rule applies. Omole: 1500, owner-choice, from Scope 005's "about 1.5 km in every direction". It lives in the place file, so the engine still knows no place. Cascade: `places/finglas.json` and `places/yaba.json` need it too; their values are the owner's choice, asked by the orchestrator before the coder starts, and written by the coder with status owner-choice.
+
 ## firstRepeatedVehicleClass
 
 Why the game needs it: a vehicle class listed twice is a slip in the file, so we point at it.
@@ -24,33 +32,16 @@ flowchart TD
   s --> a
 ```
 
-## sourceProblemForOneConstant
-
-Why the game needs it: the owner's data rule says each physical constant has exactly one source, so nobody has to guess which one the number came from.
-
-```mermaid
-flowchart TD
-  s(["sourceProblemForOneConstant: one constant, such as gravity, and the list of sources"])
-  a["count the sources that name this constant"]
-  b{"how many"}
-  c(["return a problem at constantsSources: has no source for the constant"])
-  d(["return no problem"])
-  e(["return a problem at the second source that names it: constantsSources has that many sources for the constant; each constant needs exactly one"])
-  s --> a
-  a --> b
-  b -->|"none"| c
-  b -->|"exactly one"| d
-  b -->|"more than one"| e
-```
-
 ## sourceProblemsForConstants
 
-Why the game needs it: every constant with no source and every constant with more than one is listed in the same report, not just the first.
+Why the game needs it: the owner's data rule says each physical constant has exactly one source, so nobody has to guess which one the number came from; every constant with no source and every constant with more than one is listed in the same report, not just the first.
+
+Changed for scope 005: the vehicle file now needs the same rule for its figures, so the count for one quantity moved to `parse.ts` as `sourceCountProblem` (one rule, two users, so they can never drift apart). `sourceProblemForOneConstant` is deleted. The messages are word for word the same as before.
 
 ```mermaid
 flowchart TD
   s(["sourceProblemsForConstants in the list of sources"])
-  a(["return sourceProblemForOneConstant for every constant the place file must state (gravity, air density), put together"])
+  a(["return sourceCountProblem for every constant the place file must state (gravity, air density), with the list's field name constantsSources and the word constant, put together"])
   s --> a
 ```
 

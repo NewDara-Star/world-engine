@@ -1,0 +1,57 @@
+{
+  "id": "omole",
+  "name": "Omole Phase 1, Lagos",
+  "planet": "earth",
+  "drivingSide": "right",
+  "speedUnits": "kmh",
+  "roadRuleSetId": "ng-frsc-highway-code",
+  "gravityMs2": 9.781,
+  "airDensityKgM3": 1.167,
+  "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
+  "centre": {
+    "lat": 6.634574,
+    "lon": 3.354578
+  },
+  "laneWidthM": 3.5,
+  "laneWidthSource": {
+    "source": "The owner's choice, proposed by the coder and awaiting his yes: 3.5 m, osm2lanes' default motor lane width (a-b-street/osm2lanes, locale.rs travel_width, Apache-2.0; research/36 section 2). The official Nigerian figure would be in the Federal Ministry of Works Highway Manual Part 1 (2013), which no session could open; the owner was asked to look (research/36 section 2).",
+    "url": "https://fmw.gov.ng/themes/front_end_themes_01/images/uploads_images/1569359724.pdf",
+    "status": "owner-choice"
+  },
+  "mapHalfSizeM": 1500,
+  "mapHalfSizeSource": {
+    "source": "The owner's choice: Scope 005 (approved by Daramola, 2026-10-11) asks for 'about 1.5 km in every direction' around Babatunde Ladega Street.",
+    "url": "https://www.openstreetmap.org/way/135595682",
+    "status": "owner-choice"
+  },
+  "allowedVehicleClasses": [
+    "car",
+    "bike",
+    "bus"
+  ],
+  "dataSources": [
+    {
+      "name": "OpenStreetMap (roads around Omole Phase 1, baked into places/omole/chunks)",
+      "url": "https://www.openstreetmap.org/copyright",
+      "licence": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors"
+    }
+  ],
+  "constantsNote": "Place centre: Babatunde Ladega Street, the mean of the street's nodes in OpenStreetMap way 135595682 (6.634574 N, 3.354578 E), given by the orchestrator. Gravity: WGS84 normal gravity (Somigliana formula) at 6.6346 N, sea level, is 9.78101 m/s² (recomputed by the coder), the same as Yaba's 9.781 to three decimals (research/36 section 8). Air density: the same as Yaba, from the same Lagos/Ikeja station (WMO 65201) at Ikeja airport; Omole Phase 1 is about 7 km north-north-east of the airport (our own sum from the airport's approximate position, 6.58 N 3.32 E, not checked against the station list), nearer to it than Yaba is. Ground height differs from the station's 40 m by a few tens of metres at most, under 0.5 % in density, below the figure's own uncertainty; not re-measured. Working in research/30-place-constants.md and research/36-slice-1.md section 8.",
+  "constantsSources": [
+    {
+      "quantity": "gravity",
+      "source": "WGS84 normal gravity (Somigliana formula, k = 1.931852652458e-3, e² = 6.69437999014e-3, equatorial gravity 9.7803253359 m/s²), standard NIMA TR8350.2 (2000). Constants read from the published tables at ahrs.readthedocs.io; the TR8350.2 text itself was not opened. Recomputing the formula at the place's latitude gives the stored value (tested).",
+      "url": "https://ahrs.readthedocs.io/en/latest/constants.html",
+      "period": "Not a climate value: defining constants of the WGS84 ellipsoid (2000 edition of TR8350.2)",
+      "status": "derived"
+    },
+    {
+      "quantity": "airDensity",
+      "source": "Temperature: Lagos/Ikeja (WMO 65201) 1991–2020 mean 27.8 °C at 40 m station elevation, from Infoclimat, which computes its normals from the station's own METAR/SYNOP reports. This is NOT an official NiMet figure, and Infoclimat warns its series may have gaps. The page could not be opened when this was written (the network refused it); 27.8 °C is the figure given in docs/scopes/002-diagram-tool.md. Pressure: ISO 2533 standard atmosphere at 40 m (100845 Pa), not a measured local normal. Dry air, R = 287.05 J/(kg·K), humidity ignored. Working in research/30-place-constants.md.",
+      "url": "https://www.infoclimat.fr/climatologie/normales-records/1991-2020/lagos-ikeja/valeurs/65201.html",
+      "period": "1991–2020",
+      "status": "derived"
+    }
+  ]
+}

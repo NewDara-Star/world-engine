@@ -1,0 +1,57 @@
+{
+  "id": "tiny",
+  "name": "Tiny test town (made up for the tests)",
+  "planet": "earth",
+  "drivingSide": "right",
+  "speedUnits": "kmh",
+  "roadRuleSetId": "ng-frsc-highway-code",
+  "gravityMs2": 9.781,
+  "airDensityKgM3": 1.167,
+  "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
+  "centre": {
+    "lat": 6.63,
+    "lon": 3.36
+  },
+  "laneWidthM": 3.5,
+  "laneWidthSource": {
+    "source": "Test fixture: osm2lanes' default motor lane width (locale.rs travel_width), research/36 section 2.",
+    "url": "https://github.com/a-b-street/osm2lanes",
+    "status": "owner-choice"
+  },
+  "mapHalfSizeM": 300,
+  "mapHalfSizeSource": {
+    "source": "Test fixture: a small map, six 100 m squares across, so the tests stay fast.",
+    "url": "https://www.openstreetmap.org/copyright",
+    "status": "owner-choice"
+  },
+  "allowedVehicleClasses": [
+    "car",
+    "bike",
+    "bus"
+  ],
+  "dataSources": [
+    {
+      "name": "Hand-made test roads in the OpenStreetMap OPL format",
+      "url": "https://www.openstreetmap.org/copyright",
+      "licence": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors"
+    }
+  ],
+  "constantsNote": "Test fixture. The constants are Yaba's (places/yaba.json), copied so the fixture is a whole place file.",
+  "constantsSources": [
+    {
+      "quantity": "gravity",
+      "source": "Copied from places/yaba.json for the test fixture: WGS84 normal gravity (Somigliana formula).",
+      "url": "https://ahrs.readthedocs.io/en/latest/constants.html",
+      "period": "Not a climate value: defining constants of the WGS84 ellipsoid",
+      "status": "derived"
+    },
+    {
+      "quantity": "airDensity",
+      "source": "Copied from places/yaba.json for the test fixture: Lagos/Ikeja 1991–2020 mean temperature, ISO 2533 pressure.",
+      "url": "https://www.infoclimat.fr/climatologie/normales-records/1991-2020/lagos-ikeja/valeurs/65201.html",
+      "period": "1991–2020",
+      "status": "derived"
+    }
+  ]
+}

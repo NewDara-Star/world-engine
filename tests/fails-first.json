@@ -1,148 +1,356 @@
 {
-  "base": "6dfce056403d6872e5d52ba4320692ee7585e259",
+  "base": "119d102de1c3090ddb5dd594aab1761b69c72250",
   "files": [
-    "tests/decisions/clash.test.ts",
-    "tests/decisions/cli.test.ts",
-    "tests/decisions/log.test.ts"
+    "tests/bake/bake.test.ts",
+    "tests/bake/chunk-text.test.ts",
+    "tests/bake/geometry.test.ts",
+    "tests/bake/opl.test.ts",
+    "tests/bake/roads.test.ts",
+    "tests/camera/chase.test.ts",
+    "tests/controls/actions.test.ts",
+    "tests/controls/gamepad.test.ts",
+    "tests/controls/keyboard.test.ts",
+    "tests/controls/same-actions.test.ts",
+    "tests/controls/touch.test.ts",
+    "tests/game/frame-and-fog.test.ts",
+    "tests/game/load-and-failure.test.ts",
+    "tests/game/physics.test.ts",
+    "tests/game/streaming.test.ts",
+    "tests/measure/measure.test.ts",
+    "tests/place/centre-lane-map-size.test.ts",
+    "tests/place/slice-1-data.test.ts",
+    "tests/place/start-choice.test.ts",
+    "tests/place/vehicle-figures.test.ts",
+    "tests/site/data-files.test.ts",
+    "tests/vehicle/car-physics.test.ts",
+    "tests/vehicle/pedals-steering-rules.test.ts",
+    "tests/vehicle/settings-and-forces.test.ts",
+    "tests/world/chunk.test.ts",
+    "tests/world/grid.test.ts"
   ],
   "tests": [
     {
-      "file": "tests/decisions/clash.test.ts",
+      "file": "tests/bake/bake.test.ts",
       "reason": "the module does not exist yet",
       "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path finds D-0022 for only the owner pushes, with its date, who decided, the decision and why"
+      "file": "tests/bake/chunk-text.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path lists every decision sharing a tag, says how many, newest and then highest id first, a blank line between"
+      "file": "tests/bake/geometry.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path names the shared tag as what matched"
+      "file": "tests/bake/opl.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path runs the same through npm run decisions"
+      "file": "tests/bake/roads.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path says plainly when no decision in force shares the tags or wording, and that is not a failure"
+      "file": "tests/camera/chase.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path says what matched: the shared words"
+      "file": "tests/controls/actions.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path takes --tags=a,b the same as --tags a,b"
+      "file": "tests/controls/gamepad.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: happy path takes the tags before the text too"
+      "file": "tests/controls/keyboard.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path does not warn about a tag that is in use"
+      "file": "tests/controls/same-actions.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path on a tie between two close tags, suggests the first alphabetically: ard gives ads, not art"
+      "file": "tests/controls/touch.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path reads tags in any capitals, with spaces and empty ones between commas"
+      "file": "tests/game/frame-and-fog.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path refuses --tags given twice"
+      "file": "tests/game/load-and-failure.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path refuses --tags with nothing after it"
+      "file": "tests/game/physics.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path refuses --tags= with nothing after the equals sign, instead of checking with no tags"
+      "file": "tests/game/streaming.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
-      "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path refuses an option it does not know, naming it"
+      "file": "tests/measure/measure.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path suggests the tag with the same stem first: test for tests"
+      "test": "place centre, lane width and map size: happy path accepts lane widths of 2 m and 5 m, the ends of the range"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path warns about a misspelt tag, naming the tag in use it is closest to, and still runs"
+      "test": "place centre, lane width and map size: happy path accepts map half sizes of 100 m and 50,000 m, the ends of the range"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: idiot-proof path warns about a tag nobody uses with no suggestion when none is close"
+      "test": "place centre, lane width and map size: happy path finglas.json has a centre, a lane width and a map size, each with a source"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path puts errors on stderr and nothing on stdout"
+      "test": "place centre, lane width and map size: happy path finglas.json records its map size as the owner's choice"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path refuses a blank text"
+      "test": "place centre, lane width and map size: happy path no place file still uses the old name skyPosition"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path refuses text not in quotes, which arrives as more than one text"
+      "test": "place centre, lane width and map size: happy path yaba.json has a centre, a lane width and a map size, each with a source"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path refuses to say all clear when the text is all short or common words and no tags are given"
+      "test": "place centre, lane width and map size: happy path yaba.json records its map size as the owner's choice"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path refuses when there is no text to check"
+      "test": "place centre, lane width and map size: idiot-proof path offers laneWidthM for a misspelt laneWidth"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: sad path refuses with the usage line when the first word is not check"
+      "test": "place centre, lane width and map size: idiot-proof path refuses a lane width written as text, showing the quote marks"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: tragedy path checks a pasted wall of text and still answers"
+      "test": "place centre, lane width and map size: sad path refuses a centre off the globe, naming the field and the range"
     },
     {
-      "file": "tests/decisions/cli.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
       "reason": "an expectation does not hold yet",
-      "test": "decisions check: tragedy path never changes the decision log"
+      "test": "place centre, lane width and map size: sad path refuses a lane width of 30, a slip for 3.0, naming the range and unit"
     },
     {
-      "file": "tests/decisions/log.test.ts",
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: sad path refuses a map half size under 100 m or over 50,000 m"
+    },
+    {
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: sad path refuses a source link that is not https, and a blank source"
+    },
+    {
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: sad path refuses a source whose status is not official, derived or owner-choice: never a silent guess"
+    },
+    {
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: sad path refuses lane widths just outside the range"
+    },
+    {
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: sad path says a missing lane width source is missing: every number needs one"
+    },
+    {
+      "file": "tests/place/centre-lane-map-size.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "place centre, lane width and map size: tragedy path (a file written before scope 005) tells an old file with skyPosition exactly what it lacks: the centre, the lane width and the map size, with their sources"
+    },
+    {
+      "file": "tests/place/slice-1-data.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/place/start-choice.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: happy path accepts the hatchback, a wheeled car"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: happy path gives every figure of the hatchback exactly one source, official, derived or owner-choice"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: happy path lists the forward gears first gear first, each taller than the one before"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: happy path records the gear change time as the owner's choice"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: happy path writes speeds in metres per second, never km/h: the published tests are from and to 100 km/h"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) measures the turning circle at the outer front wheel: just over twice (wheelbase plus half the track) is accepted, just under is refused"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses a centre of mass above the roof"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses a track wider than the car"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses a turning circle given as the radius, too tight for the wheelbase and track"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses a wheel taller than the car"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses a wheelbase longer than the car"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses an empty list of forward gears"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses driving figures on a vehicle that does not move on wheels, which has no driving physics yet"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) refuses forward gears typed out of order, naming both gears"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: idiot-proof path (slipped digits that would make a car feel wrong with no clue why) reports several mistakes in one pass"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) refuses a driven axle it does not know"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) refuses a figure written as text, showing the quote marks"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) refuses a mass of 0, which no car has and which would divide by zero in the physics"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) refuses a share outside 0 to 1"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) refuses a source with a status that is a guess"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) says a wheeled vehicle without its driving figures is missing them"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) says which figure has no source"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: sad path (file, line, what to fix) says which figure has two sources, pointing at the second"
+    },
+    {
+      "file": "tests/place/vehicle-figures.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "vehicle figures: tragedy path (a vehicle file from before scope 005) tells an old file with no figures exactly which groups it lacks"
+    },
+    {
+      "file": "tests/site/data-files.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/vehicle/car-physics.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/vehicle/pedals-steering-rules.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/vehicle/settings-and-forces.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/world/chunk.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/world/grid.test.ts",
       "reason": "the module does not exist yet",
       "test": "(the whole file)"
     }

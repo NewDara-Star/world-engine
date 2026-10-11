@@ -32,7 +32,7 @@ rather than guess one.
 ## D-0003
 
 - Date: 2026-10-10
-- Decision: The first real place is the owner's home street, Babatunde Ladiga Street, Omole Phase 1, Lagos, 1 to 2 km around it.
+- Decision: The first real place is the owner's home street, Babatunde Ladega Street, Omole Phase 1, Lagos, 1 to 2 km around it.
 - Why: A place the owner knows street by street.
 - Decided by: owner
 - Tags: places, roadmap

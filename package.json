@@ -13,20 +13,28 @@
     "check": "npm run typecheck && npm run lint && npm run modules && npm run test",
     "diagrams": "tsx tools/diagrams/cli.ts",
     "modules": "depcruise --config .dependency-cruiser.js src tools",
-    "decisions": "tsx tools/decisions/cli.ts"
+    "decisions": "tsx tools/decisions/cli.ts",
+    "bake": "tsx tools/bake/cli.ts",
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/node": "22.20.5",
+    "@types/three": "0.186.0",
     "dependency-cruiser": "18.5.0",
     "eslint": "10.12.0",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "typescript-eslint": "8.71.1",
+    "vite": "8.3.4",
     "vitest": "5.0.3"
   },
   "dependencies": {
+    "@dimforge/rapier3d-compat": "0.21.0",
     "jsonc-parser": "3.3.1",
-    "stemmer": "2.0.1"
+    "stemmer": "2.0.1",
+    "three": "0.186.1"
   }
 }

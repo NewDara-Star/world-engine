@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#bfd8ee" />
+    <title>world-engine</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #bfd8ee;
+        font-family: system-ui, sans-serif;
+        color: #1d2733;
+      }
+      #game {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      /* Plain-words messages: the loading line, a failure, a notice, the
+         portrait hint and the measure panel. Notices and the measure panel
+         ignore touches so they never swallow a pedal press (approver's F15). */
+      #loading,
+      #notice,
+      #portrait-hint {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px 14px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 16px;
+        max-width: 90vw;
+        text-align: center;
+      }
+      #loading {
+        top: 45%;
+      }
+      #notice {
+        top: 12px;
+        pointer-events: none;
+      }
+      #portrait-hint {
+        top: 56px;
+        pointer-events: none;
+        font-size: 14px;
+      }
+      #panel {
+        position: fixed;
+        inset: 0;
+        padding: 24px;
+        overflow: auto;
+        background: #f4f6f8;
+        font-size: 17px;
+        line-height: 1.45;
+      }
+      #panel h1 {
+        font-size: 22px;
+      }
+      #panel p {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      #measure {
+        position: fixed;
+        left: 8px;
+        bottom: 8px;
+        max-width: 60vw;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        pointer-events: none;
+      }
+      /* Thumb controls (approver's F11): no scrolling or zooming under the
+         thumbs, no text selection, no long-press menu. */
+      #controls {
+        position: fixed;
+        inset: 0;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      #controls [data-role="stick"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+      }
+      #controls button {
+        position: absolute;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        color: #1d2733;
+        font: 600 15px system-ui, sans-serif;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      #controls [data-role="accelerate"] {
+        right: max(16px, env(safe-area-inset-right));
+        bottom: max(16px, env(safe-area-inset-bottom));
+        width: 104px;
+        height: 104px;
+      }
+      #controls [data-role="brake"] {
+        right: calc(max(16px, env(safe-area-inset-right)) + 116px);
+        bottom: max(16px, env(safe-area-inset-bottom));
+        width: 88px;
+        height: 88px;
+      }
+      #controls [data-role="flipUpright"] {
+        right: max(16px, env(safe-area-inset-right));
+        bottom: calc(max(16px, env(safe-area-inset-bottom)) + 120px);
+        width: 72px;
+        height: 72px;
+        border-radius: 14px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+    <div id="controls" hidden>
+      <div data-role="stick" aria-label="Steer: put your left thumb down and slide it left or right"></div>
+      <button type="button" data-role="flipUpright">Flip upright</button>
+      <button type="button" data-role="brake">Brake</button>
+      <button type="button" data-role="accelerate">Go</button>
+    </div>
+    <div id="loading" hidden></div>
+    <div id="notice" hidden role="status"></div>
+    <div id="portrait-hint" hidden></div>
+    <div id="measure" hidden></div>
+    <div id="panel" hidden role="alert"></div>
+    <noscript>The game needs JavaScript switched on in the browser.</noscript>
+    <script type="module" src="./src/game/main.ts"></script>
+  </body>
+</html>

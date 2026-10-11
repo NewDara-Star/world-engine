@@ -108,6 +108,38 @@ export function requireNumberAtLeast(min: number, unit: string): Parser<number> 
   return checkNumberAtLeast;
 }
 
+// For numbers that are never 0 or below and have no real ceiling, such as a
+// car's mass: 0 would divide by zero in the physics, and a made-up ceiling
+// would be a guess (scope 005).
+export function requireNumberAbove(min: number, unit?: string): Parser<number> {
+  function checkNumberAbove(value: unknown, path: FieldPath): Parsed<number> {
+    if (typeof value === "number" && Number.isFinite(value) && value > min) return accept(value);
+    return reject(value, path, unit === undefined ? `a number above ${min}` : `a number above ${min} ${unit}`);
+  }
+  return checkNumberAbove;
+}
+
+// For numbers that wrap round, such as a compass heading: 360 degrees is 0, so
+// a heading is from 0 up to but not including 360 (scope 005, the map index).
+export function requireNumberFromBelow(min: number, below: number, unit: string): Parser<number> {
+  function checkNumberFromBelow(value: unknown, path: FieldPath): Parsed<number> {
+    if (typeof value === "number" && Number.isFinite(value) && value >= min && value < below) return accept(value);
+    return reject(value, path, `a number from ${min} up to but not including ${below} ${unit}`);
+  }
+  return checkNumberFromBelow;
+}
+
+// For a yes-or-no field, such as whether a road is one-way. Text such as
+// "yes" or "true" in quote marks is refused, so the file means one thing.
+export function requireTrueOrFalse(): Parser<boolean> {
+  return checkTrueOrFalse;
+}
+
+function checkTrueOrFalse(value: unknown, path: FieldPath): Parsed<boolean> {
+  if (typeof value === "boolean") return accept(value);
+  return reject(value, path, "true or false, without quote marks");
+}
+
 function rangeInWords(min: number, max: number, unit: string | undefined): string {
   if (unit !== undefined) return `a number from ${min} to ${max} ${unit}`;
   return `a number from ${min} to ${max}`;
@@ -166,7 +198,11 @@ function valueFromOneCheck<T>(result: Parsed<T>): T[] {
 }
 
 type Shape = Record<string, Parser<unknown>>;
-export type Fields<S extends Shape> = { [K in keyof S]: Infer<S[K]> };
+// The fields named in O may be left out of the file (scope 005: a vehicle's
+// driving figures exist only for wheeled vehicles).
+export type Fields<S extends Shape, O extends keyof S = never> = { [K in Exclude<keyof S, O>]: Infer<S[K]> } & {
+  [K in O]?: Infer<S[K]>;
+};
 
 // One field's result, kept with its name.
 interface FieldResult {
@@ -186,8 +222,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 // Own fields only (Object.hasOwn, ECMA-262): `in` would also see names every
 // object inherits, such as `constructor`, and take them as present (scope 002b, 2a).
-function missingFields(record: Record<string, unknown>, shape: Shape): string[] {
-  return Object.keys(shape).filter((name) => !Object.hasOwn(record, name));
+// A field that may be left out is never missing.
+function missingFields(record: Record<string, unknown>, shape: Shape, optional: readonly string[]): string[] {
+  return Object.keys(shape)
+    .filter((name) => !Object.hasOwn(record, name))
+    .filter((name) => !optional.includes(name));
 }
 
 // The file's values come from jsonc-parser's getNodeValue, which builds objects
@@ -223,13 +262,16 @@ function problemsForMissingFields(missing: readonly string[], unknowns: readonly
     .map((name) => problemAt(path, `${labelForPath(pathToField(path, name))} is missing.`));
 }
 
-export function requireRecord<S extends Shape>(shape: S): Parser<Fields<S>> {
+export function requireRecord<S extends Shape, const O extends keyof S & string = never>(
+  shape: S,
+  optional: readonly O[] = [],
+): Parser<Fields<S, NoInfer<O>>> {
   // The shape's own fields are walked, and each is looked up in the record only
   // if the record has it as its own field, so a name from the file is never
   // used to look up a checker (approver round 2, checkRecord).
-  function checkRecord(value: unknown, path: FieldPath): Parsed<Fields<S>> {
+  function checkRecord(value: unknown, path: FieldPath): Parsed<Fields<S, O>> {
     if (!isRecord(value)) return reject(value, path, "an object in curly brackets");
-    const missing = missingFields(value, shape);
+    const missing = missingFields(value, shape, optional);
     const unknowns = unknownFieldsWithGuesses(value, shape, missing);
     const checked: FieldResult[] = Object.entries(shape)
       .filter(([name]) => Object.hasOwn(value, name))
@@ -242,7 +284,7 @@ export function requireRecord<S extends Shape>(shape: S): Parser<Fields<S>> {
     if (problems.length > 0) {
       return { ok: false, problems, crossCheckWaited: checked.some((field) => field.result.crossCheckWaited) };
     }
-    return accept(Object.fromEntries(checked.flatMap(nameAndValueFromOneField)) as Fields<S>);
+    return accept(Object.fromEntries(checked.flatMap(nameAndValueFromOneField)) as Fields<S, O>);
   }
   return checkRecord;
 }
@@ -273,40 +315,53 @@ interface RuleOutcome {
 // reads are good, so every broken rule is listed in one report and a rule
 // waiting for its fields never holds back another (scope 002b, 2f; approver
 // round 2, F1).
-export function addCrossFieldRules<S extends Shape>(shape: S, rules: readonly CrossFieldRule<Fields<S>>[]): Parser<Fields<S>> {
-  const checkPlainRecord = requireRecord(shape);
-  function checkFieldsThenRules(value: unknown, path: FieldPath): Parsed<Fields<S>> {
+export function addCrossFieldRules<S extends Shape, const O extends keyof S & string = never>(
+  shape: S,
+  rules: readonly CrossFieldRule<Fields<S, NoInfer<O>>>[],
+  optional: readonly O[] = [],
+): Parser<Fields<S, NoInfer<O>>> {
+  const checkPlainRecord = requireRecord(shape, optional);
+  function checkFieldsThenRules(value: unknown, path: FieldPath): Parsed<Fields<S, O>> {
     const plain = checkPlainRecord(value, path);
     const outcomes = rules.map((rule) => problemsFromOneRule(rule, plain, value, path));
     const problems = [...problemsFromOneCheck(plain), ...outcomes.flatMap((outcome) => outcome.problems)];
     if (problems.length === 0) return plain;
     return { ok: false, problems, crossCheckWaited: plain.crossCheckWaited || outcomes.some((outcome) => outcome.waited) };
   }
-  function problemsFromOneRule(rule: CrossFieldRule<Fields<S>>, plain: Parsed<Fields<S>>, value: unknown, path: FieldPath): RuleOutcome {
+  function problemsFromOneRule(rule: CrossFieldRule<Fields<S, O>>, plain: Parsed<Fields<S, O>>, value: unknown, path: FieldPath): RuleOutcome {
     if (plain.ok) {
       const found = rule.problems(plain.value);
       return { problems: found.map((problem) => problemAt([...path, ...problem.path], problem.sentence)), waited: false };
     }
-    const fields = valuesReadByRule(value, shape, rule.reads, path);
+    const fields = valuesReadByRule(value, shape, rule.reads, path, optional);
     if (fields === undefined) return { problems: [], waited: true };
     // Safe: valuesReadByRule returns every field the rule reads, each checked
-    // by its own checker, and the rule reads no other.
-    const found = rule.problems(fields as Fields<S>);
+    // by its own checker (or absent where it may be left out), and the rule
+    // reads no other.
+    const found = rule.problems(fields as Fields<S, O>);
     return { problems: found.map((problem) => problemAt([...path, ...problem.path], problem.sentence)), waited: false };
   }
   return checkFieldsThenRules;
 }
 
 // The fields a rule reads, each checked by its own checker; nothing if any is
-// missing or wrong, so the rule never trips over a broken value.
-function valuesReadByRule(value: unknown, shape: Shape, reads: readonly string[], path: FieldPath): Record<string, unknown> | undefined {
+// missing or wrong, so the rule never trips over a broken value. A field that
+// may be left out and is absent is handed to the rule as absent (scope 005).
+function valuesReadByRule(
+  value: unknown,
+  shape: Shape,
+  reads: readonly string[],
+  path: FieldPath,
+  optional: readonly string[],
+): Record<string, unknown> | undefined {
   if (!isRecord(value)) return undefined;
   const checked: FieldResult[] = Object.entries(shape)
     .filter(([name]) => reads.includes(name))
     .filter(([name]) => Object.hasOwn(value, name))
     .map(([name, checker]) => ({ name, result: checker(value[name], pathToField(path, name)) }));
   const good = checked.flatMap(nameAndValueFromOneField);
-  if (good.length !== reads.length) return undefined;
+  const absentButOptional = reads.filter((name) => optional.includes(name)).filter((name) => !Object.hasOwn(value, name));
+  if (good.length + absentButOptional.length !== reads.length) return undefined;
   return Object.fromEntries(good);
 }
 
@@ -369,4 +424,23 @@ function shortIdSuggestion(text: string): string | undefined {
   const dashed = plain.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   if (SHORT_ID.test(dashed) && dashed !== text) return dashed;
   return undefined;
+}
+
+// The owner's data rule ("Where a number comes from"): each number has exactly
+// one source, so nobody has to guess which one it came from (scope 002b, 2f).
+// One rule for a place's constants and a vehicle's figures (scope 005). Paths
+// are inside the object; the cross-field rule puts the object's path in front.
+export function sourceCountProblem(quantity: string, sources: readonly { quantity: string }[], listName: string, thing: string): Problem[] {
+  const positions = sources
+    .map((source, index) => ({ quantity: source.quantity, index }))
+    .filter((source) => source.quantity === quantity)
+    .map((source) => source.index);
+  if (positions.length === 0) return [problemAt([listName], `\`${listName}\` has no source for \`${quantity}\`.`)];
+  if (positions.length === 1) return [];
+  return [
+    problemAt(
+      [listName, ...positions.slice(1, 2)],
+      `\`${listName}\` has ${positions.length} sources for \`${quantity}\`; each ${thing} needs exactly one.`,
+    ),
+  ];
 }

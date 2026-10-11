@@ -8,9 +8,21 @@
   "gravityMs2": 9.8137,
   "airDensityKgM3": 1.248,
   "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
-  "skyPosition": {
+  "centre": {
     "lat": 53.396,
     "lon": -6.296
+  },
+  "laneWidthM": 3,
+  "laneWidthSource": {
+    "source": "Design Manual for Urban Roads and Streets (DMURS) v1.1, 2019, section 4.4.1: lanes on arterial and link streets 2.75 to 3.5 m, preferred 3.0 to 3.25 m (read in full for research/world-drive/25-roads-look.md). 3.0 m is the lower preferred width; research/world-drive/28-lane-widths.md measured a median of 3.57 m kerb-to-kerb per lane on Finglas residential streets, which includes parking and edge strips.",
+    "url": "https://www.dmurs.ie/",
+    "status": "derived"
+  },
+  "mapHalfSizeM": 1500,
+  "mapHalfSizeSource": {
+    "source": "The owner's choice, proposed by the coder (Scope 005, slice 1) and awaiting his yes: 1.5 km in every direction from the centre, the same reach as Omole (Scope 005, 'about 1.5 km in every direction'). Finglas is not baked yet.",
+    "url": "https://www.openstreetmap.org/copyright",
+    "status": "owner-choice"
   },
   "allowedVehicleClasses": [
     "car",
