@@ -1,6 +1,6 @@
 # Role: note-taker
 
-Decided by Daramola on 2026-10-12 (Scope 004 item 5).
+Decided by Daramola on 2026-10-11 (Scope 004 item 5).
 
 You are a fresh Sonnet session. The orchestrator gives you one exchange with
 the owner, as text, in which the owner decided something. Your job is to

@@ -185,7 +185,7 @@ rather than guess one.
 
 - Date: 2026-10-10
 - Decision: Only the owner pushes; sessions never push.
-- Why: Not recorded in the handover.
+- Why: The owner keeps control of what reaches GitHub; the cloud sessions also have no push access.
 - Decided by: owner
 - Tags: process
 
@@ -209,7 +209,7 @@ rather than guess one.
 
 - Date: 2026-10-11
 - Decision: The place checker reports every mistake in one pass, with file and line, "did you mean", units, and found versus needed; exactly one source per physics constant; a field written twice is reported.
-- Why: Not recorded in the handover.
+- Why: Place files will be written by non-coders (the owner, later partners or players), so the checker must say exactly where and what to fix, in one round.
 - Decided by: owner
 - Tags: places, tooling
 
@@ -217,22 +217,78 @@ rather than guess one.
 
 - Date: 2026-10-11
 - Decision: Anything doable on a wheel, a gamepad or a keyboard is doable on a touchscreen, simplified where two thumbs need it.
-- Why: Not recorded in the handover.
+- Why: The phone is the reference device, so no action may need a wheel, gamepad or keyboard.
 - Decided by: owner
 - Tags: controls, device
 
 ## D-0027
 
-- Date: 2026-10-12
+- Date: 2026-10-11
 - Decision: Physics ranges are set per planet, in planet files (Scope 002c).
-- Why: Not recorded in the handover.
+- Why: A wide fixed range (0 to 100 m/s²) let a slipped digit like 98 through; real per-planet ranges catch it without blocking Mars later.
 - Decided by: owner
 - Tags: physics, places
 
 ## D-0028
 
-- Date: 2026-10-12
+- Date: 2026-10-11
 - Decision: Tests are written blind by a separate session and fail first; an Opus coder cannot change them; decisions live in docs/DECISIONS.md (Scope 004).
 - Why: See Scope 004, "Why the game needs it": the session that writes code should not mark its own homework, and decisions spread across chats get lost.
 - Decided by: owner
 - Tags: process, tests, decisions
+
+## D-0029
+
+- Date: 2026-10-11
+- Decision: Common-sense recommendations (one clearly right answer) are decided by the approver or orchestrator and listed; only real product trade-offs, with pros and cons, go to the owner.
+- Why: The owner's time goes to product decisions, not to fixes nobody would argue with.
+- Decided by: owner
+- Tags: process, approvals
+
+## D-0030
+
+- Date: 2026-10-11
+- Decision: 3D models are made with Meshy on a paid plan (owned, private, commercial use), props and landmarks first; Hunyuan3D-2 is not used; Tripo is not needed as well.
+- Why: Hunyuan3D-2's licence excludes the EU and UK, where the owner lives and ships; Meshy's free-plan models need a CC-BY credit, the paid plan's do not; cars wait for Scope 003's answer.
+- Decided by: owner (on the orchestrator's recommendation)
+- Tags: art, assets, licences
+
+## D-0031
+
+- Date: 2026-10-11
+- Decision: Never feed a 3D generator a photo of a real car; inputs are our own sketches or invented designs.
+- Why: Generators copy brand shapes and badges, which breaks D-0017 (invented makes and models).
+- Decided by: orchestrator
+- Tags: art, assets, vehicles
+
+## D-0032
+
+- Date: 2026-10-11
+- Decision: Sat nav voices are local to each place and set in the place file (Dublin voice in Finglas, Lagos voice in Omole, mission-control radio on Mars); generated voices are fine with a commercial licence; the owner judges the accent; never a copy of a real person's voice.
+- Why: The place should sound like itself; the engine stays place-agnostic.
+- Decided by: owner
+- Tags: audio, places
+
+## D-0033
+
+- Date: 2026-10-11
+- Decision: Game sounds come from open libraries (CC0 or CC-BY, credited on the About page) and generated effects; no field recording in Lagos is needed.
+- Why: The owner is in Dublin with nobody recording in Lagos.
+- Decided by: owner
+- Tags: audio, licences
+
+## D-0034
+
+- Date: 2026-10-11
+- Decision: If maths shapes win (Scope 003), the mesh-to-maths tool is trained on every kind of asset, each family practised on its own, marked on the shape drawn.
+- Why: Buildings, props and landmarks benefit as much as cars.
+- Decided by: owner
+- Tags: art, assets, research
+
+## D-0035
+
+- Date: 2026-10-11
+- Decision: Speed tests compare how time grows with size, not a fixed wall-clock limit, plus a generous cap.
+- Why: The 1-second test failed on unchanged code when the build machine slowed; it measured the machine, not the code.
+- Decided by: orchestrator
+- Tags: tests

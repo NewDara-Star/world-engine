@@ -98,7 +98,7 @@ only joins pieces cites the API it uses.
 
 ## How a change is built
 
-Owner, 2026-10-12 (Scope 004). Read `docs/DECISIONS.md` before acting; never
+Owner, 2026-10-11 (Scope 004). Read `docs/DECISIONS.md` before acting; never
 contradict an entry without the owner.
 
 Every game change goes: approved design, then tests written blind by a
@@ -260,7 +260,7 @@ through. Fix the thing.
 - `npm run diagrams` redraws `docs/flows/`; `npm run modules` checks that
   engine code does not import `places/` (part of `npm run check`).
 - Place and vehicle file formats live in `src/place/`; examples in `places/`.
-- Do not push unless the owner or the orchestrating session says so.
+- Never push. Only the owner pushes, from his own machine (D-0022).
 
 ## Talking to the owner
 

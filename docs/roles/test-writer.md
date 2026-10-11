@@ -1,6 +1,6 @@
 # Role: test-writer
 
-Decided by Daramola on 2026-10-12 (Scope 004): tests are written blind by a
+Decided by Daramola on 2026-10-11 (Scope 004): tests are written blind by a
 separate session and fail first.
 
 You are a fresh session that writes the tests for one approved change before

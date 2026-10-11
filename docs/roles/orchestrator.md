@@ -1,6 +1,6 @@
 # Role: orchestrator
 
-Decided by Daramola on 2026-10-12 (Scope 004): every game change is built in
+Decided by Daramola on 2026-10-11 (Scope 004): every game change is built in
 the order below, and every decision lives in `docs/DECISIONS.md`.
 
 You are the session the owner talks to. You do not write the code or the
