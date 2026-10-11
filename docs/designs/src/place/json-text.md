@@ -1,8 +1,10 @@
 # src/place/json-text.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
+Status: draft
 
-New in scope 002b (item 2d). Reads the raw text of a place or vehicle file once, with jsonc-parser 3.3.1 (MIT, see `research/33-json-lines.md`), and keeps where every field sits so each message can name its line. The pictures drawn from the code will be in `docs/flows/src/place/json-text.md`.
+New in scope 002b (item 2d). Reads the raw text of a place, vehicle or planet file once, with jsonc-parser 3.3.1 (MIT, see `research/33-json-lines.md`), and keeps where every field sits so each message can name its line. The pictures drawn from the code will be in `docs/flows/src/place/json-text.md`.
+
+Changed for scope 002c: two sentences in the table below now say "place, vehicle or planet file"; no step changed.
 
 Round 2 (after the approver's report): a byte-order mark, an empty file and a file nested too deeply are each handled; a line break is defined; every broken-JSON sentence is written out below; and a field written twice is reported, with every message pointing at the copy that is used. What jsonc-parser does in each case was run, not guessed: `research/33-json-lines.md`, "Round 2 measurements".
 
@@ -231,8 +233,8 @@ A message reads `yaba.json line 8:` and then the words in the last column, which
 | EndOfFileExpected | Something after the last `}`: an extra `}`, or a second object. | The line where the extra part starts. | is not valid JSON here: the file should end before this. A file holds one object, from its first `{` to its matching `}`, and something comes after it, such as an extra `}` or a second object. |
 | InvalidCommentToken | A comment, `// …` or `/* … */`. | That line. | is not valid JSON here: comments (`//` or `/* */`) are not allowed in this file; take the comment out. |
 | UnexpectedEndOfComment | A `/*` comment never closed. With our strict reading the comment is refused first, so this should not appear; it has a sentence so no code is ever shown. | That line. | is not valid JSON here: a comment `/*` is never closed, and comments are not allowed in this file; take it out. |
-| empty (ours) | The file is empty, or only spaces and blank lines. | Line 1. | is empty. A place or vehicle file starts with `{` and ends with `}`. |
-| nested too deeply (ours) | Brackets inside brackets thousands deep, so the reader runs out of room (about 2,560 deep in Node 22; a browser may differ). | Line 1. | has brackets nested too deeply to read: thousands of `{` or `[` inside one another. A place or vehicle file needs only a few levels. |
+| empty (ours) | The file is empty, or only spaces and blank lines. | Line 1. | is empty. A place, vehicle or planet file starts with `{` and ends with `}`. |
+| nested too deeply (ours) | Brackets inside brackets thousands deep, so the reader runs out of room (about 2,560 deep in Node 22; a browser may differ). | Line 1. | has brackets nested too deeply to read: thousands of `{` or `[` inside one another. A place, vehicle or planet file needs only a few levels. |
 | (any kind not in this table) | Only if a later jsonc-parser adds a new code. | Where the reader says. | is not valid JSON here. |
 
 A byte-order mark at the start is no longer an error at all (see `readJsonText`), so it has no row.

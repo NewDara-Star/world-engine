@@ -1,12 +1,14 @@
 # src/place/check-file.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
+Status: draft
 
-New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/flows/src/place/check-file.md`.
+New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places, vehicles and planets, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/flows/src/place/check-file.md`.
+
+Changed for scope 002c: wording only, now that planet files are checked here too; no step changed.
 
 ## validateJsonFile
 
-Why the game needs it: whoever writes a place file gets one report naming every mistake by file and line, whether the file is a place or a vehicle. A field written twice is reported in the same report, first, because it explains which copy the other messages are about.
+Why the game needs it: whoever writes a place file gets one report naming every mistake by file and line, whether the file is a place, a vehicle or a planet. A field written twice is reported in the same report, first, because it explains which copy the other messages are about.
 
 ```mermaid
 flowchart TD
@@ -18,7 +20,7 @@ flowchart TD
   d["run the checker on the values, starting at the top of the file"]
   r["find problemsForRepeatedFields in the whole tree, starting at the top of the file; if that walk runs out of room, the one problem is: nested too deeply, at line 1"]
   e{"is there any problem, from either"}
-  f(["return success with the checked place or vehicle"])
+  f(["return success with the checked place, vehicle or planet"])
   g["make messageForProblem for every problem: the repeated fields first, then the checker's"]
   h{"did any cross-check wait because a field it reads is wrong"}
   i["end the report with: the file name, then Fix these first; some cross-checks run after."]

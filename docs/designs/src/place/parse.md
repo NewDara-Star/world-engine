@@ -1,10 +1,12 @@
 # src/place/parse.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, rounds in docs/reviews/002b/), with the owner's decisions of 2026-10-11.
+Status: draft
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/parse.md`.
 
 Redrawn for scope 002b: new names (item 1) and the new behaviour (item 2). What changed, design by design, is in `docs/reviews/002b/CHANGES.md`.
+
+Changed for scope 002c: a number checked against a range no longer gets the ten-times hint (item 4; the hint moved to the planet check in `place.md`, the only place it is right); `tenTimesTooBigHint` leaves this file; two new checkers, `requireNumberAtLeast` and `requireKnownId`. What changed is in `docs/reviews/002c/CHANGES.md`.
 
 How the pieces fit, in plain words:
 
@@ -163,7 +165,7 @@ flowchart TD
 
 ## requireNumberBetween
 
-Why the game needs it: physical numbers like gravity must be real numbers in a sensible range, in a stated unit.
+Why the game needs it: numbers with fixed limits, such as a latitude (−90 to 90 degrees), must be real numbers in that range, in a stated unit.
 
 ```mermaid
 flowchart TD
@@ -174,26 +176,48 @@ flowchart TD
 
 ## requireNumberBetween > checkNumberInRange
 
-Why the game needs it: says the range and the unit, and catches the common slip of a misplaced decimal point.
+Why the game needs it: says the range and the unit. It gives no "Did you mean": a latitude of 91 is not 9.1 with the point in the wrong place, and a wrong hint is worse than none (scope 002c, item 4). The hint for a slipped point is offered only for physics constants, against their planet's range (`place.md`, `decimalPointSlipHint`).
 
 ```mermaid
 flowchart TD
   s(["checkNumberInRange a value at a path"])
-  a{"is it a number, and finite"}
-  b(["return reject: wanted rangeInWords, no hint"])
-  c{"is it at least the minimum and at most the maximum"}
+  a{"is it a number, finite, at least the minimum and at most the maximum"}
   d(["return accept the value"])
-  e(["return reject: wanted rangeInWords, with tenTimesTooBigHint as the hint"])
+  e(["return reject: wanted rangeInWords, no hint"])
   s --> a
-  a -->|"no"| b
-  a -->|"yes"| c
-  c -->|"yes"| d
-  c -->|"no"| e
+  a -->|"yes"| d
+  a -->|"no"| e
+```
+
+## requireNumberAtLeast
+
+Why the game needs it: some numbers only have a floor of their own, such as a place's gravity (never below 0) whose real range comes from its planet, or a planet range's own `min` and `max`. A place's gravity of 980 must reach the planet check, which knows the right hint, instead of being stopped early by a made-up ceiling.
+
+```mermaid
+flowchart TD
+  s(["requireNumberAtLeast a minimum and a unit"])
+  a(["return checkNumberAtLeast"])
+  s --> a
+```
+
+## requireNumberAtLeast > checkNumberAtLeast
+
+Why the game needs it: says the floor and the unit, such as "a number of at least 0 m/s²", when the value is not a number (text such as `"9.8"`, or nothing) or is below the floor.
+
+```mermaid
+flowchart TD
+  s(["checkNumberAtLeast a value at a path"])
+  a{"is it a number, finite, and at least the minimum"}
+  b(["return accept the value"])
+  c(["return reject: wanted a number of at least the minimum, then the unit; no hint"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
 ```
 
 ## rangeInWords
 
-Why the game needs it: the place-maker sees the range and the unit together, such as "a number from 1 to 30 m/s²".
+Why the game needs it: the place-maker sees the range and the unit together, such as "a number from -90 to 90 degrees".
 
 ```mermaid
 flowchart TD
@@ -204,23 +228,6 @@ flowchart TD
   s --> a
   a -->|"yes"| b
   a -->|"no"| c
-```
-
-## tenTimesTooBigHint
-
-Why the game needs it: 98 for gravity is almost always 9.8 with the point in the wrong place; we say so, and only then.
-
-```mermaid
-flowchart TD
-  s(["tenTimesTooBigHint for a number outside the range"])
-  a["divide it by ten, written without rounding noise, so 98 gives 9.8"]
-  b{"is that at least the minimum and at most the maximum"}
-  c(["return that number as the hint"])
-  d(["return nothing: no hint"])
-  s --> a
-  a --> b
-  b -->|"yes"| c
-  b -->|"no"| d
 ```
 
 ## requireOneOf
@@ -265,6 +272,64 @@ flowchart TD
   c -->|"no"| f
   d --> e
 ```
+
+## requireKnownId
+
+Why the game needs it: some ids name another file, such as a place's `planet` naming `planets/earth.json`. A slip there (`eart`) must be caught with a "Did you mean `earth`?", the same as a misspelt word, because a place on a planet that does not exist cannot be checked against anything. The kind of thing is given in words, one and many (`planet`, `planets`), so the message reads as English and the engine names no particular planet.
+
+```mermaid
+flowchart TD
+  s(["requireKnownId with the kind in words, one and many, and the known ids"])
+  a["make the short-id checker once, with requireShortId"]
+  b(["return checkIsKnownId"])
+  s --> a
+  a --> b
+```
+
+## requireKnownId > checkIsKnownId
+
+Why the game needs it: first the id must be written the id way (so `Earth` gets "Did you mean `earth`?" from the id rule); then it must be one we know. The message says plainly that there is no such thing, offers the closest known id when there is exactly one close, and otherwise lists the known ids, so the place-maker can pick one. With none known at all it says so, rather than printing an empty list.
+
+```mermaid
+flowchart TD
+  s(["checkIsKnownId a value at a path"])
+  a["run the short-id checker on the value"]
+  b{"did it pass"}
+  c(["return its failure as it is"])
+  d{"is the id one of the known ids"}
+  e(["return accept the id"])
+  f["start the sentence: labelForPath, is, the id in back-quotes; there is no such, the kind"]
+  g["find closestWord to the id among the known ids"]
+  h{"is there a closest word"}
+  i["add: a full stop, then: Did you mean, that word in back-quotes, question mark"]
+  j{"are any ids known at all"}
+  k["add: a full stop, then: The known, the kind in the plural, are, every known id in back-quotes, joined by commas, and a full stop"]
+  l["add: a comma, then: and no, the kind, file was found, and a full stop"]
+  m(["return failure with problemAt the path with that sentence, no cross-check waiting"])
+  s --> a
+  a --> b
+  b -->|"no"| c
+  b -->|"yes"| d
+  d -->|"yes"| e
+  d -->|"no"| f
+  f --> g
+  g --> h
+  h -->|"yes"| i
+  h -->|"no"| j
+  j -->|"yes"| k
+  j -->|"no"| l
+  i --> m
+  k --> m
+  l --> m
+```
+
+Examples, for a place's `planet`:
+
+> yaba.json line 4: `planet` is `eart`; there is no such planet. Did you mean `earth`?
+>
+> yaba.json line 4: `planet` is `mars`; there is no such planet. The known planets are `earth`.
+>
+> yaba.json line 4: `planet` is `earth`; there is no such planet, and no planet file was found.
 
 ## requireListOf
 

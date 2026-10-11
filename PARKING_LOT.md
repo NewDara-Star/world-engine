@@ -34,3 +34,7 @@ never into the scope being built. Each is looked at when a scope is planned.
 - "Did you mean" ten-times hint: with today's wide ranges it is often wrong
   (gravity 980 gives "Did you mean 98?", latitude 91 gives "9.1?"); offer it
   only when the tenth is near a typical value, or after the ranges tighten.
+- A planet's (and a place's) `id` must match its file name, so `planet: "earth"`
+  always means `planets/earth.json`.
+- "Did you mean" for a constant ten times too small (0.98 for 9.8 gravity).
+- The planet loader refuses two planet files with the same `id`.
