@@ -52,19 +52,25 @@ flowchart TD
 
 ## closestWord
 
-Why the game needs it: picks the one word to suggest, or none when nothing is close or two words are equally close, so the hint never sends someone the wrong way.
+Why the game needs it: picks the one word to suggest, or none when nothing is close or two words are equally close, so the hint never sends someone the wrong way. Words whose length is too different are skipped before measuring, so a whole paragraph pasted into a field cannot build a huge table and slow the check down; this changes no answer, because the distance between two words is never smaller than the difference in their lengths.
 
 ```mermaid
 flowchart TD
   s(["closestWord for what was typed, among the words we know"])
-  a["measure editDistance from what was typed to each word we know"]
-  b["keep only the words within their closeEnoughLimit"]
-  c{"is exactly one word the closest of those kept"}
-  d(["return that word"])
-  e(["return nothing: no hint"])
+  a{"for each word we know"}
+  b{"does its length differ from what was typed by more than its closeEnoughLimit"}
+  c["measure editDistance from what was typed to the word"]
+  d["keep the word if the distance is within its closeEnoughLimit"]
+  e{"is exactly one word the closest of those kept"}
+  f(["return that word"])
+  g(["return nothing: no hint"])
   s --> a
-  a --> b
-  b --> c
-  c -->|"yes"| d
-  c -->|"no"| e
+  a -->|"next word"| b
+  b -->|"yes: skip it, it cannot be close"| a
+  b -->|"no"| c
+  c --> d
+  d --> a
+  a -->|"done"| e
+  e -->|"yes"| f
+  e -->|"no"| g
 ```

@@ -46,8 +46,8 @@ cross-check waited. The file name and line are added once, at the end
 | object > inner 1 | requireRecord > checkRecord | Yes: missing and unknown worked out first; a field that is absent is never handed to its checker (2c). |
 | object > inner 1 > inner 1 | problemsFromOneField | No (now top-level). |
 | object > inner 1 > inner 2 | nameAndValueFromOneField | No (now top-level). |
-| refine | addCrossFieldRule | Yes: takes the shape and the fields the rule reads, not a finished checker (2f). |
-| refine > inner 1 | addCrossFieldRule > checkFieldsThenRule | Yes: the rule also runs when other fields are wrong, as long as its own fields are good; otherwise marks "waited" (2f). |
+| refine | addCrossFieldRules | Yes: takes the shape and the fields the rule reads, not a finished checker (2f). |
+| refine > inner 1 | addCrossFieldRules > checkFieldsThenRules | Yes: the rule also runs when other fields are wrong, as long as its own fields are good; otherwise marks "waited" (2f). |
 | (none) | valuesReadByRule | New: the rule's fields, only if all are present and good (2f). |
 | shortId | requireShortId | Yes: new rule, letters and digits, single dashes between, at most 32; first character may now be a digit, as 2g reads (2g). |
 | (none) | shortIdSuggestion | New: `Yaba` → `yaba`, `omole phase 1` → `omole-phase-1` (2g). |
@@ -84,3 +84,38 @@ cross-check waited. The file name and line are added once, at the end
   above), or keep them free of decisions.
 - `jsonc-parser` is not installed yet. It goes in `dependencies`, pinned
   exactly to `3.3.1`.
+
+## Round 2: after the approver's report
+
+Redrawn from `APPROVER-REPORT-002b.md`. Every FIX, plus E1 as the
+orchestrator recommended (pending the owner). E2 is unchanged: found values
+stay shown as JSON. Nothing the approver approved was redrawn except where a
+fix reached it, as listed. jsonc-parser was run this time; the facts are in
+`research/33-json-lines.md`, "Round 2 measurements".
+
+| Design | Function | What changed | Why |
+| --- | --- | --- | --- |
+| parse.md | addCrossFieldRules | Takes a list of rules, each with the fields it reads. | F1: two rules on one object could not be drawn. |
+| parse.md | checkFieldsThenRules | Runs the field checks once, then each rule through problemsFromOneRule, then puts everything together. | F1. |
+| parse.md | addCrossFieldRules > problemsFromOneRule | New. One rule: runs on the checked object, or on its own good fields, or waits. The "run the rule" step is now drawn in both branches. | F1. |
+| parse.md | checkEveryItemInList | A list that is too short still has every item checked; the count problem comes first, then the items' problems. | F2. |
+| parse.md | previewForError | A number too big to hold shows as "a number too big to use", never `null`. | F3. |
+| parse.md | requireShortId | Rule says "letters a to z" and "digits 0 to 9". | F4. |
+| parse.md | shortIdSuggestion | No suggestion when a letter or digit other than a to z or 0 to 9 is left after taking accents off (`Ɗanbatta`, `ß`). | F4. |
+| place.md | validatePlace | Passes a list of two rules to addCrossFieldRules. | F1. |
+| json-text.md | readJsonText | A byte-order mark becomes a space; an empty or blank file gets its own kind; running out of room (deep nesting) gets its own kind; "made no tree" is not the same as a file that is just `null`. | F6, F7. |
+| json-text.md | lineStartOffsets | `\r\n` is one break; `\r` or `\n` alone is one each. | F5. |
+| json-text.md | lineOfPath | Finds its part with usedNodeAtPath. | E1: point at the copy that is used. |
+| json-text.md | usedNodeAtPath | New. Walks a path taking the last copy of a repeated field. | E1. |
+| json-text.md | problemsForRepeatedFields | New. Finds every field written twice, in every object. | E1. |
+| json-text.md | problemForRepeatedField | New. "`name` is written twice, on lines 9 and 31; keep one." | E1. |
+| json-text.md | syntaxProblemInWords | Subject from labelForPath ("the file"); full table of sentences written into the design. | F7 (and E3, for the owner). |
+| closest-word.md | closestWord | Skips a word whose length differs by more than its limit before measuring. | F8. |
+| check-file.md | validateJsonFile | Lists line starts first (the syntax error needs them too), and adds the repeated-field problems, first in the report. | E1. Approved as it stood in round 1; changed because E1 needs the tree, which only it holds. |
+
+Not touched: `vehicle.md` (the approver said it needs no change for F1).
+
+For Session B, in addition to the notes above: the "nested too deeply" depth
+was measured at about 2,560 in Node 22, so a test with 20 000 levels is far
+past it; and only a stack overflow (RangeError) becomes that message, any
+other crash stays a crash.

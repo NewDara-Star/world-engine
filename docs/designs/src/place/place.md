@@ -71,6 +71,6 @@ Why the game needs it: adding a town is adding a file; this is the referee that 
 ```mermaid
 flowchart TD
   s(["validatePlace with the file's name and its text"])
-  a(["return validateJsonFile with the name, the text, and the place checker: the place's shape with two cross-field rules added, repeatedClassProblemsInPlace reading allowedVehicleClasses, and sourceProblemsForConstants reading constantsSources, so neither waits for the other"])
+  a(["return validateJsonFile with the name, the text, and the place checker: addCrossFieldRules with the place's shape and a list of two rules, repeatedClassProblemsInPlace reading allowedVehicleClasses, and sourceProblemsForConstants reading constantsSources; the fields are checked once, and neither rule waits for the other"])
   s --> a
 ```

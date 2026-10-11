@@ -71,8 +71,9 @@ list. Four more facts that shape the design:
 4. **Duplicate field names:** both are kept in the tree. `findNodeAtLocation`
    finds the first; `getNodeValue` keeps the last (it assigns in order). So a
    problem in a duplicated field would point to the first line while the
-   value checked is the second. Reporting a duplicated field is not in this
-   scope; raised with the owner in the Session A report.
+   value checked is the second. Session A raised it; in round 2 the designs
+   report a field written twice and point at the copy that is used (see
+   "Round 2 measurements").
 
 `ParseErrorCode` is a `const enum` in the `.d.ts`; with our
 `verbatimModuleSyntax` the code should key the wording on the names from
@@ -133,3 +134,47 @@ gets a hint; 3 to 5 letters allow 1 edit; 6 or more allow 2.
   and line lookup; the optimal string alignment distance and the closest word.
 - **Not used:** momoa (more than we need), json-source-map (unmaintained),
   damerau-levenshtein (BSD).
+
+## Round 2 measurements (2026-10-11, the round 2 design session)
+
+The approver could not run jsonc-parser; this session could (`npm pack
+jsonc-parser@3.3.1`, unpacked in a scratch folder outside the repository, run
+with Node 22 and the strict options `disallowComments: true`,
+`allowTrailingComma: false`). Nothing was installed in the project. What the
+broken-JSON table in `docs/designs/src/place/json-text.md` relies on:
+
+| Text | First error the reader gives, and its line |
+| --- | --- |
+| comma missing at the end of line 2, next field on line 3 | CommaExpected, **line 3** (the next field) |
+| `{ … "a": 1,` then `}` on line 3 | PropertyNameExpected, line 3 (the `}`) |
+| `"g": ,` on line 2 | ValueExpected, line 2 |
+| `[1,` then `]` on line 2 | ValueExpected, line 2 |
+| `{` never closed, file ends on line 6 | CloseBraceExpected, **line 6** (the end) |
+| `[` never closed, file ends on line 3 | CloseBracketExpected, line 3 (the end) |
+| `{"a": [1, 2` then `}` | CommaExpected at the `}` |
+| `{"a":01}` | CommaExpected (not a number error) |
+| `'a'`, “a”, `a` with no quotes, `True`, `NaN`, `+1`, `.5`, `0x10` | InvalidSymbol |
+| `1.`, `1e`, `1e+` | UnexpectedEndOfNumber |
+| text with no closing quote, or running onto the next line | UnexpectedEndOfString, at the line where the text starts |
+| a raw tab or control character in text | InvalidCharacter |
+| `"C:\places"` | InvalidEscapeCharacter |
+| `\u12G4` | InvalidUnicode |
+| `"name" "Yaba"` | ColonExpected |
+| an extra `}` after the end, or a second object | EndOfFileExpected, at the extra part |
+| `//` or `/* */` comment | InvalidCommentToken |
+| empty text | ValueExpected at offset 0 (line 1) |
+| only spaces and line breaks | ValueExpected at the **end** (the last line, not line 1) |
+| a byte-order mark before `{` | InvalidSymbol at 0 |
+| a space before `{` (what the design turns the mark into) | accepted |
+| the text `null` | no error; the tree is one node of type null |
+| `[` nested 2,563 or more deep | `parseTree` throws RangeError ("Maximum call stack size exceeded"); 2,562 deep is read. Found by halving between 100 and 5,000. A browser's limit may differ. |
+
+Two error kinds did not appear: `UnexpectedEndOfComment` (the parser's source,
+`lib/umd/impl/parser.js`, only raises it when comments are allowed) and
+`InvalidNumberFormat` (raised only when a scanned number gives `NaN` in
+`Number()`; no case we tried reached it). Both still get a sentence.
+
+TypeScript's `computeLineStarts` (`node_modules/typescript/lib/typescript.js`,
+read on disk) counts `\r\n` as one break, `\r` or `\n` alone as one each, and
+also U+2028 and U+2029. The design takes the first three only; see
+`lineStartOffsets`.

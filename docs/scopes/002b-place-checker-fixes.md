@@ -61,8 +61,8 @@ approved. Do items 3 to 6, with code that matches the approved designs.
    | object > inner 1 | checkRecord |
    | object > inner 1 > inner 1 | problemsFromOneField |
    | object > inner 1 > inner 2 | nameAndValueFromOneField |
-   | refine | addCrossFieldRule |
-   | refine > inner 1 | checkFieldsThenRule |
+   | refine | addCrossFieldRules |
+   | refine > inner 1 | checkFieldsThenRules |
    | shortId | requireShortId |
    | repeatedClass | firstRepeatedVehicleClass |
    | missingSource | sourceProblemsForConstants (now returns a list, item 2f) |

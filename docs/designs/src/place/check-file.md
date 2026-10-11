@@ -2,34 +2,40 @@
 
 Status: draft. Waiting for approval; the approval commit changes this line to `Status: approved`.
 
-New in scope 002b (items 2d, 2f, 2h). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/flows/src/place/check-file.md`.
+New in scope 002b (items 2d, 2f, 2h, and E1: a field written twice). Checks one file from its name and raw text, the same way for places and vehicles, and turns every problem into a message that starts with the file and the line. The pictures drawn from the code will be in `docs/fl## validateJsonFile
 
-## validateJsonFile
-
-Why the game needs it: whoever writes a place file gets one report naming every mistake by file and line, whether the file is a place or a vehicle.
+Why the game needs it: whoever writes a place file gets one report naming every mistake by file and line, whether the file is a place or a vehicle. A field written twice is reported in the same report, first, because it explains which copy the other messages are about.
 
 ```mermaid
 flowchart TD
   s(["validateJsonFile with the file's name, its text, and the checker for that kind of file"])
+  l["list the line starts of the text once"]
   a["readJsonText"]
   b{"could the text be read as JSON"}
-  c(["return failure with one message: the file name, line of the syntax error, syntaxProblemInWords"])
+  c(["return failure with one message: the file name, lineAtOffset of the syntax error, syntaxProblemInWords"])
   d["run the checker on the values, starting at the top of the file"]
-  e{"did every check pass"}
+  r["find problemsForRepeatedFields in the whole tree, starting at the top of the file"]
+  e{"is there any problem, from either"}
   f(["return success with the checked place or vehicle"])
-  g["list the line starts once, then make messageForProblem for every problem"]
+  g["make messageForProblem for every problem: the repeated fields first, then the checker's"]
   h{"did any cross-check wait because a field it reads is wrong"}
   i["end the report with: the file name, then Fix these first; some cross-checks run after."]
   j(["return failure with all the messages"])
-  s --> a
+  s --> l
+  l --> a
   a --> b
   b -->|"no"| c
   b -->|"yes"| d
-  d --> e
-  e -->|"yes"| f
-  e -->|"no"| g
+  d --> r
+  r --> e
+  e -->|"no"| f
+  e -->|"yes"| g
   g --> h
   h -->|"yes"| i
+  h -->|"no"| j
+  i --> j
+```
+
   h -->|"no"| j
   i --> j
 ```

@@ -15,17 +15,21 @@ How the pieces fit, in plain words:
 
 ## previewForError
 
-Why the game needs it: a message quotes what was found without filling the screen when someone pastes a whole paragraph into a field.
+Why the game needs it: a message quotes what was found without filling the screen when someone pastes a whole paragraph into a field, and never shows a number the reader could not hold (such as `1e400`) as `null`, which would look like an empty field.
 
 ```mermaid
 flowchart TD
   s(["previewForError of a value"])
+  n{"is it a number that is not finite, such as 1e400, which the reader holds as infinity"}
+  m(["return the words: a number too big to use"])
   a["write the value as JSON text, or the word nothing if it cannot be written"]
   b{"is the text longer than the limit"}
   c["cut it and add an ellipsis"]
   d["keep it whole"]
   e(["return the text"])
-  s --> a
+  s --> n
+  n -->|"yes"| m
+  n -->|"no"| a
   a --> b
   b -->|"yes"| c
   b -->|"no"| d
@@ -275,23 +279,25 @@ flowchart TD
 
 ## requireListOf > checkEveryItemInList
 
-Why the game needs it: says how many items were found against how many are needed, and checks every item, not just the first bad one.
+Why the game needs it: says how many items were found against how many are needed, and checks every item, not just the first bad one. A list that is too short still has its items checked, so the place-maker hears about a bad item in the same report, not on the next run.
 
 ```mermaid
 flowchart TD
   s(["checkEveryItemInList a value at a path"])
   a{"is it a list"}
   b(["return reject: wanted a list in square brackets, no hint"])
-  c{"does it have fewer items than needed"}
-  d(["return failure with problemAt the path: label needs at least itemsInWords of the smallest count; found itemsInWords of the count"])
   e["check every item at pathToField with its position in the list"]
-  f(["return gatherAllProblems of all the item results"])
+  g["gatherAllProblems of all the item results"]
+  c{"does it have fewer items than needed"}
+  f(["return that gathered result"])
+  d(["return failure with problemAt the path: label needs at least itemsInWords of the smallest count; found itemsInWords of the count. Then the items' problems from problemsFromOneCheck of the gathered result; a cross-check waited if the gathered result says so"])
   s --> a
   a -->|"no"| b
-  a -->|"yes"| c
+  a -->|"yes"| e
+  e --> g
+  g --> c
+  c -->|"no"| f
   c -->|"yes"| d
-  c -->|"no"| e
-  e --> f
 ```
 
 ## itemsInWords
@@ -490,46 +496,62 @@ flowchart TD
   a -->|"no"| c
 ```
 
-## addCrossFieldRule
+## addCrossFieldRules
 
-Why the game needs it: some rules read several fields together (a bike cannot be a boat); they belong to the object they read.
+Why the game needs it: some rules read several fields together (a bike cannot be a boat); they belong to the object they read. One object can have several such rules (a place has two), so the rules come as a list and the object's own fields are checked only once.
 
 ```mermaid
 flowchart TD
-  s(["addCrossFieldRule with a shape, the fields the rule reads, and the rule"])
+  s(["addCrossFieldRules with a shape and a list of rules, each rule with the fields it reads"])
   a["make the plain checker with requireRecord of the shape"]
-  b(["return checkFieldsThenRule"])
+  b(["return checkFieldsThenRules"])
   s --> a
   a --> b
 ```
 
-## addCrossFieldRule > checkFieldsThenRule
+## addCrossFieldRules > checkFieldsThenRules
 
-Why the game needs it: a rule runs as soon as the fields it reads are good, alongside every other check, and every broken rule is listed in the same report.
+Why the game needs it: the fields are checked once, then each rule runs as soon as the fields it reads are good, alongside every other check, and every broken rule is listed in the same report. A rule waiting for its fields never holds back another rule.
 
 ```mermaid
 flowchart TD
-  s(["checkFieldsThenRule a value at a path"])
-  a["run the plain checker"]
-  b{"did it pass"}
-  c["run the rule on the checked object"]
-  d{"did the rule find any problem"}
+  s(["checkFieldsThenRules a value at a path"])
+  a["run the plain checker once"]
+  b["for each rule, problemsFromOneRule with the plain result"]
+  c["put together: problemsFromOneCheck of the plain result, then every rule's problems"]
+  d{"is there any problem"}
   e(["return the plain result"])
-  f(["return failure with the rule's problems, each with the object's path put in front"])
-  g["find valuesReadByRule"]
-  h{"are all the fields the rule reads good"}
-  i(["return failure with the plain problems and the rule's problems, the object's path put in front of the rule's"])
-  j(["return failure with the plain problems, marked: a cross-check waited"])
+  f(["return failure with all the problems; a cross-check waited if the plain result or any rule says so"])
   s --> a
   a --> b
-  b -->|"yes"| c
+  b --> c
   c --> d
   d -->|"no"| e
   d -->|"yes"| f
-  b -->|"no"| g
-  g --> h
-  h -->|"yes"| i
-  h -->|"no"| j
+```
+
+## addCrossFieldRules > problemsFromOneRule
+
+Why the game needs it: one rule either runs, on fields that passed their own checks, or waits; it never runs on a broken value and never stops the other rules.
+
+```mermaid
+flowchart TD
+  s(["problemsFromOneRule with one rule, the plain result, the value and its path"])
+  a{"did the plain check pass"}
+  b["run the rule on the checked object"]
+  c["find valuesReadByRule for this rule"]
+  d{"are all the fields the rule reads good"}
+  e["run the rule on those fields"]
+  f(["return no problems, marked: this cross-check waited"])
+  g(["return the rule's problems, each with the object's path put in front, not waiting"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+  c --> d
+  d -->|"yes"| e
+  d -->|"no"| f
+  b --> g
+  e --> g
 ```
 
 ## valuesReadByRule
@@ -559,24 +581,27 @@ Why the game needs it: ids join files together (a place names its road rules by 
 ```mermaid
 flowchart TD
   s(["requireShortId"])
-  a(["return requireTextMatching with the id rule: lower-case letters and digits, single dashes only between them, at most 32 characters; described in words with an example, `yaba`; suggester shortIdSuggestion"])
+  a(["return requireTextMatching with the id rule: letters a to z in lower case and digits 0 to 9, with single dashes only between them, at most 32 characters; described in words with an example, `yaba`; suggester shortIdSuggestion"])
   s --> a
 ```
 
 ## shortIdSuggestion
 
-Why the game needs it: `Yaba` and `omole phase 1` are near misses; we offer `yaba` and `omole-phase-1` so the fix is one copy and paste.
+Why the game needs it: `Yaba` and `omole phase 1` are near misses; we offer `yaba` and `omole-phase-1` so the fix is one copy and paste. A suggestion is only offered when it keeps every letter: Hausa's hooked letters (`ɓ ɗ ƙ ƴ`), and letters such as `ø`, `ß` or `ł`, have no accent to take off, and dropping them would offer a wrong id (`Ɗanbatta` as `anbatta`). A wrong hint is worse than none.
 
 ```mermaid
 flowchart TD
   s(["shortIdSuggestion for some text"])
   a["make it lower case and take accents off letters, so Ọ̀yọ́ becomes oyo"]
-  b["turn every run of characters that are not a letter or digit into one dash, and drop dashes at the start and end"]
+  x{"is any letter or digit left that is not a to z or 0 to 9, such as ɗ or ß"}
+  b["turn every run of characters that are not a to z or 0 to 9 into one dash, and drop dashes at the start and end"]
   c{"does the result follow the id rule, and is it different from the text"}
   d(["return the result"])
   e(["return nothing: no suggestion, for example when it is still over 32 characters"])
   s --> a
-  a --> b
+  a --> x
+  x -->|"yes"| e
+  x -->|"no"| b
   b --> c
   c -->|"yes"| d
   c -->|"no"| e

@@ -145,6 +145,11 @@ has not run since.
 - A mid-range Android phone is the reference device. Every slice is measured
   on it. Under about 30 MB is downloaded before you can drive. The steering
   wheel is a desktop bonus, never required.
+- Every action you can do with a wheel, a gamepad or a keyboard can also be
+  done on a touchscreen (a thumb stick on one side, buttons on the other,
+  shoulder-style buttons where they fit). Two thumbs can only do so much, so
+  touch may combine or simplify controls, but nothing is out of reach on a
+  phone. (Owner, 2026-10-11.)
 - The world streams in plain 100 m grid chunks (a visual piece and a collider
   per cell), not 3D Tiles.
 
