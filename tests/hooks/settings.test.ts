@@ -22,6 +22,7 @@ describe("hook wiring", () => {
       "checks-before-stop.sh",
       "story-before-commit.sh",
       "review-before-push.sh",
+      "diagram-gate.sh",
     ];
     expect(wiredScripts().sort()).toEqual(expected.sort());
   });
