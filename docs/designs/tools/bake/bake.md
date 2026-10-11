@@ -1,0 +1,57 @@
+# tools/bake/bake.ts
+
+Status: draft
+
+New in scope 005 (item 2). The whole bake, from the place file and the
+extract's text to the text of every output file, without touching the disk,
+so tests can run it on a small made-up extract and compare bytes. The
+pictures drawn from the code will be in `docs/flows/tools/bake/bake.md`.
+
+## bakePlace
+
+Why the game needs it: the map the player drives on is made from open map data in one repeatable step, and anything wrong with the input is reported, not baked into a broken map.
+
+```mermaid
+flowchart TD
+  s(["bakePlace with the place file's name and text, the checked planets, and the extract's text"])
+  a["check the place with validatePlace"]
+  b{"is the place file good"}
+  c(["return the place file's problems; nothing is baked"])
+  d["read the extract with readOplRoadWays"]
+  e{"were there broken lines"}
+  f(["return those problems with their line numbers; nothing is baked, because a missing road would look like a real gap"])
+  g["turn the ways into roads with drivableRoadsInMetres"]
+  h{"is at least one road left"}
+  i(["return one problem: the extract has no roads a car can use; check the extract covers the place centre and was cut with the highway ways"])
+  j["cut the roads into squares: roadPieces for each, then trianglesByCell"]
+  k["find the start with carStartOnRoad and the extent from the squares"]
+  l(["return the files: one chunkFileText per square named east_north.json, and index.json from indexFileText; plus the report notes"])
+  s --> a --> b
+  b -->|"no"| c
+  b -->|"yes"| d --> e
+  e -->|"yes"| f
+  e -->|"no"| g --> h
+  h -->|"no"| i
+  h -->|"yes"| j --> k --> l
+```
+
+## drivableRoadsInMetres
+
+Why the game needs it: from every way in the extract to just the streets, each with its width and its line in metres, in way-id order so the output never depends on the order of the file.
+
+```mermaid
+flowchart TD
+  s(["drivableRoadsInMetres with the ways, the place centre and lane width"])
+  a["make metresFromCentre with localProjection for the centre"]
+  b["sort the ways by id"]
+  c["for each way"]
+  d{"is it a drivable road, by isDrivableRoad"}
+  e["skip it"]
+  f["width and any note from roadWidthMetres; points from metresFromCentre for each node"]
+  g["keep the road: way id, its tags, width, points; keep the note for the report"]
+  h(["return the roads and the report notes"])
+  s --> a --> b --> c --> d
+  d -->|"no"| e --> c
+  d -->|"yes"| f --> g --> c
+  c -->|"all ways done"| h
+```

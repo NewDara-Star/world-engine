@@ -49,3 +49,10 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Decision-log clash-check tool (Scope 004 item 4; draft designs in
   docs/designs/tools/decisions/).
 - Terrain height for places (slice 1 drives on flat ground at 0 m).
+- Floating origin, once a place grows past about 10 km across (not needed at 3 km: research/36 section 5).
+- Proper junction shapes and road markings from osm2streets' technique (Apache-2.0), replacing slice 1's overlapping grey pieces (research/36 section 2).
+- Road colliders (and kerbs) once terrain height arrives; slice 1 uses one flat ground collider per square.
+- Vehicle figures split by `dynamics` when the first boat or plane arrives (scope 005 vehicle file).
+- Before anyone but the owner plays: the About page built from `dataSources`, and the bake script plus baked chunks published under ODbL in a public place (the game repo is private).
+- Ackermann steering (inner and outer front wheels at different angles) if the car feels wrong in tight turns.
+- Rapier's non-compat build saves about 0.5 MB if the 30 MB budget ever gets tight (research/36 section 1).

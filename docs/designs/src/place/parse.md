@@ -1,6 +1,8 @@
 # src/place/parse.ts
 
-Status: approved. Judged by the delegated approver (docs/roles/approver.md, docs/reviews/002c/), with the owner's decision of 2026-10-11 (ranges per planet).
+Status: draft
+
+(Before scope 005: approved, judged by the delegated approver, docs/reviews/002c/, with the owner's decision of 2026-10-11. Scope 005 adds `requireNumberAbove` and `sourceCountProblem` at the end of this file; nothing above them changes.)
 
 The design for each function, written in plain words. The pictures drawn from the code are in `docs/flows/src/place/parse.md`.
 
@@ -675,4 +677,48 @@ flowchart TD
   b --> c
   c -->|"yes"| d
   c -->|"no"| e
+```
+
+## requireNumberAbove
+
+New in scope 005. Why the game needs it: a car's mass, size or power of exactly 0 is never real and would divide by zero in the physics; "at least 0" is not enough, and a made-up ceiling would be a guess.
+
+```mermaid
+flowchart TD
+  s(["requireNumberAbove a minimum and a unit"])
+  a(["return checkNumberAbove"])
+  s --> a
+```
+
+## requireNumberAbove > checkNumberAbove
+
+Why the game needs it: says the floor and the unit, such as "a number above 0 kg", when the value is not a number or is not above the floor.
+
+```mermaid
+flowchart TD
+  s(["checkNumberAbove a value at a path"])
+  a{"is it a number, finite, and above the minimum"}
+  b(["return accept the value"])
+  c(["return reject: wanted a number above the minimum, then the unit; no hint"])
+  s --> a
+  a -->|"yes"| b
+  a -->|"no"| c
+```
+
+## sourceCountProblem
+
+New in scope 005, moved from `place.ts` (`sourceProblemForOneConstant`) so the place's constants and the vehicle's figures use one rule. Why the game needs it: the owner's data rule says each number has exactly one source.
+
+```mermaid
+flowchart TD
+  s(["sourceCountProblem: one quantity, such as gravity or body.massKg, the list of sources, the list's field name, and the word for the thing (constant or figure)"])
+  a["count the sources that name this quantity"]
+  b{"how many"}
+  c(["return a problem at the list: the list has no source for the quantity"])
+  d(["return no problem"])
+  e(["return a problem at the second source that names it: the list has that many sources for the quantity; each thing needs exactly one"])
+  s --> a --> b
+  b -->|"none"| c
+  b -->|"exactly one"| d
+  b -->|"more than one"| e
 ```

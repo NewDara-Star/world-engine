@@ -7,7 +7,7 @@ Architecture: V5, slice order: street first.
 ## Goal
 
 Open a web page on a phone and drive a simple car on the real roads around
-Babatunde Ladiga Street, Omole Phase 1, Lagos: about 1.5 km in every
+Babatunde Ladega Street, Omole Phase 1, Lagos: about 1.5 km in every
 direction, roads drawn in grey from OpenStreetMap, on-screen thumb controls
 on a phone and keys on a computer.
 
