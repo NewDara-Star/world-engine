@@ -12,7 +12,8 @@
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm run modules && npm run test",
     "diagrams": "tsx tools/diagrams/cli.ts",
-    "modules": "depcruise --config .dependency-cruiser.js src tools"
+    "modules": "depcruise --config .dependency-cruiser.js src tools",
+    "decisions": "tsx tools/decisions/cli.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -25,6 +26,7 @@
     "vitest": "5.0.3"
   },
   "dependencies": {
-    "jsonc-parser": "3.3.1"
+    "jsonc-parser": "3.3.1",
+    "stemmer": "2.0.1"
   }
 }

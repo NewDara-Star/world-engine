@@ -1,6 +1,6 @@
 # tools/decisions/log.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved. Judged by the delegated approver (docs/reviews/clash-approver.md); its fixes drawn in.
 
 New in scope 004 (item 4, the clash check). Reads `docs/DECISIONS.md` into
 entries the clash check can compare, and finds what is wrong with the file so
@@ -17,7 +17,7 @@ Why the game needs it: the clash check is only as good as the log it reads. If o
 ```mermaid
 flowchart TD
   s(["readDecisionLog with the text of DECISIONS.md"])
-  a["split the text into lines, treating Windows line ends the same as plain ones"]
+  a["drop a byte-order mark at the very start, then split the text into lines, treating Windows line ends the same as plain ones"]
   b["cut the lines into blocks: each block starts at a line beginning with ## D- and runs to the next one; lines before the first block are the introduction and are ignored"]
   c{"is there at least one block"}
   d(["return no entries and one problem: the file has no decisions in it (no line starting ## D-)"])
@@ -25,8 +25,8 @@ flowchart TD
   f["collect the entries and the problems from all blocks"]
   g{"does any id appear on more than one block"}
   h["add a problem for each repeated id, naming both line numbers"]
-  i{"does any Replaces name an id that is not in the log"}
-  j["add a problem for each one: the line, and the id it names"]
+  i{"does any Replaces name an id that is not in the log, the entry itself, or an entry that comes after it"}
+  j["add a problem for each one: the line, the id it names, and which of the three it is"]
   k(["return the entries and the problems, problems in line order"])
   s --> a
   a --> b
@@ -45,40 +45,51 @@ flowchart TD
 
 ## parseEntry
 
-Why the game needs it: each decision must carry its date, its reason and who made it, because the orchestrator tells the owner "you decided X on that date because Y". A missing field is reported by line, so whoever wrote the entry can fix it at once.
+Why the game needs it: each decision must carry its date, its reason and who made it, because the orchestrator tells the owner "you decided X on that date because Y". A missing field is reported by line, so whoever wrote the entry can fix it at once. A bad heading does not stop the rest of the block being checked, so every problem is reported in one pass.
 
 ```mermaid
 flowchart TD
   s(["parseEntry with one block's lines and the line number it starts on"])
-  a{"is the heading exactly ## D- followed by four digits"}
-  b(["return a problem: line N, the heading is not an id like ## D-0001"])
-  c["read every line of the form - Field: value into a field and its value; other non-empty lines are a problem: line N is not a field"]
-  d{"are Date, Decision, Why, Decided by and Tags all there, each once"}
-  e["add a problem for each one missing or written twice, at the heading's line"]
+  a{"is the heading exactly ## D- followed by four digits (trailing spaces allowed)"}
+  b["add a problem: line N, the heading is not an id like ## D-0001"]
+  c["read every line of the form - Field: value, where the field name ends at the first colon-and-space (a value may itself contain colons); other non-empty lines are a problem: line N is not a field"]
+  d{"are Date, Decision, Why, Decided by and Tags each there exactly once with a non-empty value, and Replaces at most once"}
+  e["add a problem for each one missing, empty, or written twice, at the heading's line (or at the second copy's line when written twice)"]
   f{"is Date a real calendar date written YYYY-MM-DD"}
   g["add a problem: line N, the date is not YYYY-MM-DD"]
+  r{"if Replaces is given, is it an id like D-0001"}
+  q["add a problem: line N, Replaces must name one id like D-0001"]
   h{"is any field name not one of the six known ones"}
-  i["add a problem for each: line N, an unknown field, and the closest known name"]
+  i["add a problem for each: line N, an unknown field, and the closest known name (at most two letter-changes away, edit distance ≤ 2, case ignored)"]
+  l["split Tags on commas, trim each, make each lower case, drop empty ones"]
+  t{"is Tags given but left empty after dropping empty ones"}
+  u["add a problem: line N, at least one tag is needed"]
   j{"any problem"}
   k(["return the problems"])
-  l["split Tags on commas, trim each, make each lower case, drop empty ones"]
   m(["return the entry: id, date, decision, why, decided by, tags, and replaces if given"])
   s --> a
   a -->|"no"| b
   a -->|"yes"| c
+  b --> c
   c --> d
   d -->|"no"| e
   d -->|"yes"| f
   e --> f
   f -->|"no"| g
-  f -->|"yes"| h
-  g --> h
+  f -->|"yes"| r
+  g --> r
+  r -->|"no"| q
+  r -->|"yes"| h
+  q --> h
   h -->|"yes"| i
-  h -->|"no"| j
-  i --> j
+  h -->|"no"| l
+  i --> l
+  l --> t
+  t -->|"yes"| u
+  t -->|"no"| j
+  u --> j
   j -->|"yes"| k
-  j -->|"no"| l
-  l --> m
+  j -->|"no"| m
 ```
 
 ## entriesInForce

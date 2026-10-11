@@ -46,8 +46,6 @@ never into the scope being built. Each is looked at when a scope is planned.
   of asset we use (cars, buildings, props, landmarks), each family practised
   on its own, marked on the shape drawn, not on the maths numbers.
 - Mutation testing (StrykerJS, Apache-2.0) to check the blind tests are strong, not just failing first (research/35-blind-tests.md).
-- Decision-log clash-check tool (Scope 004 item 4; draft designs in
-  docs/designs/tools/decisions/).
 - Terrain height for places (slice 1 drives on flat ground at 0 m).
 - Floating origin, once a place grows past about 10 km across (not needed at 3 km: research/36 section 5).
 - Proper junction shapes and road markings from osm2streets' technique (Apache-2.0), replacing slice 1's overlapping grey pieces (research/36 section 2).

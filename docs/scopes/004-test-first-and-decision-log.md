@@ -76,12 +76,10 @@ what the owner decided.
    roles, and a line: read `docs/DECISIONS.md` before acting; never contradict
    an entry without the owner.
 
-## Change, 2026-10-11 (owner: "we can start working")
+## Change, 2026-10-11 (owner)
 
-Item 4 (the clash-check tool) is parked; its draft designs stay in
-`docs/designs/tools/decisions/`. Slice 1 (Scope 005) is the pipeline's first
-real use instead. Until the tool exists, the orchestrator checks
-`docs/DECISIONS.md` by reading it.
+The owner first parked item 4, then asked to finish it as the pipeline's
+first test while slice 1 is designed in parallel. Item 4 stands.
 
 ## Out of scope
 

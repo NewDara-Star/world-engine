@@ -14,6 +14,14 @@ export interface HookResult {
   stderr: string;
 }
 
+function withoutRole(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const rest = { ...env };
+  delete rest.WE_ROLE;
+  delete rest.WE_LOCK;
+  delete rest.WE_BASE;
+  return rest;
+}
+
 export function runHook(
   script: string,
   projectDir: string,
@@ -22,7 +30,9 @@ export function runHook(
 ): HookResult {
   const run = spawnSync("sh", [join(hooksDir, script)], {
     input: JSON.stringify(input),
-    env: { ...process.env, ...extraEnv, CLAUDE_PROJECT_DIR: projectDir },
+    // The hook sees only the role the test gives it: a role set on the session
+    // running the tests (WE_ROLE, WE_LOCK, WE_BASE) must not leak in.
+    env: { ...withoutRole(process.env), ...extraEnv, CLAUDE_PROJECT_DIR: projectDir },
     encoding: "utf8",
   });
   return { status: run.status, stdout: run.stdout, stderr: run.stderr };
