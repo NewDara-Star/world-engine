@@ -18,8 +18,10 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Check the licences of the `n8ao` and `postprocessing` libraries before the
   clay look depends on them.
 - Humidity-corrected air density (the place files use dry air).
-- Game audio: real recordings (record Lagos sounds), triggered by game events,
-  loudness/clipping checked automatically, human final listen.
+- Game audio: sounds sourced from open libraries (for example Freesound,
+  CC0 or CC-BY, credited on the About page) and generated sound effects,
+  triggered by game events, loudness/clipping checked automatically, the
+  owner's final listen. No field recording needed (owner, 2026-10-11).
 - Diagram gate: also block a design entry whose function no longer exists, so
   dead designs are deleted in the same change.
 - Gate and generator: draw a `finally` after returns and throws too, and run
@@ -27,14 +29,19 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Vehicle files: refuse controls that don't fit the class (a bike with a
   steering wheel), the same way a car that floats is refused.
 - Keke (three-wheeler) and okada (motorbike taxi) as vehicle classes, for Lagos.
-- Tighten gravity's allowed range (today 0 to 100 m/s²) to what real bodies
-  have, so a slipped digit (98 for 9.8) is caught; owner's call.
 - Code licence notices (MIT/Apache libraries shipped to players, such as
   jsonc-parser) listed on the About page with the data credits.
-- "Did you mean" ten-times hint: with today's wide ranges it is often wrong
-  (gravity 980 gives "Did you mean 98?", latitude 91 gives "9.1?"); offer it
-  only when the tenth is near a typical value, or after the ranges tighten.
 - A planet's (and a place's) `id` must match its file name, so `planet: "earth"`
   always means `planets/earth.json`.
 - "Did you mean" for a constant ten times too small (0.98 for 9.8 gravity).
 - The planet loader refuses two planet files with the same `id`.
+- A place on a mountain road above about 5,800 m: Earth's air-density floor
+  (0.56 kg/m³) may refuse it; decide when such a place is planned (approver,
+  scope 002c).
+- Sat nav voice per place, set in the place file: a Dublin voice in Finglas, a
+  Lagos voice in Omole, a calm mission-control radio voice on Mars. Generated
+  voices are fine if the tool's licence allows commercial use in a game; the
+  owner judges the accent by ear; never a copy of a real person's voice.
+- Maths-shapes training (after Scope 003, only if it wins): train on every kind
+  of asset we use (cars, buildings, props, landmarks), each family practised
+  on its own, marked on the shape drawn, not on the maths numbers.

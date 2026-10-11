@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { LICENCES, validatePlace, type Place } from "../../src/place/index.js";
+import { LICENCES, validatePlace, type Place, type Planet } from "../../src/place/index.js";
+import { goodPlanet, knownPlanets } from "./planets.js";
 
 const placesDir = resolve(import.meta.dirname, "../../places");
 
@@ -10,7 +11,7 @@ function readPlaceText(file: string): string {
 }
 
 function good(file: string): Place {
-  const checked = validatePlace(file, readPlaceText(file));
+  const checked = validatePlace(file, readPlaceText(file), knownPlanets());
   if (!checked.ok) throw new Error(checked.messages.join("\n"));
   return checked.value;
 }
@@ -26,8 +27,8 @@ function withChanges(changes: Record<string, unknown>): string {
   return JSON.stringify({ ...yaba(), ...changes }, null, 2);
 }
 
-function messagesOf(text: string, fileName = "yaba.json"): string[] {
-  const checked = validatePlace(fileName, text);
+function messagesOf(text: string, fileName = "yaba.json", planets: readonly Planet[] = knownPlanets()): string[] {
+  const checked = validatePlace(fileName, text, planets);
   return checked.ok ? [] : checked.messages;
 }
 
@@ -74,8 +75,8 @@ describe("place file: sad path (a broken file says where and what)", () => {
     ]);
   });
 
-  it("says a missing field is missing, on the line where its object starts", () => {
-    expect(messagesOf(withChanges({ gravityMs2: undefined }))).toEqual(["yaba.json line 1: `gravityMs2` is missing."]);
+  it("says a missing field is missing, on the line where its object starts, and that the planet check waits for it", () => {
+    expect(messagesOf(withChanges({ gravityMs2: undefined }))).toEqual(["yaba.json line 1: `gravityMs2` is missing.", FIX_FIRST]);
   });
 
   it("says a missing field inside an object is missing, on that object's line", () => {
@@ -98,10 +99,11 @@ describe("place file: sad path (a broken file says where and what)", () => {
     ]);
   });
 
-  it("names the unit of a number out of range", () => {
+  it("names the floor and the unit of a constant below zero, such as gravity written with a physics engine's minus sign", () => {
     const text = withChanges({ gravityMs2: -9.8 });
     expect(messagesOf(text)).toEqual([
-      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be a number from 0 to 100 m/s²; found -9.8.`,
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be a number of at least 0 m/s²; found -9.8.`,
+      FIX_FIRST,
     ]);
   });
 
@@ -198,19 +200,14 @@ describe("place file: idiot-proof path", () => {
   it("refuses a number written as text, and shows the quote marks so the slip can be seen", () => {
     const text = withChanges({ gravityMs2: "9.8" });
     expect(messagesOf(text)).toEqual([
-      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be a number from 0 to 100 m/s²; found "9.8".`,
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be a number of at least 0 m/s²; found "9.8".`,
+      FIX_FIRST,
     ]);
   });
 
   it("calls a number too big to hold 'a number too big to use', never null", () => {
     const text = readPlaceText("yaba.json").replace('"gravityMs2": 9.781', '"gravityMs2": 1e400');
-    expect(messagesOf(text)[0]).toMatch(/`gravityMs2` must be a number from 0 to 100 m\/s²; found a number too big to use\.$/);
-  });
-
-  it("offers a tenth when a number is ten times too big and a tenth fits, and only then", () => {
-    expect(messagesOf(withChanges({ gravityMs2: 981 }))[0]).toMatch(/found 981\. Did you mean 98\.1\?$/);
-    expect(messagesOf(withChanges({ gravityMs2: 9810 }))[0]).toMatch(/found 9810\.$/);
-    expect(messagesOf(withChanges({ gravityMs2: -1 }))[0]).toMatch(/found -1\.$/);
+    expect(messagesOf(text)[0]).toMatch(/`gravityMs2` must be a number of at least 0 m\/s²; found a number too big to use\.$/);
   });
 
   it("refuses a latitude off the planet", () => {
@@ -282,7 +279,8 @@ describe("place file: idiot-proof path", () => {
     const usedLine = lineOf(text, '"gravityMs2": -9.8');
     expect(messagesOf(text)).toEqual([
       `yaba.json line ${usedLine}: \`gravityMs2\` is written twice, on lines ${firstLine} and ${usedLine}; keep one.`,
-      `yaba.json line ${usedLine}: \`gravityMs2\` must be a number from 0 to 100 m/s²; found -9.8.`,
+      `yaba.json line ${usedLine}: \`gravityMs2\` must be a number of at least 0 m/s²; found -9.8.`,
+      FIX_FIRST,
     ]);
   });
 
@@ -308,18 +306,34 @@ describe("place file: idiot-proof path", () => {
 });
 
 describe("place file: tragedy path (limits, scale, old files)", () => {
-  it("accepts the edges of the planet and a world with no gravity or air (space)", () => {
-    const edges = { skyPosition: { lat: -90, lon: 180 }, gravityMs2: 0, airDensityKgM3: 0 };
-    expect(messagesOf(withChanges(edges))).toEqual([]);
+  it("accepts the edges of the planet: a pole and the date line", () => {
+    expect(messagesOf(withChanges({ skyPosition: { lat: -90, lon: 180 } }))).toEqual([]);
   });
 
-  it("checks a very large place file in under a second", () => {
+  // Why not a fixed "under a second": this test ran 0.5 s one day and 1.3 s the
+  // next on the same code, because the build machine changed speed. What we are
+  // really guarding against is a checker that slows down faster than the file
+  // grows (twice the file taking four times as long), which no machine hides.
+  // So: a 5 MB file must take at most 20 times as long as a 0.5 MB one (10 times
+  // is perfectly even growth), and never more than 5 seconds on any machine.
+  // Orchestrator decision, 2026-10-11, after the 1-second limit failed on the
+  // unchanged code too.
+  it("checks a very large place file in time that grows evenly with its size", () => {
     const fine = { name: "Map", url: "https://x.test", licence: "CC0-1.0", attribution: "a" };
-    const text = withChanges({ dataSources: Array.from({ length: 50_000 }, () => fine) });
-    expect(text.length).toBeGreaterThan(5_000_000);
-    const started = performance.now();
-    expect(messagesOf(text)).toEqual([]);
-    expect(performance.now() - started).toBeLessThan(1000);
+    const textOfSources = (count: number) => withChanges({ dataSources: Array.from({ length: count }, () => fine) });
+    const small = textOfSources(5_000);
+    const large = textOfSources(50_000);
+    expect(large.length).toBeGreaterThan(5_000_000);
+    const timeToCheck = (text: string) => {
+      const started = performance.now();
+      expect(messagesOf(text)).toEqual([]);
+      return performance.now() - started;
+    };
+    timeToCheck(small);
+    const smallTime = Math.max(timeToCheck(small), timeToCheck(small));
+    const largeTime = timeToCheck(large);
+    expect(largeTime).toBeLessThan(Math.max(20 * smallTime, 200));
+    expect(largeTime).toBeLessThan(5000);
   });
 
   it("checks a place with thousands of sources, and reports every bad one on its own line", () => {
@@ -467,5 +481,152 @@ describe("place file: gravity and air density carry their sources (scope 001b)",
   it("checks gravity at the poles and equator without drifting", () => {
     expect(wgs84NormalGravity(0)).toBeCloseTo(9.7803253359, 9);
     expect(wgs84NormalGravity(90)).toBeCloseTo(9.8321849379, 6);
+  });
+});
+
+// A planet made up for a test, from Earth's file with other ranges, so the
+// rules can be tried on worlds the game does not have yet.
+function madeUpPlanet(id: string, gravity: [number, number], airDensity: [number, number]): Planet {
+  const earth = goodPlanet("earth.json");
+  return {
+    ...earth,
+    id,
+    name: id,
+    ranges: {
+      gravity: { ...earth.ranges.gravity, min: gravity[0], max: gravity[1] },
+      airDensity: { ...earth.ranges.airDensity, min: airDensity[0], max: airDensity[1] },
+    },
+  };
+}
+
+describe("place on its planet: happy path (scope 002c)", () => {
+  it("checks Yaba and Finglas against Earth's ranges and accepts both", () => {
+    expect(good("yaba.json")).toMatchObject({ planet: "earth", gravityMs2: 9.781, airDensityKgM3: 1.167 });
+    expect(good("finglas.json")).toMatchObject({ planet: "earth" });
+  });
+
+  it("accepts gravity and air density exactly at the edges of Earth's ranges", () => {
+    expect(messagesOf(withChanges({ gravityMs2: 9.76, airDensityKgM3: 1.84 }))).toEqual([]);
+    expect(messagesOf(withChanges({ gravityMs2: 9.84, airDensityKgM3: 0.56 }))).toEqual([]);
+  });
+});
+
+describe("place on its planet: sad path (scope 002c)", () => {
+  it("refuses gravity of 98, naming the planet's range and unit, and offers 9.8", () => {
+    const text = withChanges({ gravityMs2: 98 });
+    expect(messagesOf(text)).toEqual([
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be from 9.76 to 9.84 m/s² on earth; found 98. Did you mean 9.8?`,
+    ]);
+  });
+
+  it("refuses gravity of 980 (the point two places off, or written in cm/s²) and offers 9.8", () => {
+    const text = withChanges({ gravityMs2: 980 });
+    expect(messagesOf(text)).toEqual([
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be from 9.76 to 9.84 m/s² on earth; found 980. Did you mean 9.8?`,
+    ]);
+  });
+
+  it("refuses air density ten and a hundred times too big and offers 1.167 for both", () => {
+    for (const slipped of [11.67, 116.7]) {
+      const text = withChanges({ airDensityKgM3: slipped });
+      expect(messagesOf(text), String(slipped)).toEqual([
+        `yaba.json line ${lineOf(text, '"airDensityKgM3"')}: \`airDensityKgM3\` must be from 0.56 to 1.84 kg/m³ on earth; found ${slipped}. Did you mean 1.167?`,
+      ]);
+    }
+  });
+
+  it("says there is no such planet and offers the one meant: eart is earth", () => {
+    const text = withChanges({ planet: "eart" });
+    expect(messagesOf(text)).toEqual([
+      `yaba.json line ${lineOf(text, '"planet"')}: \`planet\` is \`eart\`; there is no such planet. Did you mean \`earth\`?`,
+      FIX_FIRST,
+    ]);
+  });
+
+  it("names the only known planet when the one written is nothing like it", () => {
+    expect(messagesOf(withChanges({ planet: "mars" }))[0]).toMatch(/`planet` is `mars`; there is no such planet\. The only known planet is `earth`\.$/);
+  });
+
+  it("lists the known planets when there are several and none is close", () => {
+    const planets = [goodPlanet("earth.json"), madeUpPlanet("mars", [3.7, 3.73], [0.01, 0.02])];
+    expect(messagesOf(withChanges({ planet: "venus" }), "yaba.json", planets)[0]).toMatch(
+      /`planet` is `venus`; there is no such planet\. The known planets are `earth`, `mars`\.$/,
+    );
+  });
+
+  it("says no planet file was found, rather than an empty list, when none was handed in", () => {
+    expect(messagesOf(readPlaceText("yaba.json"), "yaba.json", [])).toEqual([
+      `yaba.json line ${lineOf(readPlaceText("yaba.json"), '"planet"')}: \`planet\` is \`earth\`; there is no such planet, and no planet file was found.`,
+      FIX_FIRST,
+    ]);
+  });
+});
+
+describe("place on its planet: idiot-proof path (scope 002c)", () => {
+  it("gives a latitude of 91 no ten-times hint: it is not 9.1 with the point in the wrong place", () => {
+    const text = withChanges({ skyPosition: { lat: 91, lon: 3.38 } });
+    expect(messagesOf(text)).toEqual([
+      `yaba.json line ${lineOf(text, '"lat"')}: \`skyPosition.lat\` must be a number from -90 to 90 degrees; found 91.`,
+    ]);
+  });
+
+  it("gives no hint when no move of the point lands inside the range: 9800, 9.7, and 0.98 (too small)", () => {
+    for (const gravity of [9800, 9.7, 0.98, 50]) {
+      expect(messagesOf(withChanges({ gravityMs2: gravity }))[0], String(gravity)).toMatch(new RegExp(`on earth; found ${gravity}\\.$`));
+    }
+  });
+
+  it("gives no hint when both moves of the point would fit, because a wrong hint is worse than none", () => {
+    const wide = madeUpPlanet("wide", [0.5, 60], [0, 2]);
+    const text = withChanges({ planet: "wide", gravityMs2: 98 });
+    expect(messagesOf(text, "yaba.json", [wide])).toEqual([
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be from 0.5 to 60 m/s² on wide; found 98.`,
+    ]);
+  });
+
+  it("offers the id for a planet written with a capital: Earth is earth", () => {
+    expect(messagesOf(withChanges({ planet: "Earth" }))[0]).toMatch(/`planet` must be an id: .*found "Earth"\. Did you mean `earth`\?$/);
+  });
+
+  it("checks gravity and air density on their own: both wrong gives two messages, each on its own line", () => {
+    const text = withChanges({ gravityMs2: 98, airDensityKgM3: 11.67 });
+    expect(messagesOf(text)).toEqual([
+      `yaba.json line ${lineOf(text, '"gravityMs2"')}: \`gravityMs2\` must be from 9.76 to 9.84 m/s² on earth; found 98. Did you mean 9.8?`,
+      `yaba.json line ${lineOf(text, '"airDensityKgM3"')}: \`airDensityKgM3\` must be from 0.56 to 1.84 kg/m³ on earth; found 11.67. Did you mean 1.167?`,
+    ]);
+  });
+
+  it("checks gravity against the planet even while another field is wrong", () => {
+    const text = withChanges({ gravityMs2: 98, drivingSide: "up" });
+    expect(messagesOf(text)).toHaveLength(2);
+    expect(messagesOf(text)[1]).toContain("found 98. Did you mean 9.8?");
+  });
+
+  it("never passes gravity silently when the planet is wrong: the range check waits and says so", () => {
+    expect(messagesOf(withChanges({ planet: "eart", gravityMs2: 98 }))).toEqual([expect.stringContaining("`planet` is `eart`"), FIX_FIRST]);
+  });
+});
+
+describe("place on its planet: tragedy path (other worlds, precision)", () => {
+  it("accepts a place on a made-up world with no gravity and no air, handed in like any planet, with no engine change", () => {
+    const space = madeUpPlanet("deep-space", [0, 0], [0, 0]);
+    expect(messagesOf(withChanges({ planet: "deep-space", gravityMs2: 0, airDensityKgM3: 0 }), "yaba.json", [space])).toEqual([]);
+  });
+
+  it("checks a Mars town against Mars's range, never against Earth's", () => {
+    const planets = [goodPlanet("earth.json"), madeUpPlanet("mars", [3.7, 3.73], [0.01, 0.02])];
+    expect(messagesOf(withChanges({ planet: "mars", gravityMs2: 3.72, airDensityKgM3: 0.015 }), "yaba.json", planets)).toEqual([]);
+    expect(messagesOf(withChanges({ planet: "mars" }), "yaba.json", planets)[0]).toContain("must be from 3.7 to 3.73 m/s² on mars; found 9.781.");
+  });
+
+  it("writes the hint with no binary rounding noise: 97.8 offers 9.78 and 1.1 m/s² hints read exactly", () => {
+    expect(messagesOf(withChanges({ gravityMs2: 97.8 }))[0]).toMatch(/Did you mean 9\.78\?$/);
+    const tight = madeUpPlanet("tight", [0.1, 0.5], [0, 2]);
+    expect(messagesOf(withChanges({ planet: "tight", gravityMs2: 1.1 }), "yaba.json", [tight])[0]).toMatch(/found 1\.1\. Did you mean 0\.11\?$/);
+  });
+
+  it("checks against the first of two planet files that share an id", () => {
+    const planets = [goodPlanet("earth.json"), madeUpPlanet("earth", [1, 2], [0, 2])];
+    expect(messagesOf(readPlaceText("yaba.json"), "yaba.json", planets)).toEqual([]);
   });
 });

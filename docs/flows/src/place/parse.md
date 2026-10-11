@@ -176,22 +176,49 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["requireNumberBetween #gt; checkNumberInRange"])
-  n2{"typeof value !== #quot;number#quot;"}
-  n3{"!Number.isFinite(value)"}
-  n4(["return reject(value, path, rangeInWords(min, max, unit));<br/>calls reject, rangeInWords"])
-  n5{"value #gt;= min"}
-  n6{"value #lt;= max"}
-  n7(["return accept(value);<br/>calls accept"])
-  n8(["return reject(value, path, rangeInWords(min, max, unit), te…<br/>calls reject, rangeInWords, tenTimesTooBigHint"])
+  n2{"typeof value === #quot;number#quot;"}
+  n3{"Number.isFinite(value)"}
+  n4{"value #gt;= min"}
+  n5{"value #lt;= max"}
+  n6(["return accept(value);<br/>calls accept"])
+  n7(["return reject(value, path, rangeInWords(min, max, unit));<br/>calls reject, rangeInWords"])
   n1 --> n2
-  n2 -->|"no"| n3
-  n2 -->|"yes"| n4
+  n2 -->|"yes"| n3
   n3 -->|"yes"| n4
-  n3 -->|"no"| n5
+  n4 -->|"yes"| n5
   n5 -->|"yes"| n6
-  n6 -->|"yes"| n7
-  n5 -->|"no"| n8
-  n6 -->|"no"| n8
+  n2 -->|"no"| n7
+  n3 -->|"no"| n7
+  n4 -->|"no"| n7
+  n5 -->|"no"| n7
+```
+
+## requireNumberAtLeast
+
+```mermaid
+flowchart TD
+  n1(["requireNumberAtLeast"])
+  n2(["return checkNumberAtLeast;"])
+  n1 --> n2
+```
+
+## requireNumberAtLeast > checkNumberAtLeast
+
+```mermaid
+flowchart TD
+  n1(["requireNumberAtLeast #gt; checkNumberAtLeast"])
+  n2{"typeof value === #quot;number#quot;"}
+  n3{"Number.isFinite(value)"}
+  n4{"value #gt;= min"}
+  n5(["return accept(value);<br/>calls accept"])
+  n6(["return reject(value, path, #96;a number of at least ${min} ${u…<br/>calls reject"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n3 -->|"yes"| n4
+  n4 -->|"yes"| n5
+  n2 -->|"no"| n6
+  n3 -->|"no"| n6
+  n4 -->|"no"| n6
 ```
 
 ## rangeInWords
@@ -205,24 +232,6 @@ flowchart TD
   n1 --> n2
   n2 -->|"yes"| n3
   n2 -->|"no"| n4
-```
-
-## tenTimesTooBigHint
-
-```mermaid
-flowchart TD
-  n1(["tenTimesTooBigHint"])
-  n2["const tenth = Number(#96;${value}e-1#96;);"]
-  n3{"tenth #gt;= min"}
-  n4{"tenth #lt;= max"}
-  n5(["return String(tenth);"])
-  n6(["return undefined;"])
-  n1 --> n2
-  n2 --> n3
-  n3 -->|"yes"| n4
-  n4 -->|"yes"| n5
-  n3 -->|"no"| n6
-  n4 -->|"no"| n6
 ```
 
 ## requireOneOf
@@ -577,6 +586,57 @@ flowchart TD
   n5 --> n6
   n6 -->|"yes"| n7
   n6 -->|"no"| n8
+```
+
+## requireKnownId
+
+```mermaid
+flowchart TD
+  n1(["requireKnownId"])
+  n2["const checkShortId = requireShortId();<br/>calls requireShortId"]
+  n3(["return checkIsKnownId;"])
+  n1 --> n2
+  n2 --> n3
+```
+
+## requireKnownId > checkIsKnownId
+
+```mermaid
+flowchart TD
+  n1(["requireKnownId #gt; checkIsKnownId"])
+  n2["const short = checkShortId(value, path);<br/>calls checkShortId"]
+  n3{"!short.ok"}
+  n4(["return short;"])
+  n5{"known.includes(short.value)"}
+  n6(["return accept(short.value);<br/>calls accept"])
+  n7["let sentence = #96;${labelForPath(path)} is \#96;${short.value}\#96;…<br/>calls labelForPath"]
+  n8["const guess = closestWord(short.value, known);<br/>calls closestWord"]
+  n9{"guess !== undefined"}
+  n10["sentence += #96;. Did you mean \#96;${guess}\#96;?#96;;"]
+  n11{"known.length #gt; 0"}
+  n12{"known.length === 1"}
+  n13["sentence += #96;. The only known ${kind.one} is \#96;${known[0]}\…"]
+  n14["sentence += #96;. The known ${kind.many} are ${known.map((id) …"]
+  n15["sentence += #96;, and no ${kind.one} file was found.#96;;"]
+  n16(["return { ok: false, problems: [problemAt(path, sentence)], …<br/>calls problemAt"])
+  n1 --> n2
+  n2 --> n3
+  n3 -->|"yes"| n4
+  n3 -->|"no"| n5
+  n5 -->|"yes"| n6
+  n5 -->|"no"| n7
+  n7 --> n8
+  n8 --> n9
+  n9 -->|"yes"| n10
+  n9 -->|"no"| n11
+  n11 -->|"yes"| n12
+  n12 -->|"yes"| n13
+  n12 -->|"no"| n14
+  n11 -->|"no"| n15
+  n10 --> n16
+  n13 --> n16
+  n14 --> n16
+  n15 --> n16
 ```
 
 ## requireShortId

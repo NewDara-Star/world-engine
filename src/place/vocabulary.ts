@@ -24,5 +24,15 @@ export const LICENCES = ["CC0-1.0", "CC-BY-4.0", "MIT", "Apache-2.0", "ODbL-1.0"
 export const CONSTANT_QUANTITIES = ["gravity", "airDensity"] as const;
 export const CONSTANT_STATUSES = ["official", "derived", "owner-choice"] as const;
 
+export type ConstantQuantity = (typeof CONSTANT_QUANTITIES)[number];
+
+// The one unit each constant is written in, by place files and planet files
+// alike, so the two can never disagree (scope 002c). SI units (BIPM, The
+// International System of Units, 9th edition, 2019).
+export const CONSTANT_UNITS: Record<ConstantQuantity, string> = {
+  gravity: "m/s²",
+  airDensity: "kg/m³",
+};
+
 export type VehicleClass = (typeof VEHICLE_CLASSES)[number];
 export type DynamicsType = (typeof DYNAMICS_TYPES)[number];

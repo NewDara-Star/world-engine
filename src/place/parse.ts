@@ -85,28 +85,32 @@ export function requireTextMatching(pattern: RegExp, wanted: string, suggest?: (
   return checkTextMatchesFormat;
 }
 
+// For numbers with fixed limits, such as a latitude. No "Did you mean": a
+// latitude of 91 is not 9.1 with the point in the wrong place, and a wrong hint
+// is worse than none (scope 002c, item 4). The hint for a slipped point is
+// given only for physics constants, against their planet (place.ts).
 export function requireNumberBetween(min: number, max: number, unit?: string): Parser<number> {
   function checkNumberInRange(value: unknown, path: FieldPath): Parsed<number> {
-    if (typeof value !== "number" || !Number.isFinite(value)) return reject(value, path, rangeInWords(min, max, unit));
-    if (value >= min && value <= max) return accept(value);
-    return reject(value, path, rangeInWords(min, max, unit), tenTimesTooBigHint(value, min, max));
+    if (typeof value === "number" && Number.isFinite(value) && value >= min && value <= max) return accept(value);
+    return reject(value, path, rangeInWords(min, max, unit));
   }
   return checkNumberInRange;
+}
+
+// For numbers with only a floor of their own, such as a place's gravity, whose
+// real range comes from its planet: 980 must reach the planet check, which
+// knows the right hint, instead of being stopped by a made-up ceiling (scope 002c).
+export function requireNumberAtLeast(min: number, unit: string): Parser<number> {
+  function checkNumberAtLeast(value: unknown, path: FieldPath): Parsed<number> {
+    if (typeof value === "number" && Number.isFinite(value) && value >= min) return accept(value);
+    return reject(value, path, `a number of at least ${min} ${unit}`);
+  }
+  return checkNumberAtLeast;
 }
 
 function rangeInWords(min: number, max: number, unit: string | undefined): string {
   if (unit !== undefined) return `a number from ${min} to ${max} ${unit}`;
   return `a number from ${min} to ${max}`;
-}
-
-// 98 for gravity is almost always 9.8 with the point in the wrong place (scope
-// 002b, 2e: hint only when a tenth fits). Dividing in binary would print 9.78
-// as 0.9780000000000001, so the decimal point is moved in the number's own
-// text instead: "97.8e-1" reads as exactly 9.78 (ECMA-262, StringToNumber).
-function tenTimesTooBigHint(value: number, min: number, max: number): string | undefined {
-  const tenth = Number(`${value}e-1`);
-  if (tenth >= min && tenth <= max) return String(tenth);
-  return undefined;
 }
 
 export function requireOneOf<const T extends string>(options: readonly T[]): Parser<T> {
@@ -305,6 +309,41 @@ function valuesReadByRule(value: unknown, shape: Shape, reads: readonly string[]
   if (good.length !== reads.length) return undefined;
   return Object.fromEntries(good);
 }
+
+// The kind of thing an id names, in words, one and many: `planet`, `planets`.
+export interface KindInWords {
+  one: string;
+  many: string;
+}
+
+// An id that names another file, such as a place's `planet`. The id rule runs
+// first, so an id with a capital gets the lower-case one offered; then it must be
+// one we know. The engine names no particular planet: the kind and the known
+// ids are handed in (scope 002c, item 3). The failure is built here rather than
+// by `reject`, because the sentence is "is …; there is no such …", not "must be".
+export function requireKnownId(kind: KindInWords, known: readonly string[]): Parser<string> {
+  const checkShortId = requireShortId();
+  function checkIsKnownId(value: unknown, path: FieldPath): Parsed<string> {
+    const short = checkShortId(value, path);
+    if (!short.ok) return short;
+    if (known.includes(short.value)) return accept(short.value);
+    let sentence = `${labelForPath(path)} is \`${short.value}\`; there is no such ${kind.one}`;
+    const guess = closestWord(short.value, known);
+    if (guess !== undefined) {
+      sentence += `. Did you mean \`${guess}\`?`;
+    } else if (known.length > 0) {
+      if (known.length === 1) sentence += `. The only known ${kind.one} is \`${known[0]}\`.`;
+      else sentence += `. The known ${kind.many} are ${known.map((id) => `\`${id}\``).join(", ")}.`;
+    } else {
+      sentence += `, and no ${kind.one} file was found.`;
+    }
+    return { ok: false, problems: [problemAt(path, sentence)], crossCheckWaited: false };
+  }
+  return checkIsKnownId;
+}
+
+// A web link, the one form every source's `url` takes.
+export const httpsLink: Parser<string> = requireTextMatching(/^https:\/\/\S+$/, "a link starting with https://");
 
 // The id rule decided by the owner (scope 002b, 2g): letters a to z and digits,
 // single dashes only between them, at most 32 characters. Ids join files
