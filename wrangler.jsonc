@@ -1,0 +1,12 @@
+// Cloudflare Workers static assets: serves the built game in dist/ (made by
+// `npm run build`). Deploy with `npx wrangler deploy`. No secrets here.
+// Cloudflare docs, Workers "Static Assets": `assets.directory` and
+// `assets.not_found_handling`.
+{
+  "name": "world-engine",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

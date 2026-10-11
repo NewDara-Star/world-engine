@@ -1,0 +1,248 @@
+{
+  "id": "hatchback",
+  "name": "Ayo Kekere 1.2",
+  "class": "car",
+  "controls": {
+    "wheelPosition": "left",
+    "steering": "steering-wheel"
+  },
+  "dynamics": "wheeled",
+  "drivenAxle": "front",
+  "body": {
+    "massKg": 1035,
+    "lengthM": 4.065,
+    "widthM": 1.725,
+    "heightM": 1.45,
+    "wheelbaseM": 2.58,
+    "trackM": 1.518,
+    "centreOfMassHeightM": 0.53,
+    "frontAxleLoadShare": 0.617
+  },
+  "wheels": {
+    "radiusM": 0.311,
+    "turningCircleM": 10.2,
+    "suspensionTravelM": 0.15,
+    "rideFrequencyHz": 1.2,
+    "dampingRatio": 0.3,
+    "tyreFriction": 1.1,
+    "rollingResistance": 0.012
+  },
+  "engine": {
+    "peakPowerKw": 62,
+    "peakTorqueNm": 122,
+    "forwardGearRatios": [
+      3.545,
+      1.895,
+      1.192,
+      0.906,
+      0.719
+    ],
+    "reverseGearRatio": 3.636,
+    "finalDriveRatio": 4.6,
+    "redlineRpm": 6500,
+    "drivetrainEfficiency": 0.92,
+    "gearChangeS": 0.3
+  },
+  "air": {
+    "dragCoefficient": 0.32,
+    "frontalAreaM2": 2.1
+  },
+  "brakes": {
+    "frontShare": 0.7,
+    "testFromSpeedMs": 27.78,
+    "testStoppingDistanceM": 35.5
+  },
+  "published": {
+    "testToSpeedMs": 27.78,
+    "testTimeS": 12.9,
+    "topSpeedMs": 47.22
+  },
+  "figureSources": [
+    {
+      "quantity": "body.massKg",
+      "source": "Kia's 2017 Rio European technical specification gives the 1.25 MPI a curb weight of 1,110 kg, which ADAC's catalogue lists as 'Leergewicht (EU)', the EU mass in running order that includes a 75 kg driver; 75 kg is taken off to give 1,035 kg without a driver (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "derived"
+    },
+    {
+      "quantity": "body.lengthM",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio (YB) an overall length of 4,065 mm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "body.widthM",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio (YB) an overall width of 1,725 mm excluding mirrors (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "body.heightM",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio (YB) an overall height of 1,450 mm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "body.wheelbaseM",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio (YB) a wheelbase of 2,580 mm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "body.trackM",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio (YB) a front track of 1,518 mm on 15-inch wheels (rear 1,524 mm) (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "body.centreOfMassHeightM",
+      "source": "No opened source: a search snippet citing NHTSA's measured inertial data puts passenger-car centre-of-gravity heights at about 0.50 to 0.58 m and compact cars at 500 to 560 mm; 0.53 m is the owner's choice inside that band until the NHTSA listing is opened.",
+      "url": "https://eng.auburn.edu/~dmbevly/mech4420/vehicle_params.pdf",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "body.frontAxleLoadShare",
+      "source": "auto motor und sport weighed a Kia Rio 1.0 T-GDI 120 GT-Line (same YB body, turbo engine, 2020 facelift) at 61.7 % front / 38.3 % rear (search snippet only, not opened).",
+      "url": "https://www.auto-motor-und-sport.de/test/kosten-realverbrauch-kia-rio-1-0-t-gdi-120-gt-line/technische-daten/",
+      "status": "derived"
+    },
+    {
+      "quantity": "wheels.radiusM",
+      "source": "Kia's 2017 Rio European technical specification fits standard 185/65 R15 tyres; unloaded radius = (15 x 25.4 + 2 x 0.65 x 185) / 2 = 310.75 mm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "wheels.turningCircleM",
+      "source": "Kia's 2017 Rio European technical specification and its Irish launch release give the Kia Rio (YB) a turning circle of 10.2 m; kerb-to-kerb wording not seen (search snippet only, not opened).",
+      "url": "https://press.kia.com/ie/en/home/media-resouces/press-releases/2017/KiaRio_pressrelease.html",
+      "status": "official"
+    },
+    {
+      "quantity": "wheels.suspensionTravelM",
+      "source": "No source was found for wheel travel of a small hatchback (this page came up in the search and gives no figure); 0.15 m is the owner's choice, proposed, not sourced.",
+      "url": "https://en.wikipedia.org/wiki/Automotive_suspension_design_process",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "wheels.rideFrequencyHz",
+      "source": "No opened source: a search snippet of OptimumG's Springs and Dampers Tech Tip 1 gives '0.5 - 1.5 Hz for passenger cars'; 1.2 Hz is the owner's choice inside that range until it is opened; Tech Tip 1 has only an http link, so the url given is Part Three of the same series.",
+      "url": "https://optimumg.com/wp-content/uploads/2020/01/SpringsDampers_Tech_Tip_3.pdf",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "wheels.dampingRatio",
+      "source": "No opened source: a search snippet of OptimumG's 'Of Springs and Dampers' puts passenger cars at about 0.3 when comfort is the priority; 0.3 is the owner's choice until the page is opened.",
+      "url": "https://optimumg.com/of-springs-and-dampers/",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "wheels.tyreFriction",
+      "source": "Worked out from ADAC's measured 35.5 m stop from 100 km/h for a Kia Rio 1.0 T-GDI 100: deceleration = 27.78^2 / (2 x 35.5) = 10.87 m/s^2, so mu >= 10.87 / 9.781 = 1.11, rounded to 1.1 (search snippet only, not opened).",
+      "url": "https://www.adac.de/rund-ums-fahrzeug/autokatalog/marken-modelle/kia/kia-rio/",
+      "status": "derived"
+    },
+    {
+      "quantity": "wheels.rollingResistance",
+      "source": "No opened source: a search snippet of a MATEC 2019 paper says passenger-car tyres on smooth asphalt range 0.007 to 0.02 with 0.012 cited most often; 0.012 is the owner's choice until the paper is opened.",
+      "url": "https://www.matec-conferences.org/articles/matecconf/pdf/2019/03/matecconf_mms18_01005.pdf",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "engine.peakPowerKw",
+      "source": "Kia's 2017 Rio European technical specification rates the Kia Rio 1.25 MPI at 84 ps (62 kW) at 6,000 rpm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "engine.peakTorqueNm",
+      "source": "Kia's 2017 Rio European technical specification rates the Kia Rio 1.25 MPI at 122 Nm at 4,000 rpm (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "engine.forwardGearRatios",
+      "source": "Kia's 2017 Rio European technical specification lists the Kia Rio 1.25 MPI five-speed manual at 3.545, 1.895, 1.192 (seen in three snippets) and about 0.906, 0.719 (one garbled snippet); the 0.72 top gear matches Carfolio's Hyundai i20 1.2 84 PS (search snippets only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "engine.reverseGearRatio",
+      "source": "Kia's 2017 Irish launch release for the Kia Rio lists reverse 3.636 for the 1.25 MPI in one snippet and 3.583 in another; 3.636 is taken and must be checked (search snippet only, not opened).",
+      "url": "https://press.kia.com/ie/en/home/media-resouces/press-releases/2017/KiaRio_pressrelease.html",
+      "status": "official"
+    },
+    {
+      "quantity": "engine.finalDriveRatio",
+      "source": "Kia's 2017 Irish launch release for the Kia Rio lists a 4.600 final drive for the 1.25 MPI manual, matching Carfolio's 4.60 for the Hyundai i20 1.2 84 PS (search snippet only, not opened).",
+      "url": "https://press.kia.com/ie/en/home/media-resouces/press-releases/2017/KiaRio_pressrelease.html",
+      "status": "official"
+    },
+    {
+      "quantity": "engine.redlineRpm",
+      "source": "No maker figure was found; a MotorBeam road test snippet says a related 1.2 Kappa engine 'redlines just above 6500 RPM'; 6,500 rpm is the owner's choice, proposed, not sourced for this engine.",
+      "url": "https://motorbeam.com/2018-kia-rio-review-test-drive/2",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "engine.drivetrainEfficiency",
+      "source": "No opened source: a search snippet of an MDPI World Electric Vehicle Journal paper puts manual transmission efficiency at 92-97 % and uses 0.92 as a worst case; 0.92 is the owner's choice until the paper is opened.",
+      "url": "https://www.mdpi.com/2032-6653/14/12/342",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "engine.gearChangeS",
+      "source": "The owner's choice (orchestrator decision E1(a)), proposed 0.3 s; no source exists, so the url is a placeholder that names no source.",
+      "url": "https://example.invalid/no-source",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "air.dragCoefficient",
+      "source": "No Kia figure found; median of three published values for peer cars: Suzuki Swift 2017 0.32 (Auto Express table), Hyundai i20 1.2 0.30 (Carfolio), Kia Rio 1.4 2017 0.32 (automobile-catalog estimate) (search snippets only, not opened).",
+      "url": "https://www.autoexpress.co.uk/suzuki/swift/99516/suzuki-swift-vs-toyota-yaris-vs-skoda-fabia",
+      "status": "derived"
+    },
+    {
+      "quantity": "air.frontalAreaM2",
+      "source": "No opened source for the factor: the EcoModder wiki snippet gives frontal area as width x height x 0.84; 0.84 x 1.725 x 1.450 = 2.10 m^2 is the owner's choice until a textbook source is opened.",
+      "url": "https://ecomodder.com/wiki/Vehicle_Coefficient_of_Drag_List",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "brakes.frontShare",
+      "source": "No opened source: a search snippet of a University of Michigan traction/braking paper gives an optimal 69/31 front/rear split on a dry road (mu 0.85) for one vehicle model; 0.7 is the owner's choice until the paper is opened.",
+      "url": "https://huei.engin.umich.edu/wp-content/uploads/sites/186/2015/02/vehicle.pdf",
+      "status": "owner-choice"
+    },
+    {
+      "quantity": "brakes.testFromSpeedMs",
+      "source": "ADAC's braking test is from 100 km/h (27.78 m/s) (search snippet only, not opened).",
+      "url": "https://www.adac.de/rund-ums-fahrzeug/autokatalog/marken-modelle/kia/kia-rio/",
+      "status": "official"
+    },
+    {
+      "quantity": "brakes.testStoppingDistanceM",
+      "source": "ADAC measured 35.5 m from 100 km/h for a Kia Rio 1.0 T-GDI 100 (same YB body, different engine); auto motor und sport measured 37.1 m and 35.8 m on two 1.0 T-GDI 120 cars (search snippet only, not opened).",
+      "url": "https://www.adac.de/rund-ums-fahrzeug/autokatalog/marken-modelle/kia/kia-rio/",
+      "status": "derived"
+    },
+    {
+      "quantity": "published.testToSpeedMs",
+      "source": "Kia's 2017 Rio European technical specification quotes acceleration 0-100 km/h (27.78 m/s) (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "published.testTimeS",
+      "source": "Kia's 2017 Rio European technical specification gives the Kia Rio 1.25 MPI 0-100 km/h in 12.9 s; ADAC's catalogue repeats it (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    },
+    {
+      "quantity": "published.topSpeedMs",
+      "source": "Kia's 2017 Rio European technical specification and Irish release give the Kia Rio 1.25 MPI a top speed of 170 km/h (47.22 m/s); ADAC's German catalogue lists 173 km/h (search snippet only, not opened).",
+      "url": "https://press.kia.com/content/dam/kiapress/EU/download-files/New-Rio/Kia-Rio-Technical-Specification-3-Feb-2017.doc",
+      "status": "official"
+    }
+  ]
+}

@@ -8,9 +8,21 @@
   "gravityMs2": 9.781,
   "airDensityKgM3": 1.167,
   "seaLevelDatum": "Earth mean sea level (EGM2008 geoid)",
-  "skyPosition": {
+  "centre": {
     "lat": 6.51,
     "lon": 3.38
+  },
+  "laneWidthM": 3.5,
+  "laneWidthSource": {
+    "source": "The owner's choice, proposed by the coder and awaiting his yes: 3.5 m, osm2lanes' default motor lane width (a-b-street/osm2lanes, locale.rs travel_width, Apache-2.0; research/36 section 2). The official Nigerian figure would be in the Federal Ministry of Works Highway Manual Part 1 (2013), which no session could open; the owner was asked to look (research/36 section 2).",
+    "url": "https://fmw.gov.ng/themes/front_end_themes_01/images/uploads_images/1569359724.pdf",
+    "status": "owner-choice"
+  },
+  "mapHalfSizeM": 1500,
+  "mapHalfSizeSource": {
+    "source": "The owner's choice, proposed by the coder (Scope 005, slice 1) and awaiting his yes: 1.5 km in every direction from the centre, the same reach as Omole (Scope 005, 'about 1.5 km in every direction'). Yaba is not baked yet.",
+    "url": "https://www.openstreetmap.org/copyright",
+    "status": "owner-choice"
   },
   "allowedVehicleClasses": [
     "car",

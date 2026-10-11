@@ -12,6 +12,9 @@ export const STEERING_TYPES = ["steering-wheel", "handlebars", "tiller", "yoke",
 // How the vehicle moves: on wheels, on two wheels, on water, or through air.
 export const DYNAMICS_TYPES = ["wheeled", "two-wheeler", "hull", "aerodynamic"] as const;
 
+// Which wheels the engine drives (scope 005).
+export const DRIVEN_AXLES = ["front", "rear", "both"] as const;
+
 // Licences a data source may carry (CLAUDE.md): CC0, MIT and Apache, and the
 // attribution-only ones (CC-BY, ODbL), credited on the About page. ODbL is also
 // the licence of OpenStreetMap and so of every map built from it.

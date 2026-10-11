@@ -221,6 +221,94 @@ flowchart TD
   n4 -->|"no"| n6
 ```
 
+## requireNumberAbove
+
+```mermaid
+flowchart TD
+  n1(["requireNumberAbove"])
+  n2(["return checkNumberAbove;"])
+  n1 --> n2
+```
+
+## requireNumberAbove > checkNumberAbove
+
+```mermaid
+flowchart TD
+  n1(["requireNumberAbove #gt; checkNumberAbove"])
+  n2{"typeof value === #quot;number#quot;"}
+  n3{"Number.isFinite(value)"}
+  n4{"value #gt; min"}
+  n5(["return accept(value);<br/>calls accept"])
+  n6{"unit === undefined"}
+  n7["#96;a number above ${min}#96;"]
+  n8["#96;a number above ${min} ${unit}#96;"]
+  n9(["return reject(value, path, unit === undefined ? #96;a number a…<br/>calls reject"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n3 -->|"yes"| n4
+  n4 -->|"yes"| n5
+  n2 -->|"no"| n6
+  n3 -->|"no"| n6
+  n4 -->|"no"| n6
+  n6 -->|"yes"| n7
+  n6 -->|"no"| n8
+  n7 --> n9
+  n8 --> n9
+```
+
+## requireNumberFromBelow
+
+```mermaid
+flowchart TD
+  n1(["requireNumberFromBelow"])
+  n2(["return checkNumberFromBelow;"])
+  n1 --> n2
+```
+
+## requireNumberFromBelow > checkNumberFromBelow
+
+```mermaid
+flowchart TD
+  n1(["requireNumberFromBelow #gt; checkNumberFromBelow"])
+  n2{"typeof value === #quot;number#quot;"}
+  n3{"Number.isFinite(value)"}
+  n4{"value #gt;= min"}
+  n5{"value #lt; below"}
+  n6(["return accept(value);<br/>calls accept"])
+  n7(["return reject(value, path, #96;a number from ${min} up to but …<br/>calls reject"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n3 -->|"yes"| n4
+  n4 -->|"yes"| n5
+  n5 -->|"yes"| n6
+  n2 -->|"no"| n7
+  n3 -->|"no"| n7
+  n4 -->|"no"| n7
+  n5 -->|"no"| n7
+```
+
+## requireTrueOrFalse
+
+```mermaid
+flowchart TD
+  n1(["requireTrueOrFalse"])
+  n2(["return checkTrueOrFalse;"])
+  n1 --> n2
+```
+
+## checkTrueOrFalse
+
+```mermaid
+flowchart TD
+  n1(["checkTrueOrFalse"])
+  n2{"typeof value === #quot;boolean#quot;"}
+  n3(["return accept(value);<br/>calls accept"])
+  n4(["return reject(value, path, #quot;true or false, without quote ma…<br/>calls reject"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n2 -->|"no"| n4
+```
+
 ## rangeInWords
 
 ```mermaid
@@ -392,7 +480,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["missingFields"])
-  n2(["return Object.keys(shape).filter((name) =#gt; !Object.hasOwn(r…"])
+  n2(["return Object.keys(shape) .filter((name) =#gt; !Object.hasOwn(…"])
   n1 --> n2
 ```
 
@@ -459,7 +547,7 @@ flowchart TD
   n1(["requireRecord #gt; checkRecord"])
   n2{"!isRecord(value)<br/>calls isRecord"}
   n3(["return reject(value, path, #quot;an object in curly brackets#quot;);<br/>calls reject"])
-  n4["const missing = missingFields(value, shape);<br/>calls missingFields"]
+  n4["const missing = missingFields(value, shape, optional);<br/>calls missingFields"]
   n5["const unknowns = unknownFieldsWithGuesses(value, shape, mis…<br/>calls unknownFieldsWithGuesses"]
   n6["const checked: FieldResult[] = Object.entries(shape) .filte…<br/>calls checker, pathToField"]
   n7["const problems = [ ...problemsForUnknownFields(unknowns, sh…<br/>calls problemsForUnknownFields, problemsForMissingFields"]
@@ -514,7 +602,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["addCrossFieldRules"])
-  n2["const checkPlainRecord = requireRecord(shape);<br/>calls requireRecord"]
+  n2["const checkPlainRecord = requireRecord(shape, optional);<br/>calls requireRecord"]
   n3(["return checkFieldsThenRules;"])
   n1 --> n2
   n2 --> n3
@@ -555,7 +643,7 @@ flowchart TD
   n5["const fields = valuesReadByRule(value, shape, rule.reads, p…<br/>calls valuesReadByRule"]
   n6{"fields === undefined"}
   n7(["return { problems: [], waited: true };"])
-  n8["const found = rule.problems(fields as Fields#lt;S#gt;);<br/>calls problems"]
+  n8["const found = rule.problems(fields as Fields#lt;S, O#gt;);<br/>calls problems"]
   n9(["return { problems: found.map((problem) =#gt; problemAt([...pat…<br/>calls problemAt"])
   n1 --> n2
   n2 -->|"yes"| n3
@@ -576,16 +664,18 @@ flowchart TD
   n3(["return undefined;"])
   n4["const checked: FieldResult[] = Object.entries(shape) .filte…<br/>calls checker, pathToField"]
   n5["const good = checked.flatMap(nameAndValueFromOneField);"]
-  n6{"good.length !== reads.length"}
-  n7(["return undefined;"])
-  n8(["return Object.fromEntries(good);"])
+  n6["const absentButOptional = reads.filter((name) =#gt; optional.i…"]
+  n7{"good.length + absentButOptional.length !== reads.length"}
+  n8(["return undefined;"])
+  n9(["return Object.fromEntries(good);"])
   n1 --> n2
   n2 -->|"yes"| n3
   n2 -->|"no"| n4
   n4 --> n5
   n5 --> n6
-  n6 -->|"yes"| n7
-  n6 -->|"no"| n8
+  n6 --> n7
+  n7 -->|"yes"| n8
+  n7 -->|"no"| n9
 ```
 
 ## requireKnownId
@@ -670,4 +760,23 @@ flowchart TD
   n7 -->|"yes"| n8
   n6 -->|"no"| n9
   n7 -->|"no"| n9
+```
+
+## sourceCountProblem
+
+```mermaid
+flowchart TD
+  n1(["sourceCountProblem"])
+  n2["const positions = sources .map((source, index) =#gt; ({ quanti…"]
+  n3{"positions.length === 0"}
+  n4(["return [problemAt([listName], #96;\#96;${listName}\#96; has no sourc…<br/>calls problemAt"])
+  n5{"positions.length === 1"}
+  n6(["return [];"])
+  n7(["return [ problemAt( [listName, ...positions.slice(1, 2)], #96;…<br/>calls problemAt"])
+  n1 --> n2
+  n2 --> n3
+  n3 -->|"yes"| n4
+  n3 -->|"no"| n5
+  n5 -->|"yes"| n6
+  n5 -->|"no"| n7
 ```

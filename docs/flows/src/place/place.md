@@ -11,31 +11,12 @@ flowchart TD
   n1 --> n2
 ```
 
-## sourceProblemForOneConstant
-
-```mermaid
-flowchart TD
-  n1(["sourceProblemForOneConstant"])
-  n2["const positions = sources .map((source, index) =#gt; ({ quanti…"]
-  n3{"positions.length === 0"}
-  n4(["return [problemAt([#quot;constantsSources#quot;], #96;\#96;constantsSources…<br/>calls problemAt"])
-  n5{"positions.length === 1"}
-  n6(["return [];"])
-  n7(["return [ problemAt( [#quot;constantsSources#quot;, ...positions.slice…<br/>calls problemAt"])
-  n1 --> n2
-  n2 --> n3
-  n3 -->|"yes"| n4
-  n3 -->|"no"| n5
-  n5 -->|"yes"| n6
-  n5 -->|"no"| n7
-```
-
 ## sourceProblemsForConstants
 
 ```mermaid
 flowchart TD
   n1(["sourceProblemsForConstants"])
-  n2(["return CONSTANT_QUANTITIES.flatMap((quantity) =#gt; sourceProb…<br/>calls sourceProblemForOneConstant"])
+  n2(["return CONSTANT_QUANTITIES.flatMap((quantity) =#gt; sourceCoun…<br/>calls sourceCountProblem"])
   n1 --> n2
 ```
 

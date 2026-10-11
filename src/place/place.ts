@@ -17,6 +17,7 @@ import {
   requireRecord,
   requireShortId,
   requireText,
+  sourceCountProblem,
 } from "./parse.js";
 import type { Planet } from "./planet.js";
 import {
@@ -55,6 +56,14 @@ const constantSource = requireRecord({
   status: requireOneOf(CONSTANT_STATUSES),
 });
 
+// Where one of the place's own numbers (lane width, map size) came from, with
+// the data rule's status: official, derived or the owner's choice (scope 005).
+const numberSource = requireRecord({
+  source: requireText(),
+  url: httpsLink,
+  status: requireOneOf(CONSTANT_STATUSES),
+});
+
 // The shape every place has. `planet` is written as an id here; placeCheckerFor
 // puts in its place the check against the planets handed in, keeping the
 // field's position, so messages come in the file's order.
@@ -73,8 +82,21 @@ const placeShape = {
   airDensityKgM3: requireNumberAtLeast(0, CONSTANT_UNITS.airDensity),
   // What "0 m" means for heights in this place (the sea surface, or the planet's datum).
   seaLevelDatum: requireText(),
-  // Where the sky is computed from: the sun and stars as seen from here.
-  skyPosition: position,
+  // Where the map is centred and the sky is seen from (scope 005: one field,
+  // so the two can never disagree). The bake measures every road in metres
+  // from here.
+  centre: position,
+  // How wide one traffic lane is here, used by the bake when a road has no
+  // `width` tag. A fact about the country's road standard (osm2lanes
+  // locale.rs, research/36 section 2). 2 to 5 m catches slips such as 30 for
+  // 3.0 (our own sanity range, src/place/place.md).
+  laneWidthM: requireNumberBetween(2, 5, "m"),
+  laneWidthSource: numberSource,
+  // How far the map reaches from the centre in every direction. The bake
+  // clips the roads to this square, because an osmium extract keeps whole
+  // ways that cross its box (approver's F20). 100 to 50,000 m is a sanity range.
+  mapHalfSizeM: requireNumberBetween(100, 50_000, "m"),
+  mapHalfSizeSource: numberSource,
   allowedVehicleClasses: requireListOf(requireOneOf(VEHICLE_CLASSES), 1),
   dataSources: requireListOf(dataSource, 1),
   // How gravity and air density were worked out, so the numbers can be checked.
@@ -96,27 +118,10 @@ function firstRepeatedVehicleClass(classes: readonly string[]): string | undefin
   return classes.find((name, index) => classes.indexOf(name) !== index);
 }
 
-// The owner's data rule (CLAUDE.md, "Where a number comes from"): each physical
-// constant has exactly one source, so nobody has to guess which one the number
-// came from (scope 002b, 2f). Paths are inside the place; the rule puts the
-// place's path in front.
-function sourceProblemForOneConstant(quantity: string, sources: PlaceFields["constantsSources"]): Problem[] {
-  const positions = sources
-    .map((source, index) => ({ quantity: source.quantity, index }))
-    .filter((source) => source.quantity === quantity)
-    .map((source) => source.index);
-  if (positions.length === 0) return [problemAt(["constantsSources"], `\`constantsSources\` has no source for \`${quantity}\`.`)];
-  if (positions.length === 1) return [];
-  return [
-    problemAt(
-      ["constantsSources", ...positions.slice(1, 2)],
-      `\`constantsSources\` has ${positions.length} sources for \`${quantity}\`; each constant needs exactly one.`,
-    ),
-  ];
-}
-
+// The owner's data rule: each physical constant has exactly one source; the
+// count is the same rule as a vehicle's figures (parse.ts, sourceCountProblem).
 function sourceProblemsForConstants(place: Pick<PlaceFields, "constantsSources">): Problem[] {
-  return CONSTANT_QUANTITIES.flatMap((quantity) => sourceProblemForOneConstant(quantity, place.constantsSources));
+  return CONSTANT_QUANTITIES.flatMap((quantity) => sourceCountProblem(quantity, place.constantsSources, "constantsSources", "constant"));
 }
 
 function repeatedClassProblemsInPlace(place: Pick<PlaceFields, "allowedVehicleClasses">): Problem[] {

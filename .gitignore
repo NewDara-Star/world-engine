@@ -2,3 +2,5 @@ node_modules/
 .claude/.state/
 *.log
 raw-data/
+dist/
+.wrangler/
