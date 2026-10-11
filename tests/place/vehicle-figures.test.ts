@@ -90,16 +90,16 @@ describe("vehicle figures: happy path", () => {
 
 describe("vehicle figures: sad path (file, line, what to fix)", () => {
   it("refuses a mass of 0, which no car has and which would divide by zero in the physics", () => {
-    expect(messagesOf(withFigures("body", { massKg: 0 }))).toEqual([expect.stringMatching(/^hatchback\.json line \d+: `body\.massKg` must be a number above 0 kg; found 0\.$/)]);
+    expect(messagesOf(withFigures("body", { massKg: 0 }))).toEqual([expect.stringMatching(/^hatchback\.json line \d+: `body\.massKg` must be a number above 0 kg; found 0\.$/), expect.stringMatching(/^hatchback\.json: Fix these first; some cross-checks run after\.$/)]);
   });
 
   it("refuses a figure written as text, showing the quote marks", () => {
-    expect(messagesOf(withFigures("wheels", { tyreFriction: "1.0" }))).toEqual([expect.stringContaining('`wheels.tyreFriction` must be a number above 0; found "1.0".')]);
+    expect(messagesOf(withFigures("wheels", { tyreFriction: "1.0" }))).toEqual([expect.stringContaining('`wheels.tyreFriction` must be a number above 0; found "1.0".'), expect.stringMatching(/^hatchback\.json: Fix these first; some cross-checks run after\.$/)]);
   });
 
   it("refuses a share outside 0 to 1", () => {
-    expect(messagesOf(withFigures("body", { frontAxleLoadShare: 1.2 }))).toEqual([expect.stringContaining("`body.frontAxleLoadShare` must be a number from 0 to 1")]);
-    expect(messagesOf(withFigures("engine", { drivetrainEfficiency: 90 }))).toEqual([expect.stringContaining("`engine.drivetrainEfficiency` must be a number from 0 to 1")]);
+    expect(messagesOf(withFigures("body", { frontAxleLoadShare: 1.2 }))).toEqual([expect.stringContaining("`body.frontAxleLoadShare` must be a number from 0 to 1"), expect.stringMatching(/^hatchback\.json: Fix these first; some cross-checks run after\.$/)]);
+    expect(messagesOf(withFigures("engine", { drivetrainEfficiency: 90 }))).toEqual([expect.stringContaining("`engine.drivetrainEfficiency` must be a number from 0 to 1"), expect.stringMatching(/^hatchback\.json: Fix these first; some cross-checks run after\.$/)]);
   });
 
   it("says a wheeled vehicle without its driving figures is missing them", () => {

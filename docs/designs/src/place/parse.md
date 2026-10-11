@@ -452,7 +452,7 @@ Why the game needs it: finds every field the file should have and does not, by t
 ```mermaid
 flowchart TD
   s(["missingFields of a record, for a shape"])
-  a(["return every field name of the shape that the record does not have as its own field"])
+  a(["return every field name of the shape that the record does not have as its own field, except the fields that may be left out"])
   s --> a
 ```
 
@@ -508,7 +508,7 @@ Why the game needs it: a place file, and parts of it like the sky position, are 
 
 ```mermaid
 flowchart TD
-  s(["requireRecord a shape: each field name with its checker"])
+  s(["requireRecord a shape: each field name with its checker, and optionally the names of fields that may be left out"])
   a(["return checkRecord"])
   s --> a
 ```
@@ -635,8 +635,8 @@ flowchart TD
   s(["valuesReadByRule with a value, the shape, the fields the rule reads and the path"])
   a{"is the value a record"}
   b(["return nothing: the rule must wait"])
-  c["check each field the rule reads with its own checker from the shape, if the record has it as its own field"]
-  d{"is every one of them present and good"}
+  c["check each field the rule reads with its own checker from the shape, if the record has it as its own field; a field that may be left out and is absent is handed to the rule as absent"]
+  d{"is every one of them good, or absent where it may be left out"}
   e(["return those fields with their checked values"])
   s --> a
   a -->|"no"| b
