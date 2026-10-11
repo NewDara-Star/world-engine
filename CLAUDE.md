@@ -4,7 +4,8 @@ world-engine is a driving engine and game that is not tied to any one place.
 Real places are built from open map data; each place is a data file in
 `places/`, not code. First places: Finglas (Dublin, drives on the left) and
 Yaba (Lagos, drives on the right). Later: boats, planes, other countries,
-maybe other planets. It runs in the browser (three.js and Rapier on the
+Mars, invented planets and galaxies: the engine is built for the whole
+universe and names none of it. It runs in the browser (three.js and Rapier on the
 client), with Cloudflare Workers and Durable Objects on the server. The core
 mode is deliveries in Lagos, and the server decides every payout.
 
@@ -14,6 +15,13 @@ several.
 
 These rules are adapted from the Spes and World Drive rules. Where a script
 can enforce one, it does (see "Checks and hooks"). The rest you follow.
+
+## Tracks
+
+The game is built by several track chats at once (world data, assets,
+gameplay, server, and more). `docs/TRACKS.md` says what each owns and how
+they work together: read it first. Read anyone's code; change only your
+track's folders; ask for changes elsewhere in `docs/requests/`.
 
 ## One scope per session
 
@@ -25,9 +33,9 @@ can enforce one, it does (see "Checks and hooks"). The rest you follow.
 
 ## Find code before writing code
 
-Before writing any system from scratch (traffic, a tyre model, a city
-importer, weather), assume someone has built it and look first: GitHub,
-published datasets, game-dev write-ups.
+Before writing anything (a whole system or a small feature), assume someone
+has built it and look first: GitHub, published datasets, papers, game-dev
+write-ups. Research is always the first step, never the code.
 
 - Study the best two or three. Read their licences.
 - Write what you found to `research/`, naming the source (repo, page, dataset).
@@ -101,9 +109,14 @@ only joins pieces cites the API it uses.
 Owner, 2026-10-11 (Scope 004). Read `docs/DECISIONS.md` before acting; never
 contradict an entry without the owner.
 
-Every game change goes: approved design, then tests written blind by a
-session that never sees the code (failing first), then code by a separate
-Opus session that cannot change those tests, then the gates and reviewers.
+Physics, money, cheating and saved progress go: approved design, then tests
+written blind by a session that never sees the code (failing first), then
+code by a separate Opus session that cannot change those tests, then the
+gates and reviewers. Everything else (screens, maps, labels, data, tools) is
+built by one session with its designs and ordinary tests, approved by the
+orchestrator in one pass (owner, 2026-10-11: "strike a balance between
+moving things forward and actually writing code"). Every session ends with
+something the owner can see or play.
 The roles are in `docs/roles/`: `orchestrator.md` (runs the pipeline, the
 only one who approves, sets roles and records decisions), `approver.md`,
 `test-writer.md`, `coder.md`, `note-taker.md`. A session started with

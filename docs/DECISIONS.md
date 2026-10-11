@@ -309,3 +309,19 @@ rather than guess one.
 - Decided by: owner (on the orchestrator's recommendation)
 - Tags: platform, server
 
+## D-0038
+
+- Date: 2026-10-11
+- Decision: Heavy process (designs, blind tests, approver) only for physics, money, cheating and saved progress; everything else is built by one session and approved in one pass; every session ends with something playable.
+- Why: A day and a half went on tooling with little to play; the owner wants a balance between moving forward and writing code.
+- Decided by: owner
+- Tags: process
+
+## D-0039
+
+- Date: 2026-10-11
+- Decision: The game is built in 13 tracks (docs/TRACKS.md), at most four active at once; now World data, Assets, Gameplay and Server. Every track researches before code, reads everyone's code, changes only its own folders, and keeps the engine free of any place or planet (the whole universe, invented worlds included).
+- Why: Parallel chats move faster when each owns clear ground; the owner tests everything, so only four at a time.
+- Decided by: owner
+- Tags: process, tracks
+
