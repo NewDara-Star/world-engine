@@ -96,6 +96,21 @@ only joins pieces cites the API it uses.
   are unapproved, with no exceptions. `src/` and `tools/` are covered; shell
   hooks, tests and `places/` are not.
 
+## How a change is built
+
+Owner, 2026-10-11 (Scope 004). Read `docs/DECISIONS.md` before acting; never
+contradict an entry without the owner.
+
+Every game change goes: approved design, then tests written blind by a
+session that never sees the code (failing first), then code by a separate
+Opus session that cannot change those tests, then the gates and reviewers.
+The roles are in `docs/roles/`: `orchestrator.md` (runs the pipeline, the
+only one who approves, sets roles and records decisions), `approver.md`,
+`test-writer.md`, `coder.md`, `note-taker.md`. A session started with
+`WE_ROLE` is held to its role by hooks and cannot change it. The test-writer's
+commit is the one commit allowed with failing tests, and only its new ones,
+each failing for an expected reason (`tests/fails-first.json`).
+
 ## Write code that reads like a diagram
 
 - **Small functions.** Each one does one thing and reads as a diagram. Lint
@@ -212,6 +227,14 @@ anything is committed or pushed. The hooks in `.claude/hooks/` (wired in
   are out of date, while a function in `src/` or `tools/` has no design in
   `docs/designs/`, or while a design is not approved (see "Diagram first").
   Shell hooks are not TypeScript, so they are exempt; the push review reads them.
+- **Role guard:** with `WE_ROLE=test-writer`, reading or listing `src/` or
+  `docs/flows/` and writing outside `tests/` are refused; with
+  `WE_ROLE=coder`, changing `tests/` is refused; under any role, changing
+  `.claude/`, `CLAUDE.md`, `docs/roles/` or `.git/`, or starting another
+  `claude`, is refused. No role: nothing changes.
+- **Tests lock:** the test-writer's commit needs its new tests to fail first
+  for an expected reason; the coder's commit needs `tests/` byte-identical to
+  the test-writer's commit (`WE_LOCK`) and those tests passing.
 - **Story before commit:** a commit that changes `src/` is blocked without a
   `Story:` paragraph.
 - **Second-model review before push:** separate Claudes read this file, the
@@ -237,7 +260,7 @@ through. Fix the thing.
 - `npm run diagrams` redraws `docs/flows/`; `npm run modules` checks that
   engine code does not import `places/` (part of `npm run check`).
 - Place and vehicle file formats live in `src/place/`; examples in `places/`.
-- Do not push unless the owner or the orchestrating session says so.
+- Never push. Only the owner pushes, from his own machine (D-0022).
 
 ## Talking to the owner
 
