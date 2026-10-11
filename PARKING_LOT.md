@@ -34,3 +34,4 @@ never into the scope being built. Each is looked at when a scope is planned.
 - "Did you mean" ten-times hint: with today's wide ranges it is often wrong
   (gravity 980 gives "Did you mean 98?", latitude 91 gives "9.1?"); offer it
   only when the tenth is near a typical value, or after the ranges tighten.
+- Mutation testing (StrykerJS, Apache-2.0) to check the blind tests are strong, not just failing first (research/35-blind-tests.md).
