@@ -203,7 +203,7 @@ rather than guess one.
 - Decision: Design approvals are delegated to a fresh approver session (docs/roles/approver.md); it decides common sense itself and brings the owner only real product trade-offs, with pros and cons.
 - Why: Replaces the earlier rule, from before this log, that the owner approves every design. Further reason not recorded in the handover.
 - Decided by: owner
-- Tags: process, design, approval
+- Tags: process, design, approvals
 
 ## D-0025
 

@@ -1,0 +1,150 @@
+{
+  "base": "6dfce056403d6872e5d52ba4320692ee7585e259",
+  "files": [
+    "tests/decisions/clash.test.ts",
+    "tests/decisions/cli.test.ts",
+    "tests/decisions/log.test.ts"
+  ],
+  "tests": [
+    {
+      "file": "tests/decisions/clash.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path finds D-0022 for only the owner pushes, with its date, who decided, the decision and why"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path lists every decision sharing a tag, says how many, newest and then highest id first, a blank line between"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path names the shared tag as what matched"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path runs the same through npm run decisions"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path says plainly when no decision in force shares the tags or wording, and that is not a failure"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path says what matched: the shared words"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path takes --tags=a,b the same as --tags a,b"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: happy path takes the tags before the text too"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path does not warn about a tag that is in use"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path on a tie between two close tags, suggests the first alphabetically: ard gives ads, not art"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path reads tags in any capitals, with spaces and empty ones between commas"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path refuses --tags given twice"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path refuses --tags with nothing after it"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path refuses --tags= with nothing after the equals sign, instead of checking with no tags"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path refuses an option it does not know, naming it"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path suggests the tag with the same stem first: test for tests"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path warns about a misspelt tag, naming the tag in use it is closest to, and still runs"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: idiot-proof path warns about a tag nobody uses with no suggestion when none is close"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path puts errors on stderr and nothing on stdout"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path refuses a blank text"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path refuses text not in quotes, which arrives as more than one text"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path refuses to say all clear when the text is all short or common words and no tags are given"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path refuses when there is no text to check"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: sad path refuses with the usage line when the first word is not check"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: tragedy path checks a pasted wall of text and still answers"
+    },
+    {
+      "file": "tests/decisions/cli.test.ts",
+      "reason": "an expectation does not hold yet",
+      "test": "decisions check: tragedy path never changes the decision log"
+    },
+    {
+      "file": "tests/decisions/log.test.ts",
+      "reason": "the module does not exist yet",
+      "test": "(the whole file)"
+    }
+  ]
+}
