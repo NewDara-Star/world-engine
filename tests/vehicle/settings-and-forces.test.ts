@@ -156,7 +156,10 @@ describe("engine and gearbox", () => {
 describe("drive, air and road forces", () => {
   it("pulls hardest from a standstill in first gear, by the throttle", () => {
     const v = car();
-    const first = wheelForce(v.engine.peakTorqueNm, gearRatio(1));
+    // Wheel force over the rotating-mass factor for first gear (Gillespie 1992,
+    // 1.04 + 0.0025 x overall ratio squared), as forwardDriveForceN's design says.
+    const overallRatio = gearRatio(1) * v.engine.finalDriveRatio;
+    const first = wheelForce(v.engine.peakTorqueNm, gearRatio(1)) / (1.04 + 0.0025 * overallRatio ** 2);
     expect(forwardDriveForceN(v, { gear: 1, changeLeftS: 0 }, 0, 1)).toBeCloseTo(first, 6);
     expect(forwardDriveForceN(v, { gear: 1, changeLeftS: 0 }, 0, 0.5)).toBeCloseTo(first / 2, 6);
     expect(forwardDriveForceN(v, { gear: 1, changeLeftS: 0 }, 0, 0)).toBe(0);
