@@ -73,13 +73,21 @@ only joins pieces cites the API it uses.
   `npm run diagrams` writes `docs/flows/` (one chart per function, plus
   `modules.md`, which file uses which). Run it before every commit that
   changes TypeScript; commit the result.
-- A design is **approved** when the commit that last changed it has the
-  trailer `Approved-by: Daramola`. The orchestrating session adds that trailer
-  only after the owner approves in chat. **A hook cannot prove who typed it**:
-  the trailer is a record the orchestrator is trusted to keep honest, not a
-  signature. To approve, the orchestrator changes each approved design's
-  `Status:` line from `draft` to `approved` and commits with the trailer. Any
-  later edit to a design is unapproved until it is approved again.
+- A design is **approved** when the commit that last changed it has one of
+  two trailers, each as a whole line:
+  - `Approved-by: Daramola` when the owner decided it in chat (anything the
+    approver escalated, and any design the owner approves himself);
+  - `Approved-by: reviewer (delegated by Daramola)` when the delegated design
+    approver (`docs/roles/approver.md`) approved it on its own.
+
+  Only the orchestrating session adds either trailer, and only after that
+  approval; no other session (a coding session, the approver itself) adds one.
+  Anything else, even `Approved-by: reviewer` alone, does not count. **A hook
+  cannot prove who typed it**: the trailer is a record the orchestrator is
+  trusted to keep honest, not a signature. To approve, the orchestrator
+  changes each approved design's `Status:` line from `draft` to `approved` and
+  commits with the trailer. Any later edit to a design is unapproved until it
+  is approved again.
 - Generated flows must match the approved design. If they differ, either the
   code or the design is wrong: tell the owner, do not quietly change one. The
   push review's design-match lens checks this for every changed function.
