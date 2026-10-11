@@ -1,6 +1,6 @@
 # tools/site/data-files.ts
 
-Status: approved by the orchestrator in one pass (Scope 005b, the owner's lighter process for non-physics work, 2026-10-11).
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (item 4). The game fetches its data (place, planet, car,
 map squares) as files at run time, so they are not baked into the
@@ -30,7 +30,7 @@ flowchart TD
   a{"is it start.json"}
   y(["return yes"])
   b{"is it planets/name.json, vehicles/name.json or places/name.json"}
-  c{"is it places/name/chunks/name.json"}
+  c{"is it places/name/chunks/ index.json, east_north.json or buildings_east_north.json (scope 006)"}
   d{"is it places/name/streets.json (Scope 005b)"}
   n(["return no"])
   s --> a

@@ -24,15 +24,23 @@ export interface GamePage extends MessagePage {
   miniMap: HTMLCanvasElement;
 }
 
-// A loaded 100 m square: its ground, its collider, and its road when it has
-// arrived (streaming.md).
+// Where one of a square's files is: on its way, drawn, failed (to be tried
+// again), or not needed because the index lists nothing of that kind there.
+export type FileState = "loading" | "loaded" | "failed" | "not-needed";
+
+// A loaded 100 m square: its ground, its collider, its road and its buildings
+// with their solids once they have arrived (streaming.md).
 export interface LoadedSquare {
   cell: Cell;
   groundMesh: Mesh;
   groundCollider: number;
   roadMesh: Mesh | undefined;
-  road: "loading" | "loaded" | "failed" | "not-needed";
+  road: FileState;
   failedAtMs: number | undefined;
+  buildingMesh: Mesh | undefined;
+  buildingColliders: number[];
+  buildings: FileState;
+  buildingsFailedAtMs: number | undefined;
   // Only the first failure of a square is told to the player; retries stay quiet.
   failedBefore: boolean;
 }
@@ -52,6 +60,8 @@ export interface Game {
   navigator: Pick<Navigator, "getGamepads">;
   // The squares that have road, from the map index, by key.
   roadCells: ReadonlySet<string>;
+  // The squares that have buildings, from the map index, by key (scope 006).
+  buildingCells: ReadonlySet<string>;
   squares: Map<string, LoadedSquare>;
   leftOverS: number;
   lastFrameMs: number | undefined;

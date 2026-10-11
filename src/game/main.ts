@@ -101,6 +101,7 @@ export function buildGame(data: GameData, renderer: WebGLRenderer, page: GamePag
     touches,
     navigator,
     roadCells: new Set(data.mapIndex.cells),
+    buildingCells: new Set(data.mapIndex.buildingCells),
     squares: new Map(),
     leftOverS: 0,
     lastFrameMs: undefined,

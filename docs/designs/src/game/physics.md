@@ -1,6 +1,6 @@
 # src/game/physics.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (items 4 and 5). The physics world: Rapier, started once,
 pulling down with the place's gravity (D-0009), the flat ground one collider
@@ -48,6 +48,34 @@ flowchart TD
   a["a fixed box 100 m by 100 m across and 1 m deep, its top at height 0, centred on the square"]
   b(["return the collider's handle, kept with the square so it can be removed"])
   s --> a --> b
+```
+
+## addBuildingColliders
+
+Why the game needs it (scope 006): the car cannot drive through a building. One simple solid per building: the convex hull of its outline at the ground and at its roof (Rapier 0.21.0 `ColliderDesc.convexHull`). A hull fills a courtyard and the inside of an L-shaped building; in Omole those sit behind compound walls, so the car would not reach them anyway.
+
+```mermaid
+flowchart TD
+  s(["addBuildingColliders to the world for a square's buildings"])
+  a["for each building's outline and height, from buildingOutlinesInMetres"]
+  b["every outline corner twice: at the ground and at the roof, in game axes"]
+  c{"can Rapier make a hull of them"}
+  d["skip it: its corners are all in a line"]
+  e["add the hull as a fixed collider at the square's south-west corner; keep its handle"]
+  f(["return the handles, kept with the square so they can be removed"])
+  s --> a --> b --> c
+  c -->|"no"| d --> a
+  c -->|"yes"| e --> a
+  a -->|"all done"| f
+```
+
+## addBuildingColliders > inner function 1
+
+```mermaid
+flowchart TD
+  s(["one outline corner and its number"])
+  a(["write it at the ground and at the roof"])
+  s --> a
 ```
 
 ## addMapEdgeWalls

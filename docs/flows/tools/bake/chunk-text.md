@@ -59,10 +59,17 @@ flowchart TD
 ```mermaid
 flowchart TD
   n1(["indexFileText"])
-  n2["const sorted = cells.toSorted((a, b) =#gt; a.east - b.east).to…"]
-  n3["const index = { format: CHUNK_FORMAT, cellSizeM: CELL_SIZE_…"]
-  n4(["return #96;${JSON.stringify(index, null, 2)}\n#96;;"])
+  n2["const index = { format: INDEX_FORMAT, cellSizeM: CELL_SIZE_…<br/>calls southRowFirst"]
+  n3(["return #96;${JSON.stringify(index, null, 2)}\n#96;;"])
   n1 --> n2
   n2 --> n3
-  n3 --> n4
+```
+
+## southRowFirst
+
+```mermaid
+flowchart TD
+  n1(["southRowFirst"])
+  n2(["return cells.toSorted((a, b) =#gt; a.east - b.east).toSorted((…"])
+  n1 --> n2
 ```

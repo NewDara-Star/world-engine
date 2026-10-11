@@ -1,5 +1,5 @@
 // What is drawn: the sky colour, simple light, the flat ground per square, the
-// grey roads and a grey-box car. three.js 0.186.1 with WebGL 2
+// grey roads, the buildings (scope 006) and a grey-box car. three.js 0.186.1 with WebGL 2
 // (WebGLRenderer, HemisphereLight, DirectionalLight, Fog, BufferGeometry,
 // MeshLambertMaterial, Material.depthWrite, Object3D.renderOrder). Ground and
 // roads are drawn first and write no depth, so the flat layers never flicker
@@ -9,6 +9,7 @@ import type RAPIER from "@dimforge/rapier3d-compat";
 import {
   BoxGeometry,
   BufferAttribute,
+  Color,
   BufferGeometry,
   CylinderGeometry,
   DirectionalLight,
@@ -26,6 +27,7 @@ import { CAMERA_BEHIND_M, FIELD_OF_VIEW_DEG } from "../camera/chase.js";
 import type { Vehicle } from "../place/vehicle.js";
 import type { Pose } from "../vehicle/car.js";
 import { chassisMassProperties, wheelMountPoints } from "../vehicle/rapier-settings.js";
+import { type BuildingChunk, buildingSurfaces, SHADE_COUNT } from "../world/buildings.js";
 import type { Chunk } from "../world/chunk.js";
 import { type Cell, CELL_SIZE_M, cellBounds } from "../world/grid.js";
 import type { GameFailure } from "./failure.js";
@@ -39,6 +41,11 @@ const CAR_COLOUR = 0xd0d4d8;
 const WHEEL_COLOUR = 0x222222;
 const SKY_LIGHT_STRENGTH = 2;
 const SUN_STRENGTH = 1.5;
+// Buildings (scope 006): one family of painted-render colours, cream to pale
+// sand, so the streets do not look like one mass, and a darker flat roof. Our
+// own choice, to be replaced when the look is chosen (D-0023).
+const BUILDING_SHADES = [0xe8e0cc, 0xddd2b8, 0xefe9dc, 0xd6cab0] as const;
+const ROOF_COLOUR = 0x8f8778;
 // Sharper screens cost frame rate on phones; at most two pixels per CSS pixel.
 const MOST_PIXEL_RATIO = 2;
 
@@ -47,6 +54,7 @@ export interface SceneParts {
   fog: Fog;
   groundMaterial: Material;
   roadMaterial: Material;
+  buildingMaterial: Material;
 }
 
 export interface CarDrawing {
@@ -85,7 +93,8 @@ export function createScene(loadRadiusM: number, aspect: number): SceneParts {
   scene.add(sun);
   const groundMaterial = new MeshLambertMaterial({ color: GROUND_COLOUR, depthWrite: false });
   const roadMaterial = new MeshLambertMaterial({ color: ROAD_COLOUR, depthWrite: false });
-  return { scene, fog, groundMaterial, roadMaterial };
+  const buildingMaterial = new MeshLambertMaterial({ vertexColors: true });
+  return { scene, fog, groundMaterial, roadMaterial, buildingMaterial };
 }
 
 // three.js fogs by depth straight ahead (vFogDepth = −mvPosition.z), not by
@@ -130,6 +139,30 @@ export function roadMeshFromChunk(chunk: Chunk, material: Material): Mesh {
   road.position.set(bounds.westM, 0, -bounds.southM);
   road.renderOrder = 1;
   return road;
+}
+
+// One square's buildings as one mesh, drawn after the flat layers and
+// writing depth like any solid. Each corner's colour is its wall shade (or
+// the roof's) times its tone (src/world/buildings.ts).
+export function buildingMeshFromChunk(chunk: BuildingChunk, material: Material): Mesh {
+  const surfaces = buildingSurfaces(chunk);
+  const palette = [...BUILDING_SHADES, ROOF_COLOUR].map((hex) => new Color(hex));
+  const colours = new Float32Array(surfaces.shades.length * 3);
+  for (let corner = 0; corner < surfaces.shades.length; corner += 1) {
+    const colour = palette[Math.min(surfaces.shades[corner] ?? 0, SHADE_COUNT)] as Color;
+    const tone = surfaces.tones[corner] ?? 1;
+    colours.set([colour.r * tone, colour.g * tone, colour.b * tone], corner * 3);
+  }
+  const shape = new BufferGeometry();
+  shape.setAttribute("position", new BufferAttribute(surfaces.positions, 3));
+  shape.setAttribute("normal", new BufferAttribute(surfaces.normals, 3));
+  shape.setAttribute("color", new BufferAttribute(colours, 3));
+  shape.setIndex(new BufferAttribute(surfaces.indices, 1));
+  const buildings = new Mesh(shape, material);
+  const bounds = cellBounds(chunk.cell);
+  buildings.position.set(bounds.westM, 0, -bounds.southM);
+  buildings.renderOrder = 2;
+  return buildings;
 }
 
 // A small car the real car's size, of plain shapes: our own grey box, no

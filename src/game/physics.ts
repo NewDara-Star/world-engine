@@ -9,6 +9,7 @@
 import RAPIER from "@dimforge/rapier3d-compat";
 import { Quaternion } from "three";
 import type { Place } from "../place/place.js";
+import { type BuildingChunk, buildingOutlinesInMetres } from "../world/buildings.js";
 import { type Cell, CELL_SIZE_M, cellBounds } from "../world/grid.js";
 import type { MapExtent, Pose } from "../vehicle/car.js";
 
@@ -50,6 +51,26 @@ export function addGroundCollider(world: RAPIER.World, cell: Cell): number {
   const half = CELL_SIZE_M / 2;
   const ground = RAPIER.ColliderDesc.cuboid(half, 0.5, half).setTranslation(bounds.westM + half, -0.5, -(bounds.southM + half));
   return world.createCollider(ground).handle;
+}
+
+// One fixed solid per building, so the car cannot drive through it (scope
+// 006): the convex hull of its outline at the ground and at its roof
+// (Rapier 0.21.0 `ColliderDesc.convexHull`). A hull fills a courtyard and
+// the inside of an L, which sit behind compound walls in real life; an outline
+// Rapier cannot make a hull of (all corners in a line) gets no solid.
+export function addBuildingColliders(world: RAPIER.World, chunk: BuildingChunk): number[] {
+  const bounds = cellBounds(chunk.cell);
+  const handles: number[] = [];
+  for (const building of buildingOutlinesInMetres(chunk)) {
+    const points = new Float32Array(building.outline.length * 6);
+    building.outline.forEach((corner, at) => {
+      points.set([corner.eastM, 0, -corner.northM, corner.eastM, building.heightM, -corner.northM], at * 6);
+    });
+    const hull = RAPIER.ColliderDesc.convexHull(points);
+    if (hull === null) continue;
+    handles.push(world.createCollider(hull.setTranslation(bounds.westM, 0, -bounds.southM)).handle);
+  }
+  return handles;
 }
 
 // Four invisible walls, 1 m thick and 3 m tall, just outside the map's edges,

@@ -89,7 +89,7 @@ describe("the baked Omole map in places/omole/chunks", () => {
   it("has a good chunk file for every square the index lists, and no others", () => {
     const index = omoleIndex();
     const folder = resolve(repoRoot, "places/omole/chunks");
-    const files = readdirSync(folder).filter((name) => name !== "index.json");
+    const files = readdirSync(folder).filter((name) => name !== "index.json" && !name.startsWith("buildings_"));
     expect(files.toSorted()).toEqual(index.cells.map((key: string) => `${key}.json`).toSorted());
     for (const key of index.cells) {
       const [east, north] = key.split("_").map(Number);

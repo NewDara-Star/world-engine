@@ -24,6 +24,97 @@
     "url": "https://www.openstreetmap.org/way/135595682",
     "status": "owner-choice"
   },
+  "buildingHeights": {
+    "metresPerLevel": 3,
+    "defaultM": 6,
+    "byType": [
+      {
+        "type": "house",
+        "heightM": 6
+      },
+      {
+        "type": "detached",
+        "heightM": 6
+      },
+      {
+        "type": "residential",
+        "heightM": 6
+      },
+      {
+        "type": "apartments",
+        "heightM": 12
+      },
+      {
+        "type": "commercial",
+        "heightM": 8
+      },
+      {
+        "type": "retail",
+        "heightM": 4
+      },
+      {
+        "type": "office",
+        "heightM": 9
+      },
+      {
+        "type": "church",
+        "heightM": 10
+      },
+      {
+        "type": "mosque",
+        "heightM": 8
+      },
+      {
+        "type": "school",
+        "heightM": 7
+      },
+      {
+        "type": "hospital",
+        "heightM": 9
+      },
+      {
+        "type": "hotel",
+        "heightM": 12
+      },
+      {
+        "type": "industrial",
+        "heightM": 8
+      },
+      {
+        "type": "manufacture",
+        "heightM": 8
+      },
+      {
+        "type": "warehouse",
+        "heightM": 8
+      },
+      {
+        "type": "construction",
+        "heightM": 3
+      },
+      {
+        "type": "roof",
+        "heightM": 4
+      },
+      {
+        "type": "garage",
+        "heightM": 3
+      },
+      {
+        "type": "shed",
+        "heightM": 3
+      },
+      {
+        "type": "service",
+        "heightM": 3
+      }
+    ],
+    "source": {
+      "source": "The owner's choice, proposed by the coder and awaiting his yes (scope 006: 'a default by building type, recorded as owner-choice'). 3 m a storey is the scope's own figure. OpenStreetMap gives no height and no levels for any of the 3,864 buildings in the Omole extract (counted by the coder, 2026-10-11); 3,808 are just building=yes, so nearly every block is drawn at the 6 m default, about two storeys. The nearest real measure we hold is Google Open Buildings 2.5D Temporal (2023) in Yaba, about 15 km south: median 5.5 m, three in four under 7 m (research/world-drive/03 section 1); Omole itself is not measured. Real heights come in Scope 007.",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:building",
+      "status": "owner-choice"
+    }
+  },
   "allowedVehicleClasses": [
     "car",
     "bike",
@@ -31,7 +122,7 @@
   ],
   "dataSources": [
     {
-      "name": "OpenStreetMap (roads around Omole Phase 1, baked into places/omole/chunks)",
+      "name": "OpenStreetMap (roads and buildings around Omole Phase 1, baked into places/omole/chunks)",
       "url": "https://www.openstreetmap.org/copyright",
       "licence": "ODbL-1.0",
       "attribution": "© OpenStreetMap contributors"

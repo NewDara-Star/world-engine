@@ -47,6 +47,46 @@ flowchart TD
   n4 --> n5
 ```
 
+## addBuildingColliders
+
+```mermaid
+flowchart TD
+  n1(["addBuildingColliders"])
+  n2["const bounds = cellBounds(chunk.cell);<br/>calls cellBounds"]
+  n3["const handles: number[] = [];"]
+  n4{"for each const building of buildingOutlinesInMetres(chunk)<br/>calls buildingOutlinesInMetres"}
+  n5["const points = new Float32Array(building.outline.length * 6…"]
+  n6["building.outline.forEach((corner, at) =#gt; { points.set([corn…"]
+  n7["const hull = RAPIER.ColliderDesc.convexHull(points);"]
+  n8{"hull === null"}
+  n9["continue"]
+  n10["handles.push(world.createCollider(hull.setTranslation(bound…"]
+  n11(["return handles;"])
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 -->|"next item"| n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 -->|"yes"| n9
+  n8 -->|"no"| n10
+  n10 --> n4
+  n9 --> n4
+  n4 -->|"done"| n11
+```
+
+## addBuildingColliders > inner function 1
+
+```mermaid
+flowchart TD
+  n1(["addBuildingColliders #gt; inner function 1"])
+  n2["points.set([corner.eastM, 0, -corner.northM, corner.eastM, …"]
+  n3(["end"])
+  n1 --> n2
+  n2 --> n3
+```
+
 ## addMapEdgeWalls
 
 ```mermaid

@@ -55,3 +55,7 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Ackermann steering (inner and outer front wheels at different angles) if the car feels wrong in tight turns.
 - Rapier's non-compat build saves about 0.5 MB if the 30 MB budget ever gets tight (research/36 section 1).
 - Small map: names written along their road, and room for a phone's notch (safe-area insets); scope 005b writes names straight and keeps 8 px from the screen's edge.
+- Omole buildings: OpenStreetMap has almost no footprints in Omole Phase 1 itself (0 within 100 m of the start, 1 within 300 m, 13 within 500 m; scope 006). Fill the gaps from Google Open Buildings v3 footprints (ODbL option) where OSM has none, with Scope 007's heights.
+- Buildings: `building=roof` (petrol-station canopies, 8 in Omole) is drawn as a solid block the car cannot drive under; draw it as a raised slab with no solid.
+- Buildings: multipolygon rings made of several ways joined end to end are skipped with a note (none in Omole today).
+- Pavement strips along the road edge (scope 006 item 3, optional, not done).

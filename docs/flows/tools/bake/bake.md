@@ -24,7 +24,13 @@ flowchart TD
   n16["const start = carStartOnRoad(drivable.roads);<br/>calls carStartOnRoad"]
   n17["const chunks = [...byCell.entries()] .map(([key, triangles]…<br/>calls chunkFileText"]
   n18["const cells: Cell[] = chunks.map((file) =#gt; file.cell);"]
-  n19(["return { ok: true, placeId: place.value.id, files: [...chun…<br/>calls indexFileText, streetsFileText"])
+  n19{"buildingsText === undefined"}
+  n20["emptyBuildingBake()<br/>calls emptyBuildingBake"]
+  n21["bakeBuildings(placeFileName, place.value, buildingsText, ex…<br/>calls bakeBuildings"]
+  n22["const buildings = buildingsText === undefined ? emptyBuildi…<br/>calls emptyBuildingBake, bakeBuildings"]
+  n23{"!buildings.ok"}
+  n24(["return buildings;"])
+  n25(["return { ok: true, placeId: place.value.id, files: [ ...chu…<br/>calls indexFileText, streetsFileText"])
   n1 --> n2
   n2 --> n3
   n3 -->|"yes"| n4
@@ -43,6 +49,65 @@ flowchart TD
   n16 --> n17
   n17 --> n18
   n18 --> n19
+  n19 -->|"yes"| n20
+  n19 -->|"no"| n21
+  n20 --> n22
+  n21 --> n22
+  n22 --> n23
+  n23 -->|"yes"| n24
+  n23 -->|"no"| n25
+```
+
+## emptyBuildingBake
+
+```mermaid
+flowchart TD
+  n1(["emptyBuildingBake"])
+  n2(["return { ok: true, files: [], cells: [], notes: [], count: …"])
+  n1 --> n2
+```
+
+## bakeBuildings
+
+```mermaid
+flowchart TD
+  n1(["bakeBuildings"])
+  n2{"place.buildingHeights === undefined"}
+  n3(["return { ok: false, problems: [#96;${placeFileName}: a buildin…"])
+  n4["const read = readOplBuildings(buildingsText);<br/>calls readOplBuildings"]
+  n5{"read.problems.length #gt; 0"}
+  n6(["return { ok: false, problems: read.problems };"])
+  n7["const grouped = buildingsByCell(read.buildings, place.centr…<br/>calls buildingsByCell"]
+  n8["const squares = [...grouped.byCell.values()];"]
+  n9(["return { ok: true, files: squares.map((square) =#gt; ({ name: …<br/>calls buildingFileName, buildingFileText"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n2 -->|"no"| n4
+  n4 --> n5
+  n5 -->|"yes"| n6
+  n5 -->|"no"| n7
+  n7 --> n8
+  n8 --> n9
+```
+
+## bakeBuildings > isInsideMap
+
+```mermaid
+flowchart TD
+  n1(["bakeBuildings #gt; isInsideMap"])
+  n2{"point.eastM #gt;= extent.westM"}
+  n3{"point.eastM #lt; extent.eastM"}
+  n4{"point.northM #gt;= extent.southM"}
+  n5["point.northM #lt; extent.northM"]
+  n6(["return point.eastM #gt;= extent.westM && point.eastM #lt; extent.…"])
+  n1 --> n2
+  n2 -->|"yes"| n3
+  n3 -->|"yes"| n4
+  n4 -->|"yes"| n5
+  n2 -->|"no"| n6
+  n3 -->|"no"| n6
+  n4 -->|"no"| n6
+  n5 --> n6
 ```
 
 ## drivableRoadsInMetres

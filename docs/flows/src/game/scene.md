@@ -39,7 +39,8 @@ flowchart TD
   n10["scene.add(sun);"]
   n11["const groundMaterial = new MeshLambertMaterial({ color: GRO…"]
   n12["const roadMaterial = new MeshLambertMaterial({ color: ROAD_…"]
-  n13(["return { scene, fog, groundMaterial, roadMaterial };"])
+  n13["const buildingMaterial = new MeshLambertMaterial({ vertexCo…"]
+  n14(["return { scene, fog, groundMaterial, roadMaterial, building…"])
   n1 --> n2
   n2 --> n3
   n3 --> n4
@@ -52,6 +53,7 @@ flowchart TD
   n10 --> n11
   n11 --> n12
   n12 --> n13
+  n13 --> n14
 ```
 
 ## fogRangeForView
@@ -140,6 +142,62 @@ flowchart TD
   n20 --> n21
   n21 --> n22
   n22 --> n23
+```
+
+## buildingMeshFromChunk
+
+```mermaid
+flowchart TD
+  n1(["buildingMeshFromChunk"])
+  n2["const surfaces = buildingSurfaces(chunk);<br/>calls buildingSurfaces"]
+  n3["const palette = [...BUILDING_SHADES, ROOF_COLOUR].map((hex)…"]
+  n4["const colours = new Float32Array(surfaces.shades.length * 3…"]
+  n5["let corner = 0"]
+  n6{"corner #lt; surfaces.shades.length"}
+  n7{"surfaces.shades[corner] is missing?"}
+  n8["0"]
+  n9["const colour = palette[Math.min(surfaces.shades[corner] ?? …"]
+  n10{"surfaces.tones[corner] is missing?"}
+  n11["1"]
+  n12["const tone = surfaces.tones[corner] ?? 1;"]
+  n13["colours.set([colour.r * tone, colour.g * tone, colour.b * t…"]
+  n14["corner += 1"]
+  n15["const shape = new BufferGeometry();"]
+  n16["shape.setAttribute(#quot;position#quot;, new BufferAttribute(surfaces…"]
+  n17["shape.setAttribute(#quot;normal#quot;, new BufferAttribute(surfaces.n…"]
+  n18["shape.setAttribute(#quot;color#quot;, new BufferAttribute(colours, 3)…"]
+  n19["shape.setIndex(new BufferAttribute(surfaces.indices, 1));"]
+  n20["const buildings = new Mesh(shape, material);"]
+  n21["const bounds = cellBounds(chunk.cell);<br/>calls cellBounds"]
+  n22["buildings.position.set(bounds.westM, 0, -bounds.southM);"]
+  n23["buildings.renderOrder = 2;"]
+  n24(["return buildings;"])
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 -->|"yes"| n7
+  n7 -->|"yes"| n8
+  n7 -->|"no"| n9
+  n8 --> n9
+  n9 --> n10
+  n10 -->|"yes"| n11
+  n10 -->|"no"| n12
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n6
+  n6 -->|"no"| n15
+  n15 --> n16
+  n16 --> n17
+  n17 --> n18
+  n18 --> n19
+  n19 --> n20
+  n20 --> n21
+  n21 --> n22
+  n22 --> n23
+  n23 --> n24
 ```
 
 ## carModel

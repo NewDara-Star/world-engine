@@ -2,16 +2,18 @@
 // beyond the larger keep radius, so a car driving along a square's edge does
 // not load and drop the same square over and over; only squares inside the
 // map's extent (scope 005 item 4; D-0008). The ground and its collider appear
-// at once and the road follows when its file arrives.
+// at once; the road and the buildings with their solids (scope 006) follow
+// when their files arrive.
 // Design: docs/designs/src/game/streaming.md.
 import type { MapExtent } from "../vehicle/car.js";
+import { validateBuildingChunk } from "../world/buildings.js";
 import { validateChunk } from "../world/chunk.js";
 import { type Cell, type MapPoint, cellBounds, cellKey, cellsWithin, distanceToCell } from "../world/grid.js";
 import { showNotice } from "./failure.js";
-import type { Game } from "./game.js";
+import type { Game, LoadedSquare } from "./game.js";
 import { type Loaded, fetchText } from "./load.js";
-import { addGroundCollider } from "./physics.js";
-import { groundTileMesh, releaseMesh, roadMeshFromChunk } from "./scene.js";
+import { addBuildingColliders, addGroundCollider } from "./physics.js";
+import { buildingMeshFromChunk, groundTileMesh, releaseMesh, roadMeshFromChunk } from "./scene.js";
 
 // Performance numbers, the owner's choice, proposed 2026-10-11, to be
 // confirmed by the frame-rate measurement on the phone.
@@ -46,9 +48,36 @@ export function loadCell(game: Game, cell: Cell): void {
   game.parts.scene.add(groundMesh);
   const groundCollider = addGroundCollider(game.world, cell);
   const hasRoad = game.roadCells.has(key);
-  game.squares.set(key, { cell, groundMesh, groundCollider, roadMesh: undefined, road: hasRoad ? "loading" : "not-needed", failedAtMs: undefined, failedBefore: false });
-  if (!hasRoad) return;
-  void fetchText(`places/${game.data.place.id}/chunks/${key}.json`).then((answer) => roadArrived(game, cell, answer));
+  const hasBuildings = game.buildingCells.has(key);
+  game.squares.set(key, {
+    cell,
+    groundMesh,
+    groundCollider,
+    roadMesh: undefined,
+    road: hasRoad ? "loading" : "not-needed",
+    failedAtMs: undefined,
+    buildingMesh: undefined,
+    buildingColliders: [],
+    buildings: hasBuildings ? "loading" : "not-needed",
+    buildingsFailedAtMs: undefined,
+    failedBefore: false,
+  });
+  if (hasRoad) fetchRoad(game, cell);
+  if (hasBuildings) fetchBuildings(game, cell);
+}
+
+function fetchRoad(game: Game, cell: Cell): void {
+  void fetchText(`places/${game.data.place.id}/chunks/${cellKey(cell)}.json`).then((answer) => roadArrived(game, cell, answer));
+}
+
+function fetchBuildings(game: Game, cell: Cell): void {
+  void fetchText(`places/${game.data.place.id}/chunks/buildings_${cellKey(cell)}.json`).then((answer) => buildingsArrived(game, cell, answer));
+}
+
+// The first failure of a square is told to the player; retries stay quiet.
+function tellFirstFailure(game: Game, square: LoadedSquare): void {
+  if (!square.failedBefore) showNotice(game.page, "Part of the map did not load; trying again.");
+  square.failedBefore = true;
 }
 
 // A road file that arrives after the car has driven away is dropped; a broken
@@ -61,13 +90,31 @@ export function roadArrived(game: Game, cell: Cell, answer: Loaded<string>): voi
   if (chunk === undefined || !chunk.ok) {
     square.road = "failed";
     square.failedAtMs = performance.now();
-    if (!square.failedBefore) showNotice(game.page, "Part of the map did not load; trying again.");
-    square.failedBefore = true;
+    tellFirstFailure(game, square);
     return;
   }
   square.roadMesh = roadMeshFromChunk(chunk.value, game.parts.roadMaterial);
   game.parts.scene.add(square.roadMesh);
   square.road = "loaded";
+}
+
+// The same for a square's buildings: drawn as one mesh, each with its solid,
+// so the car stops at a wall instead of driving through it.
+export function buildingsArrived(game: Game, cell: Cell, answer: Loaded<string>): void {
+  const key = cellKey(cell);
+  const square = game.squares.get(key);
+  if (square === undefined || square.buildings !== "loading") return;
+  const chunk = answer.ok ? validateBuildingChunk(`buildings_${key}.json`, answer.value, cell) : undefined;
+  if (chunk === undefined || !chunk.ok) {
+    square.buildings = "failed";
+    square.buildingsFailedAtMs = performance.now();
+    tellFirstFailure(game, square);
+    return;
+  }
+  square.buildingMesh = buildingMeshFromChunk(chunk.value, game.parts.buildingMaterial);
+  game.parts.scene.add(square.buildingMesh);
+  square.buildingColliders = addBuildingColliders(game.world, chunk.value);
+  square.buildings = "loaded";
 }
 
 // Letting go of a square removes everything it added, so a three-hour drive
@@ -79,15 +126,22 @@ export function unloadCell(game: Game, cell: Cell): void {
   releaseMesh(square.groundMesh, game.parts.scene);
   game.world.removeCollider(game.world.getCollider(square.groundCollider), false);
   if (square.roadMesh !== undefined) releaseMesh(square.roadMesh, game.parts.scene);
+  if (square.buildingMesh !== undefined) releaseMesh(square.buildingMesh, game.parts.scene);
+  for (const handle of square.buildingColliders) game.world.removeCollider(game.world.getCollider(handle), false);
   game.squares.delete(key);
 }
 
-// A road that failed on a weak signal comes back by itself when the signal does.
-export function retryFailedRoads(game: Game, nowMs: number): void {
-  for (const [key, square] of game.squares) {
+// A road or buildings file that failed on a weak signal comes back by itself
+// when the signal does.
+export function retryFailedFiles(game: Game, nowMs: number): void {
+  for (const square of game.squares.values()) {
     if (square.road === "failed" && nowMs - (square.failedAtMs ?? nowMs) >= RETRY_AFTER_MS) {
       square.road = "loading";
-      void fetchText(`places/${game.data.place.id}/chunks/${key}.json`).then((answer) => roadArrived(game, square.cell, answer));
+      fetchRoad(game, square.cell);
+    }
+    if (square.buildings === "failed" && nowMs - (square.buildingsFailedAtMs ?? nowMs) >= RETRY_AFTER_MS) {
+      square.buildings = "loading";
+      fetchBuildings(game, square.cell);
     }
   }
 }
@@ -97,5 +151,5 @@ export function updateStreaming(game: Game, car: MapPoint, nowMs: number): void 
   const plan = streamingPlan(car, [...game.squares.values()].map((square) => square.cell), game.data.mapIndex.extent, LOAD_RADIUS_M, KEEP_RADIUS_M);
   for (const cell of plan.toLetGo) unloadCell(game, cell);
   for (const cell of plan.toLoad) loadCell(game, cell);
-  retryFailedRoads(game, nowMs);
+  retryFailedFiles(game, nowMs);
 }

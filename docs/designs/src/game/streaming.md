@@ -1,6 +1,6 @@
 # src/game/streaming.ts
 
-Status: approved. Judged by the delegated approver (docs/reviews/slice-1-approver.md); its fixes F1 to F24 and the orchestrator's decisions on E1 to E3 applied in one pass.
+Status: approved by the orchestrator in one pass (Scope 006, lighter process, 2026-10-11).
 
 New in scope 005 (item 4: "the chunks around the car, all chunks within a
 view distance; unload far ones"). Squares are loaded within the **load
@@ -15,7 +15,8 @@ the scene and the physics. The pictures drawn from the code will be in
 
 Each loaded square keeps: its ground mesh, its ground collider, its road mesh
 when it has arrived, and whether its road is loading, loaded, failed (with
-the time) or not needed (the index has no road there).
+the time) or not needed (the index has no road there); and the same for its
+buildings (scope 006), with the handles of their solids.
 
 ## streamingPlan
 
@@ -33,19 +34,59 @@ flowchart TD
 
 ## loadCell
 
-Why the game needs it: the ground and its collider appear at once, so the car can never fall through a square whose road file is slow; the road follows when it arrives.
+Why the game needs it: the ground and its collider appear at once, so the car can never fall through a square whose road file is slow; the road and the buildings (scope 006) follow when they arrive.
 
 ```mermaid
 flowchart TD
   s(["loadCell with the game and a square"])
-  a["add groundTileMesh to the scene and addGroundCollider to the world; keep both under the square's key"]
+  a["add groundTileMesh to the scene and addGroundCollider to the world; keep both under the square's key, with the road and the buildings marked loading where the map index lists them and not needed where it does not"]
   b{"does the map index list road in this square"}
-  c(["return; the road is not needed"])
-  d["mark the road loading; start fetching the chunk file, and hand its answer to roadArrived"]
+  d["fetchRoad"]
+  f{"does the map index list buildings in this square"}
+  g["fetchBuildings"]
   e(["return without waiting"])
   s --> a --> b
-  b -->|"no"| c
-  b -->|"yes"| d --> e
+  b -->|"yes"| d --> f
+  b -->|"no"| f
+  f -->|"yes"| g --> e
+  f -->|"no"| e
+```
+
+## fetchRoad
+
+Why the game needs it: one place that names a square's road file and hands its answer on.
+
+```mermaid
+flowchart TD
+  s(["fetchRoad with the game and a square"])
+  a(["start fetching places/id/chunks/east_north.json, hand its answer to roadArrived, and return without waiting"])
+  s --> a
+```
+
+## fetchBuildings
+
+Why the game needs it: the same for a square's buildings file.
+
+```mermaid
+flowchart TD
+  s(["fetchBuildings with the game and a square"])
+  a(["start fetching places/id/chunks/buildings_east_north.json, hand its answer to buildingsArrived, and return without waiting"])
+  s --> a
+```
+
+## tellFirstFailure
+
+Why the game needs it: the player is told once that part of the map did not load; retries, and the second file of the same square, stay quiet.
+
+```mermaid
+flowchart TD
+  s(["tellFirstFailure with the game and a loaded square"])
+  a{"has this square failed before"}
+  b["showNotice: Part of the map did not load; trying again."]
+  c(["remember that it has failed"])
+  s --> a
+  a -->|"no"| b --> c
+  a -->|"yes"| c
 ```
 
 ## roadArrived
@@ -59,8 +100,29 @@ flowchart TD
   b(["return; drop the answer"])
   c["check the answer with validateChunk for that square"]
   d{"a failure or problems"}
-  e["mark the road failed with the time; the first time this square fails, showNotice: Part of the map did not load; trying again. Retries of the same square stay quiet"]
+  e["mark the road failed with the time; tellFirstFailure"]
   f["add roadMeshFromChunk to the scene; mark the road loaded"]
+  g(["return"])
+  s --> a
+  a -->|"no"| b
+  a -->|"yes"| c --> d
+  d -->|"yes"| e --> g
+  d -->|"no"| f --> g
+```
+
+## buildingsArrived
+
+Why the game needs it (scope 006): a square's buildings are drawn as one mesh and each gets its solid, so the car stops at a wall; a late file is dropped and a broken one is reported once and tried again, like a road.
+
+```mermaid
+flowchart TD
+  s(["buildingsArrived with the game, the square, and the fetch's answer"])
+  a{"is the square still loaded and its buildings still loading"}
+  b(["return; drop the answer"])
+  c["check the answer with validateBuildingChunk for that square"]
+  d{"a failure or problems"}
+  e["mark the buildings failed with the time; tellFirstFailure"]
+  f["add buildingMeshFromChunk to the scene; addBuildingColliders to the world and keep their handles; mark the buildings loaded"]
   g(["return"])
   s --> a
   a -->|"no"| b
@@ -79,26 +141,36 @@ flowchart TD
   a["releaseMesh the ground tile; remove the ground collider from the world"]
   b{"has its road mesh arrived"}
   c["releaseMesh the road"]
-  d(["forget the square; a road still loading will be dropped by roadArrived"])
+  e{"has its buildings mesh arrived"}
+  f["releaseMesh the buildings"]
+  g["remove every building solid from the world"]
+  d(["forget the square; a file still loading will be dropped when it arrives"])
   s --> a --> b
-  b -->|"yes"| c --> d
-  b -->|"no"| d
+  b -->|"yes"| c --> e
+  b -->|"no"| e
+  e -->|"yes"| f --> g
+  e -->|"no"| g
+  g --> d
 ```
 
-## retryFailedRoads
+## retryFailedFiles
 
-Why the game needs it: a road that failed on a weak signal comes back by itself when the signal does, without the player reloading.
+Why the game needs it: a road or buildings file that failed on a weak signal comes back by itself when the signal does, without the player reloading.
 
 ```mermaid
 flowchart TD
-  s(["retryFailedRoads with the game and the time now"])
-  a["for each loaded square whose road failed"]
-  b{"did it fail at least 5 seconds ago"}
-  c["mark it loading and fetch it again, as in loadCell"]
+  s(["retryFailedFiles with the game and the time now"])
+  a["for each loaded square"]
+  b{"its road failed at least 5 seconds ago"}
+  c["mark it loading; fetchRoad"]
+  e{"its buildings failed at least 5 seconds ago"}
+  f["mark them loading; fetchBuildings"]
   d(["return"])
   s --> a --> b
-  b -->|"yes"| c --> a
-  b -->|"no"| a
+  b -->|"yes"| c --> e
+  b -->|"no"| e
+  e -->|"yes"| f --> a
+  e -->|"no"| a
   a -->|"all done"| d
 ```
 
@@ -112,7 +184,7 @@ flowchart TD
   a["the plan from streamingPlan"]
   b["unloadCell each square to let go"]
   c["loadCell each square to load"]
-  d["retryFailedRoads"]
+  d["retryFailedFiles"]
   e(["return"])
   s --> a --> b --> c --> d --> e
 ```
