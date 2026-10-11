@@ -1,0 +1,18 @@
+{
+  "id": "street-sign",
+  "family": "prop",
+  "what": "A street name sign: a metal post with one blank rectangular name board. The game writes the street's real name on the board from World data's streets.json.",
+  "size": {
+    "lengthM": 0.9, "widthM": 0.08, "heightM": 2.6,
+    "status": "owner-choice",
+    "note": "The Nigerian road-sign manual (Federal Ministry of Works Highway Manual Part 1 Vol. VI, 2013) was found but its size tables could not be read; no Lagos street-sign standard found. Board colour also needs the owner (from memory or his own photos)."
+  },
+  "budget": { "triangles": 300, "textureMaxPx": 256, "packedKB": 60 },
+  "prompt": {
+    "subject": "street name sign, one round galvanised metal post with a single blank flat rectangular board fixed near the top, board face completely plain",
+    "style": "stylised game prop, simple clean shapes, flat colours, no text, no logos, no lighting or shadows painted into the texture"
+  },
+  "mustNotShow": ["any writing on the board"],
+  "textBy": "game",
+  "inputImages": []
+}

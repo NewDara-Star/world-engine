@@ -1,0 +1,18 @@
+{
+  "id": "keke-body",
+  "family": "vehicle-body",
+  "what": "A keke (three-wheeled passenger tricycle) as our own invented make: single front wheel, open sides, canvas roof, driver in front and a bench for passengers behind.",
+  "size": {
+    "lengthM": 2.64, "widthM": 1.31, "heightM": 1.72, "wheelbaseM": 2.0,
+    "status": "derived",
+    "note": "Middle of two published class specs: 2,635 x 1,300 x 1,700 mm (trucksbuses.com) and 2,647 x 1,329 x 1,740 mm (tractorkarvan.com). Size only; shape our own."
+  },
+  "budget": { "triangles": 4000, "textureMaxPx": 1024, "packedKB": 350 },
+  "prompt": {
+    "subject": "three-wheeled passenger auto rickshaw, one front wheel and two rear wheels, open sides, rounded metal front cowl with one headlamp, canvas roof on a tubular frame, rear passenger bench, painted green and yellow with a black canvas roof",
+    "style": "stylised game vehicle, simple clean shapes, flat colours, invented design, no badges, no text, no logos, no lighting or shadows painted into the texture"
+  },
+  "mustNotShow": ["any real maker's badge or grille", "any writing"],
+  "textBy": "game",
+  "inputImages": []
+}

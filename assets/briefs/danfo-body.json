@@ -1,0 +1,18 @@
+{
+  "id": "danfo-body",
+  "family": "vehicle-body",
+  "what": "The body of a danfo, the yellow Lagos minibus, as our own invented make: boxy one-box van shape, sliding side door, yellow with two black bands.",
+  "size": {
+    "lengthM": 4.57, "widthM": 1.85, "heightM": 1.93, "wheelbaseM": 2.46,
+    "status": "derived",
+    "note": "Class size of the 1980s rear-engined minibuses most danfos were built on (en.wikipedia.org/wiki/Volkswagen_Type_2_(T3), specifications table). Size only; the shape and face are our own."
+  },
+  "budget": { "triangles": 6000, "textureMaxPx": 1024, "packedKB": 500 },
+  "prompt": {
+    "subject": "boxy one-box passenger minibus with a flat front and a single wide windscreen, round headlamps set in a plain flat grille panel, sliding side door, roof rack rail, painted bright yellow with two horizontal black bands along the sides, worn bumpers",
+    "style": "stylised game vehicle, simple clean shapes, flat colours, invented design, no badges, no text, no logos, no lighting or shadows painted into the texture"
+  },
+  "mustNotShow": ["any real maker's badge or front face", "split windscreen or V-shaped front panel", "any writing"],
+  "textBy": "game",
+  "inputImages": []
+}

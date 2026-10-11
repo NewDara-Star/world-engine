@@ -1,0 +1,18 @@
+{
+  "id": "kiosk-roadside",
+  "family": "prop",
+  "what": "A small roadside kiosk: a painted metal or timber box with a serving hatch and a sloped tin roof, the kind that sells credit, drinks and provisions at a street corner.",
+  "size": {
+    "lengthM": 2.0, "widthM": 1.5, "heightM": 2.4,
+    "status": "owner-choice",
+    "note": "No published dimensions found (research/41). Proposed from a common single-hatch kiosk; the owner checks against what he remembers in Omole."
+  },
+  "budget": { "triangles": 2000, "textureMaxPx": 512, "packedKB": 200 },
+  "prompt": {
+    "subject": "small roadside kiosk, painted corrugated metal box with one front serving hatch propped open, sloped corrugated tin roof overhanging the front, blank signboard above the hatch, short wooden counter, slightly weathered paint",
+    "style": "stylised game prop, simple clean shapes, flat colours, no text, no logos, no lighting or shadows painted into the texture"
+  },
+  "mustNotShow": ["telecom or drink brand colours and logos", "any writing"],
+  "textBy": "game",
+  "inputImages": []
+}
