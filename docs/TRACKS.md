@@ -173,6 +173,18 @@ makes the product calls.
 When a track finishes its current work, the next one in line starts in its
 place. The owner decides the order.
 
+## Branches and merging (owner, 2026-10-11)
+
+- Each track works and pushes on its **own branch**, never on `main`:
+  `track/world-data`, `track/assets`, `track/gameplay`, `track/server`, and so
+  on. A track may push its branch whenever `npm run check` passes.
+- When a piece is ready to play, the track brings its branch up to date with
+  `main` (fixing any clash on its side), then opens a **pull request** on
+  GitHub with a plain-words summary and what to try. The owner merges it.
+  `main` is what gets published.
+- Nobody pushes to `main` directly, and nobody changes another track's
+  branch.
+
 ## Starting a track chat
 
 1. Open a new chat in the "real world" project; connect the world-engine repo

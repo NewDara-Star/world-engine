@@ -325,3 +325,12 @@ rather than guess one.
 - Decided by: owner
 - Tags: process, tracks
 
+## D-0040
+
+- Date: 2026-10-11
+- Decision: Each track pushes to its own branch (track/<name>) whenever its checks pass; work reaches main only through a pull request the owner merges; nobody pushes to main directly.
+- Why: Several chats at once need to save their own work without the owner pushing everything, while main stays what the owner has seen.
+- Decided by: owner
+- Tags: process, tracks
+- Replaces: D-0022
+

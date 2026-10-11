@@ -273,7 +273,8 @@ through. Fix the thing.
 - `npm run diagrams` redraws `docs/flows/`; `npm run modules` checks that
   engine code does not import `places/` (part of `npm run check`).
 - Place and vehicle file formats live in `src/place/`; examples in `places/`.
-- Never push. Only the owner pushes, from his own machine (D-0022).
+- Push only your track's own branch (`track/<name>`), never `main`; work
+  reaches `main` through a pull request the owner merges (D-0040).
 
 ## Talking to the owner
 
