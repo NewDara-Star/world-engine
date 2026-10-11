@@ -10,7 +10,8 @@ Each entry has the same fields, in this order, so a script can read them:
 common sense), `Tags`, and `Replaces` when it overrides an older entry.
 
 D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
-(Scope 004 item 3).
+(Scope 004 item 3). Where the handover gave no reason, `Why` says so
+rather than guess one.
 
 ## D-0001
 
@@ -32,7 +33,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: The first real place is the owner's home street, Babatunde Ladiga Street, Omole Phase 1, Lagos, 1 to 2 km around it.
-- Why: A place the owner knows street by street, so mistakes are easy to see.
+- Why: A place the owner knows street by street.
 - Decided by: owner
 - Tags: places, roadmap
 
@@ -56,7 +57,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: The reference device is a mid-range Android phone; under about 30 MB downloads before you can drive; a steering wheel is a desktop bonus.
-- Why: Most players in Lagos drive on a phone.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: device, performance, controls
 
@@ -64,7 +65,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Slice order: street, then a server-paid grey-box delivery with a cheat test, traffic and lights, buildings, shared world, economy, first hunt.
-- Why: Each slice proves one risk before the next is built on it.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: roadmap
 
@@ -80,7 +81,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Physics constants are fixed per place from real data (gravity from WGS84, air density from climate normals); live weather is visual only.
-- Why: Driving feels the same every day, and the numbers have a source.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: physics, places, data
 
@@ -88,7 +89,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: The data rule: an official figure; else one derived from real measurements, with source and weaknesses named; else the owner's creative call, recorded as his. Never a silent guess.
-- Why: Every number in the game can be traced and trusted.
+- Why: Never invent numbers; every number can be traced.
 - Decided by: owner
 - Tags: data, process
 
@@ -96,7 +97,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Licences: CC0, MIT, Apache, or attribution-only (CC-BY, ODbL, Copernicus), with every credit on the game's About page only; Google Open Buildings under ODbL; techniques only from anything else, never GPL code.
-- Why: Keep the game code private and the credits honest.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: licences, legal, data
 
@@ -104,7 +105,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Never use the leaked GTA source on the owner's Mac, for anything.
-- Why: Legal risk, and it is not ours.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: legal
 
@@ -112,7 +113,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Diagram first: every function has an approved design before code; the diagram gate blocks everywhere, no exceptions.
-- Why: The owner reads designs, not code.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: process, design
 
@@ -120,7 +121,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Lint judges a function by complexity (8) and nesting depth (3), not by length.
-- Why: Small functions that read like a diagram, without arbitrary length cuts.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: process, lint
 
@@ -128,7 +129,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Push review: three Sonnet lenses (story, rules, tests) plus a design-match lens; one Opus review for a big or risky push (over 400 lines, money or trust, the rules, Scope-complete).
-- Why: A second model checks every push; the risky ones get the strongest one.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: process, review
 
@@ -136,7 +137,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: TypeScript stays at 6.0.3; a weekly scheduled task watches for TS7 lint support.
-- Why: The lint rules need typescript-eslint, which does not support TS7 yet.
+- Why: Lint support for TypeScript 7 is not there yet; the weekly task watches for it.
 - Decided by: owner
 - Tags: tooling
 
@@ -144,7 +145,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Cars are invented makes and models; danfo, BRT and double-decker forms in our own liveries.
-- Why: No brand names, logos or badges.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: vehicles, legal
 
@@ -152,7 +153,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Economy: coins can be bought (packs from about £2.99) but never cashed out; money only saves time, never wins; in-game prizes only for now.
-- Why: Fair play, and no gambling or payout law to deal with yet.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: economy, money
 
@@ -160,7 +161,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Ads later: billboards, sponsored or charter runs, optional rewarded ads; nothing interrupts driving. Radio later, after a legal check. Payments decided before the economy slice.
-- Why: Income without spoiling the drive.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: economy, ads, roadmap
 
@@ -168,7 +169,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Landmarks near home to include: Fasta International School, St. Jude's Church, Foursquare Church.
-- Why: Places the owner and locals recognise.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: places, landmarks
 
@@ -176,7 +177,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: A site whose robots.txt disallows us is never fetched by any route; the owner is given the link instead.
-- Why: Respect the sites' rules.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: research, legal
 
@@ -184,7 +185,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: Only the owner pushes; sessions never push.
-- Why: The owner stays in control of what leaves the machine.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: process
 
@@ -192,7 +193,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-10
 - Decision: The art style is found by trying looks side by side (clay diorama, painted real, toy realism) before the buildings slice.
-- Why: Choose the look by seeing it, not by describing it.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: art, roadmap
 
@@ -200,7 +201,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-11
 - Decision: Design approvals are delegated to a fresh approver session (docs/roles/approver.md); it decides common sense itself and brings the owner only real product trade-offs, with pros and cons.
-- Why: The owner's time goes on product decisions. This replaces the earlier rule, from before this log, that the owner approves every design.
+- Why: Replaces the earlier rule, from before this log, that the owner approves every design. Further reason not recorded in the handover.
 - Decided by: owner
 - Tags: process, design, approval
 
@@ -208,7 +209,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-11
 - Decision: The place checker reports every mistake in one pass, with file and line, "did you mean", units, and found versus needed; exactly one source per physics constant; a field written twice is reported.
-- Why: Whoever writes a place file fixes it in one go.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: places, tooling
 
@@ -216,7 +217,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-11
 - Decision: Anything doable on a wheel, a gamepad or a keyboard is doable on a touchscreen, simplified where two thumbs need it.
-- Why: The phone is the reference device.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: controls, device
 
@@ -224,7 +225,7 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-12
 - Decision: Physics ranges are set per planet, in planet files (Scope 002c).
-- Why: Sensible ranges differ between planets.
+- Why: Not recorded in the handover.
 - Decided by: owner
 - Tags: physics, places
 
@@ -232,6 +233,6 @@ D-0001 to D-0028 were backfilled on 2026-10-11 from the orchestrator's handover
 
 - Date: 2026-10-12
 - Decision: Tests are written blind by a separate session and fail first; an Opus coder cannot change them; decisions live in docs/DECISIONS.md (Scope 004).
-- Why: The code's author should not mark its own homework, and decisions spread across chats get lost.
+- Why: See Scope 004, "Why the game needs it": the session that writes code should not mark its own homework, and decisions spread across chats get lost.
 - Decided by: owner
 - Tags: process, tests, decisions
