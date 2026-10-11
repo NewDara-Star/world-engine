@@ -34,31 +34,29 @@ especially docs/tracks/world-data.md (what the first chat did and found).
 Work on the branch track/world-data; push it when npm run check passes;
 open a pull request into main when something is ready to see.
 
-Goal: recreate the whole world, down to street level, from every free source
-that exists, before we hand-model anything. Not one city: everywhere.
+Goal: the world, built out from Lagos. Lagos is where the core game is, so
+it is built first and best; the world grows outward from there, small piece
+by small piece, and every new place is announced to players ("we've added
+...").
 
-1. Find and list every free source of world data: maps (OpenStreetMap,
-   Overture Maps, and anything else), building footprints (Google Open
-   Buildings, Microsoft building footprints, and others), heights and the
-   shape of the ground (Copernicus and other elevation data), water, land use,
-   place names, and cities that already have open 3D models (for example
-   New York, the Netherlands' 3D BAG, Tokyo's PLATEAU, and any others).
-   For each: what it covers, how detailed, its licence, its size, and how to
-   download it. Licences we can use are in CLAUDE.md. Tell me straight away
-   which sites you cannot reach, so I can allow them.
-2. Get the data: everything we can get for free, onto our own storage, in a
-   form our bake can read. Where the whole world is too big to hold or bake
-   at once, say so, with the real sizes, and propose how we hold it (for
-   example stored in Cloudflare R2 and baked area by area when a player goes
-   there).
-3. Make the bake work the same way for any place on Earth: roads, buildings
-   with heights, the ground's shape, water. Where a city already has a good
-   open 3D model, use it for that city.
-4. Show it: build a few very different places so I can drive them and compare
-   (a city with an open 3D model, a dense city without one, a small town).
+1. Lagos first, as well as free data allows: every street, road, building
+   with height, the ground's shape and water, from every free source
+   (OpenStreetMap, Overture, Google and Microsoft building outlines,
+   Copernicus and other elevation data, and anything else you find). The
+   bake must work the same way for any place, so Lagos also proves it.
+2. Places other people have already modelled in 3D: official open city
+   models (cities and countries publish them) and the many projects on
+   GitHub that recreate cities (New York, Tokyo, Indian cities and many more;
+   these are examples, look widely). Bring in every one whose licence we can
+   use; skip and list the ones with no licence, or built from Google's 3D
+   tiles (their terms forbid reuse).
+3. Everywhere else: the plain baseline from global data, baked area by area
+   when someone goes there, held in our own storage (Cloudflare R2). Give me
+   real sizes before downloading anything huge.
+4. List every free source you find (coverage, detail, licence, size, how to
+   get it), and tell me straight away which sites you cannot reach.
 
-No hand-modelling and no cleaning up of individual places yet: get what
-exists first. Research first, always. End each session with something I can
+Get what exists before hand-modelling anything. Research first, always. End each session with something I can
 see or drive on my link, and a list of what you could not get and why.
 ```
 

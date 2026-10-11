@@ -13,6 +13,10 @@ The owner is a designer, not a coder. Explain in plain words, say what you
 tested and what you did not, and recommend one option instead of listing
 several.
 
+**The owner's examples are examples, never the whole list.** When he says
+"for example New York, Tokyo" or "like a blue sky", look at everything of
+that kind (every city, night skies, auroras), not only the words he used.
+
 These rules are adapted from the Spes and World Drive rules. Where a script
 can enforce one, it does (see "Checks and hooks"). The rest you follow.
 

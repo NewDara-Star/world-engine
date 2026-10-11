@@ -351,3 +351,12 @@ rather than guess one.
 - Tags: world, tracks
 - Replaces: D-0041
 
+## D-0043
+
+- Date: 2026-10-11
+- Decision: The world is built out from Lagos (first and best, from every free source); places others have already modelled in 3D (official city models and licensed GitHub projects) are brought in as they are; everywhere else gets the plain baseline baked when visited; each new place is announced to players.
+- Why: The whole world at full detail is too heavy at once; the core game is in Lagos; existing models are free detail.
+- Decided by: owner
+- Tags: world, tracks
+- Replaces: D-0042
+
