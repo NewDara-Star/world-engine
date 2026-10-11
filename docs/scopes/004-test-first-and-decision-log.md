@@ -76,6 +76,13 @@ what the owner decided.
    roles, and a line: read `docs/DECISIONS.md` before acting; never contradict
    an entry without the owner.
 
+## Change, 2026-10-11 (owner: "we can start working")
+
+Item 4 (the clash-check tool) is parked; its draft designs stay in
+`docs/designs/tools/decisions/`. Slice 1 (Scope 005) is the pipeline's first
+real use instead. Until the tool exists, the orchestrator checks
+`docs/DECISIONS.md` by reading it.
+
 ## Out of scope
 
 Any game code. Changing the push review. Running the note-taker automatically
