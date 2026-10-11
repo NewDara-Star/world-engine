@@ -23,7 +23,7 @@ Each session runs headless, in its own git worktree, with its role file as
 extra instructions and the task on stdin. `$repo` is the worktree.
 
 1. **Scope.** Agree the scope with the owner (`docs/scopes/`, from the
-   template). Record his decisions (see "After the owner decides").
+   template). Record the owner's decisions (see "After the owner decides").
 2. **Designs.** An Opus session writes the designs in `docs/designs/`
    (`Status: draft`), no code:
 
@@ -37,7 +37,7 @@ extra instructions and the task on stdin. `$repo` is the worktree.
 
    You record its approvals (`Status: approved`, trailer
    `Approved-by: reviewer (delegated by Daramola)`) and bring escalations to
-   the owner (trailer `Approved-by: Daramola` once he decides).
+   the owner (trailer `Approved-by: Daramola` once the owner decides).
 4. **Blind tests.** A fresh Opus session writes the tests:
 
        cd "$repo" && WE_ROLE=test-writer WE_BASE=$(git rev-parse HEAD) \
