@@ -1,6 +1,6 @@
 # tools/decisions/cli.ts
 
-Status: draft
+Status: approved. Judged by the delegated approver (docs/reviews/clash-approver.md); its fixes drawn in.
 
 New in scope 004 (item 4, the clash check). The command the orchestrator and
 the note-taker run: `npm run decisions -- check "<text>" --tags a,b`. It
@@ -11,8 +11,9 @@ and nothing else: it never changes the log. The pictures drawn from the code
 will be in `docs/flows/tools/decisions/cli.md`.
 
 Exit codes: 0 when the check ran (whether or not it found anything); 1 when
-it could not run (wrong arguments, no log, a broken log). A match is not a
-failure: deciding whether it really clashes is a person's job.
+it could not run (wrong arguments, nothing to compare, no log, a broken
+log). A match is not a failure: deciding whether it really clashes is a
+person's job. Problems and errors go to stderr; results go to stdout.
 
 ## parseCheckArguments
 
@@ -26,7 +27,7 @@ flowchart TD
   c["the text is the next word that is not an option; --tags takes the word after it, or the part after --tags="]
   d{"is there exactly one text, and is it not blank"}
   e(["return a problem: no text to check (or: more than one text; put the text in quotes), with the usage line"])
-  f{"was --tags given without a value, or any other option given"}
+  f{"was --tags given twice, or given with an empty value (--tags at the end, or --tags= with nothing after), or any other option given"}
   g(["return a problem naming the option, with the usage line"])
   h(["return the text and the tags split on commas, trimmed, lower case, empty ones dropped"])
   s --> a
@@ -47,7 +48,7 @@ Why the game needs it: a misspelt tag (monye for money) would quietly match noth
 flowchart TD
   s(["unknownTags with the query tags and all the entries"])
   a["collect every tag used by any entry, including replaced ones"]
-  b(["return the query tags not in that collection, each with the closest tag in use when one is close"])
+  b(["return the query tags not in that collection, each with the closest tag in use: one with the same Porter stem, else one at most two letter-changes away (edit distance ≤ 2), the first alphabetically on a tie; none if nothing is that close"])
   s --> a
   a --> b
 ```
@@ -82,13 +83,15 @@ flowchart TD
   a["parseCheckArguments"]
   b{"a problem"}
   c(["print the problem and stop with exit code 1"])
-  d{"can docs/DECISIONS.md be read, from the project folder"}
+  d{"can docs/DECISIONS.md be read, found from this tool's own folder (two levels up), not from wherever the command was run"}
   e(["print: the decision log was not found at that path; stop with exit code 1"])
   f["readDecisionLog"]
   g{"any problems in the log"}
   h(["print every problem with its line, then: fix the log first, a broken entry could hide a clash; stop with exit code 1"])
   i["print a warning for each of unknownTags, if any"]
   j["findClashes with entriesInForce, the text and the tags"]
+  n{"findClashes said nothing to match against"}
+  o(["print: the text has no words to compare (all short or common) and no tags were given, so nothing was checked; add --tags or more words; exit code 1"])
   k{"any matches"}
   l(["print: no decision in force shares these tags or close wording; exit code 0"])
   m(["print how many were found, then describeMatch for each, a blank line between; exit code 0"])
@@ -102,7 +105,9 @@ flowchart TD
   g -->|"yes"| h
   g -->|"no"| i
   i --> j
-  j --> k
+  j --> n
+  n -->|"yes"| o
+  n -->|"no"| k
   k -->|"no"| l
   k -->|"yes"| m
 ```
