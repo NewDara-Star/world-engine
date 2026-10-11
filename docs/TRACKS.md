@@ -187,6 +187,8 @@ place. The owner decides the order.
 
 ## Starting a track chat
 
+Ready-to-paste first messages for each track: `docs/tracks/STARTERS.md`.
+
 1. Open a new chat in the "real world" project; connect the world-engine repo
    if offered, so it can pull and push itself.
 2. Tell it: "You are the orchestrator for track N, <name>. Read docs/TRACKS.md,
