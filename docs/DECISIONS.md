@@ -342,3 +342,12 @@ rather than guess one.
 - Decided by: owner
 - Tags: process, tracks
 
+## D-0042
+
+- Date: 2026-10-11
+- Decision: World data gathers every free source for the whole world first (maps, footprints, heights, terrain, water, existing open city 3D models) and makes the bake work anywhere; no single place gets special cleaning up or hand-modelling until that is done. Gameplay waits for this and a car that drives right.
+- Why: The game is for anywhere; hand-tuning one place before the world exists wastes time.
+- Decided by: owner
+- Tags: world, tracks
+- Replaces: D-0041
+

@@ -4,9 +4,10 @@ Copy one block as the first message of a new chat in the "real world"
 project, with the world-engine repo connected.
 
 **Order (owner, 2026-10-11): the world and the car first, the game on top.**
-Before any gameplay, two things must be true: Omole looks like Omole (your
-street recognisable, buildings, ground shape, landmarks) and the car drives
-like a real car (and looks like one, not a box). So the active tracks are:
+Before any gameplay, two things must be true: the world is built from every
+free source we can get, down to street level with buildings and the ground's
+shape, for any place; and the car drives like a real car (and looks like one,
+not a box). No place gets special hand-work before that. So the active tracks are:
 
 1. **World data**: start a fresh chat (the first one could not push or use
    newly allowed domains). Starter below.
@@ -33,19 +34,32 @@ especially docs/tracks/world-data.md (what the first chat did and found).
 Work on the branch track/world-data; push it when npm run check passes;
 open a pull request into main when something is ready to see.
 
-Goal: Omole looks like Omole. OpenStreetMap has almost no buildings near
-Babatunde Ladega Street, so:
-1. Fill in buildings from Overture Maps (it includes Google Open Buildings;
-   take only the Omole box, about 3 km, with DuckDB over Overture's open S3
-   bucket; ODbL), merged with the OpenStreetMap ones without duplicates, and
-   use any real heights it has.
-2. The real ground shape from Copernicus GLO-30 (tile N06 E003), with roads
-   and buildings sitting on it.
-3. Landmarks I will point to on the small map: Fasta International School,
-   St. Jude's Church, Foursquare Church.
-Research first, then build in one session. Tell me if any download address
-is blocked, and which domain to allow. End with screenshots and something
-I can drive on my link.
+Goal: recreate the whole world, down to street level, from every free source
+that exists, before we hand-model anything. Not one city: everywhere.
+
+1. Find and list every free source of world data: maps (OpenStreetMap,
+   Overture Maps, and anything else), building footprints (Google Open
+   Buildings, Microsoft building footprints, and others), heights and the
+   shape of the ground (Copernicus and other elevation data), water, land use,
+   place names, and cities that already have open 3D models (for example
+   New York, the Netherlands' 3D BAG, Tokyo's PLATEAU, and any others).
+   For each: what it covers, how detailed, its licence, its size, and how to
+   download it. Licences we can use are in CLAUDE.md. Tell me straight away
+   which sites you cannot reach, so I can allow them.
+2. Get the data: everything we can get for free, onto our own storage, in a
+   form our bake can read. Where the whole world is too big to hold or bake
+   at once, say so, with the real sizes, and propose how we hold it (for
+   example stored in Cloudflare R2 and baked area by area when a player goes
+   there).
+3. Make the bake work the same way for any place on Earth: roads, buildings
+   with heights, the ground's shape, water. Where a city already has a good
+   open 3D model, use it for that city.
+4. Show it: build a few very different places so I can drive them and compare
+   (a city with an open 3D model, a dense city without one, a small town).
+
+No hand-modelling and no cleaning up of individual places yet: get what
+exists first. Research first, always. End each session with something I can
+see or drive on my link, and a list of what you could not get and why.
 ```
 
 ## Vehicles and movement (track 4)
@@ -78,7 +92,7 @@ Read docs/TRACKS.md, CLAUDE.md, docs/DECISIONS.md and docs/tracks/ first.
 Work on the branch track/gameplay; push it when npm run check passes;
 open a pull request into main when something is ready to play.
 
-First job: a practice delivery run in Omole, no coins yet (the server pays later).
+First job: a practice delivery run in any baked place, no coins yet (the server pays later).
 A job appears ("pick up at A, drop at B"), a marker shows on the road and on the
 small map, a timer runs, you drive there, and you finish with your time and a rating.
 Research first: how other driving games do delivery and taxi jobs, markers,

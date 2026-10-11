@@ -44,7 +44,9 @@ Each entry says what the track is for, what it owns, what it needs from
 others, and what it must not do. "Owns" means the folders it may change.
 
 ### 1. World data
-**For:** getting real data for every part of the world we can: maps (roads,
+**For:** recreating the whole world down to street level from every free
+source before anything is hand-modelled: getting real data for every part of
+the world we can: maps (roads,
 paths, rails, water), buildings and their heights, the shape of the ground,
 coastlines, land use (fields, forest, sand), names of places, and existing
 open 3D models of real places where the licence allows. Then turning that
@@ -166,8 +168,9 @@ makes the product calls.
 - **Active now:** 1 World data, 4 Vehicles and movement, 3 Assets; then
   2 World look once buildings and terrain are in. The world and the car come
   first (owner, 2026-10-11).
-- **Next:** 5 Gameplay and 6 Server, once Omole looks like Omole and the car
-  drives like a real car; then 7 Traffic and people.
+- **Next:** 5 Gameplay and 6 Server, once the world is built from all the free
+  data we can get (street level, buildings, ground shape, anywhere) and the
+  car drives like a real car; then 7 Traffic and people.
 - **Later:** 8 Audio, 9 Screens, 10 Economy, 11 Shared world,
   12 Universe and places, 13 Platform. Until 12 and 13 start, the World data
   chat keeps the shared core and this chat (the first orchestrator) keeps
