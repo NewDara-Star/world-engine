@@ -59,3 +59,4 @@ never into the scope being built. Each is looked at when a scope is planned.
 - Buildings: `building=roof` (petrol-station canopies, 8 in Omole) is drawn as a solid block the car cannot drive under; draw it as a raised slab with no solid.
 - Buildings: multipolygon rings made of several ways joined end to end are skipped with a note (none in Omole today).
 - Pavement strips along the road edge (scope 006 item 3, optional, not done).
+- A coarse far ring of map squares (1 to 2 km, outlines and heights only) so the skyline and lagoon show beyond the 100 m squares, as Valdrada does (research/45). For World look and Platform. (World data, 2026-10-11)
