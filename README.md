@@ -104,6 +104,26 @@ the file in `raw-data/` was already there.) `--buildings` is optional;
 without it the map has roads only. Building heights come from the place
 file's `buildingHeights`.
 
+**Without osmium-tool** (World data, 2026-10-11): the same two inputs can be
+cut with pyosmium (`pip install osmium`, BSD-2-Clause) in two steps. First
+cut the whole region once (every way touching the box, with node positions,
+as OPL; one pass over the country file, a few minutes):
+
+    python3 tools/bake/cut/cut_box.py raw-data/nigeria-261009.osm.pbf 2.70 6.36 4.36 6.76 raw-data/lagos-state.opl
+
+then cut any place out of it in seconds, which writes
+`<prefix>-highways.opl` and `<prefix>-buildings.opl` (with every ring of the
+courtyard buildings):
+
+    python3 tools/bake/cut/cut_opl.py raw-data/lagos-state.opl 3.360 6.490 3.400 6.530 raw-data/yaba/yaba
+    npm run bake -- --place places/yaba.json --extract raw-data/yaba/yaba-highways.opl --buildings raw-data/yaba/yaba-buildings.opl
+
+`tools/bake/cut/coverage.py` counts, per square kilometre, the OSM
+buildings, those with a height, and the metres of road (research/40).
+`tools/bake/fetch-free-sources.sh <name> W S E N` downloads the Copernicus
+ground tiles and the Overture layers for any box, showing sizes first; it
+needs a network that reaches those hosts.
+
 It replaces `places/omole/chunks/` and `places/omole/streets.json` and prints
 how many roads, buildings and files it made, the street file's size and where the car
 starts. The same extract always gives the same files, byte for byte.

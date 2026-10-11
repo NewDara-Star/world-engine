@@ -20,9 +20,100 @@
   },
   "mapHalfSizeM": 1500,
   "mapHalfSizeSource": {
-    "source": "The owner's choice, proposed by the coder (Scope 005, slice 1) and awaiting his yes: 1.5 km in every direction from the centre, the same reach as Omole (Scope 005, 'about 1.5 km in every direction'). Yaba is not baked yet.",
+    "source": "The owner's choice, proposed by the coder (Scope 005, slice 1) and awaiting his yes: 1.5 km in every direction from the centre, the same reach as Omole (Scope 005, 'about 1.5 km in every direction').",
     "url": "https://www.openstreetmap.org/copyright",
     "status": "owner-choice"
+  },
+  "buildingHeights": {
+    "metresPerLevel": 3,
+    "defaultM": 6,
+    "byType": [
+      {
+        "type": "house",
+        "heightM": 6
+      },
+      {
+        "type": "detached",
+        "heightM": 6
+      },
+      {
+        "type": "residential",
+        "heightM": 6
+      },
+      {
+        "type": "apartments",
+        "heightM": 12
+      },
+      {
+        "type": "commercial",
+        "heightM": 8
+      },
+      {
+        "type": "retail",
+        "heightM": 4
+      },
+      {
+        "type": "office",
+        "heightM": 9
+      },
+      {
+        "type": "church",
+        "heightM": 10
+      },
+      {
+        "type": "mosque",
+        "heightM": 8
+      },
+      {
+        "type": "school",
+        "heightM": 7
+      },
+      {
+        "type": "hospital",
+        "heightM": 9
+      },
+      {
+        "type": "hotel",
+        "heightM": 12
+      },
+      {
+        "type": "industrial",
+        "heightM": 8
+      },
+      {
+        "type": "manufacture",
+        "heightM": 8
+      },
+      {
+        "type": "warehouse",
+        "heightM": 8
+      },
+      {
+        "type": "construction",
+        "heightM": 3
+      },
+      {
+        "type": "roof",
+        "heightM": 4
+      },
+      {
+        "type": "garage",
+        "heightM": 3
+      },
+      {
+        "type": "shed",
+        "heightM": 3
+      },
+      {
+        "type": "service",
+        "heightM": 3
+      }
+    ],
+    "source": {
+      "source": "The owner's choice, the same table as places/omole.json (one city, one table), awaiting his yes. 3 m a storey is scope 006's figure. Most Yaba buildings in OpenStreetMap carry no height or levels, so most are drawn at the type's height. The one real measure we hold is Google Open Buildings 2.5D Temporal (2023) in Yaba: median 5.5 m, three in four under 7 m (research/world-drive/03 section 1), close to the 6 m default. Real per-building heights replace this table once the 2.5D tiles can be downloaded (research/40).",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:building",
+      "status": "owner-choice"
+    }
   },
   "allowedVehicleClasses": [
     "car",
@@ -31,22 +122,10 @@
   ],
   "dataSources": [
     {
-      "name": "Overture Maps (roads and buildings, derived from OpenStreetMap)",
-      "url": "https://docs.overturemaps.org/attribution",
+      "name": "OpenStreetMap (roads and buildings around Yaba, baked into places/yaba/chunks)",
+      "url": "https://www.openstreetmap.org/copyright",
       "licence": "ODbL-1.0",
-      "attribution": "© OpenStreetMap contributors, Overture Maps Foundation"
-    },
-    {
-      "name": "Google Open Buildings v3 (building footprints)",
-      "url": "https://sites.research.google/gr/open-buildings/",
-      "licence": "ODbL-1.0",
-      "attribution": "Google Open Buildings (ODbL)"
-    },
-    {
-      "name": "Google Open Buildings 2.5D Temporal (building heights)",
-      "url": "https://sites.research.google/gr/open-buildings/temporal",
-      "licence": "CC-BY-4.0",
-      "attribution": "Google Open Buildings 2.5D Temporal (CC BY 4.0), Copernicus Sentinel-2"
+      "attribution": "© OpenStreetMap contributors"
     }
   ],
   "constantsNote": "Place centre is the middle of the Yaba box in research/world-drive/03-real-lagos-map-pipeline.md (lat 6.49-6.53, lon 3.36-3.40). Gravity: WGS84 normal gravity (Somigliana formula) at 6.51 N, sea level. Air density: ideal gas law for dry air, p = 100845 Pa (ISO 2533 standard atmosphere at the 40 m station elevation), T = 27.8 °C (Lagos/Ikeja 1991–2020 mean, Infoclimat; see constantsSources for its weaknesses). The working is in research/30-place-constants.md. Ground height is not stored here; it comes from the terrain data.",
