@@ -2,6 +2,30 @@
 
 Kept by the Assets orchestrator chat. Newest first.
 
+## 2026-10-12: learner, maths-defined models, realism ladder
+
+- **Pushing:** this chat still can't push with git; everything goes up through
+  GitHub's web upload in the built-in browser (owner's instruction). The
+  maths-shapes code is on `experiment/maths-shapes`; pull request #2 brings it
+  into `track/assets` and is waiting for the owner to merge.
+- **Learner (Corridor Crew way):** a shape factory makes made-up box cars with
+  known recipes; a small 3D network learns to read the recipe. One hour on CPU:
+  0.93 overlap on made-up cars, 0.85 on the real hatchback at a glance; glance
+  plus 300 polish steps matched the hand-started search (0.953 vs 0.949).
+  Stopped by the owner: made-up boxes don't look like real cars.
+- **Owner's idea, researched (research/43):** test the learner on real models
+  that come with their maths. DeepCAD (Onshape public designs) is the best
+  source but is machine parts, almost no vehicles. Download blocked: needs
+  `www.cs.columbia.edu` allowed, or the owner downloads `data.tar` once.
+- **Realism ladder** (experiments/realism-ladder): Babatunde Ladega Street at
+  three levels, timed on the phone, with a headroom test that doubles cars and
+  trees on High. Owner's first run (iPhone, iOS 18.7, inside the Claude app):
+  every level at exactly 30 fps, so the page was held to 30 by the app or
+  Low Power Mode; High (1.8M triangles counting all passes, 345 draw calls)
+  still held 30. Needs a rerun outside the app and a mid-range Android run.
+- **First real cut:** the five World Drive cars went from ~800 KB to ~140 KB
+  each (512 px WebP textures, meshopt) with glTF-Transform.
+
 ## 2026-10-11 (late): Scope 003 maths-shapes experiment run
 
 - Fitted the World Drive hatchback with 8, 16 and 24 rounded boxes (runs A and
