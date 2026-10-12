@@ -1,0 +1,344 @@
+<title>Maths Hatchback</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a wide test bench (original car on the left, maths car on the right, one camera), controls under it, the scorecard beside it. */
+:root {
+  --bg: #eceef0; --surface: #f8f9fa; --ink: #1b1e22; --muted: #5d6570; --line: #d2d7dd;
+  --accent: #2f6fe0; --accent-ink: #ffffff; --stage: #dde1e6;
+  --orig: #d64541; --maths: #3b82f6; --good: #2f7d4a; --warn: #b5651d;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15181c; --surface: #1d2126; --ink: #e8ebef; --muted: #9aa3ad; --line: #2f353c;
+  --accent: #6fa0ff; --accent-ink: #0d1014; --stage: #22272d; --good: #6cc08b; --warn: #e39a55; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15181c; --surface: #1d2126; --ink: #e8ebef; --muted: #9aa3ad; --line: #2f353c;
+  --accent: #6fa0ff; --accent-ink: #0d1014; --stage: #22272d; --good: #6cc08b; --warn: #e39a55; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 48px; display: grid; gap: 20px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 800 clamp(28px, 4.4vw, 46px)/1.02 var(--display); margin: 0; text-wrap: balance; }
+.lede { max-width: 72ch; color: var(--muted); margin: 0; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.bench { display: grid; gap: 10px; min-width: 0; }
+.stage { position: relative; background: var(--stage); border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.tag { position: absolute; top: 12px; font: 500 12px/1 var(--mono); padding: 7px 9px; border-radius: 6px; background: var(--surface); color: var(--ink); }
+.tag.l { left: 12px; border-left: 3px solid var(--orig); }
+.tag.r { right: 12px; border-left: 3px solid var(--maths); }
+.fps { position: absolute; left: 12px; bottom: 10px; font: 500 12px var(--mono); color: var(--ink); background: var(--surface); padding: 6px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; }
+.group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.label { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.seg { font: 500 13px/1 var(--mono); padding: 8px 11px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.seg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+aside { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+aside h2 { font: 600 22px/1.15 var(--display); margin: 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.v { font-family: var(--mono); white-space: nowrap; }
+.pass { color: var(--good); font-weight: 600; } .fail { color: var(--warn); font-weight: 600; }
+.verdict { margin: 0; font-size: 14px; }
+.sils { display: grid; gap: 8px; }
+.silrow { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.silrow img { width: 100%; border-radius: 4px; background: #f5f5f5; }
+.key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+.notes section { min-width: 0; }
+.notes h3 { font: 600 17px/1.2 var(--display); margin: 0 0 6px; }
+.notes p, .notes li { color: var(--muted); margin: 0; font-size: 14px; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.credit { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">World Engine · Scope 003 · maths-shapes experiment</span>
+    <h1>The hatchback, rebuilt from maths</h1>
+    <p class="lede">Left: your World Drive hatchback, the real model. Right: the same car as a short list of rounded boxes that a program fitted to it, drawn straight from the maths in the graphics chip. Wheels are fixed parts placed from the car's own measurements. Switch to 20 cars to time both on whatever you're viewing this on; your phone is the test that counts.</p>
+  </header>
+
+  <div class="main">
+    <div class="bench">
+      <div class="stage" id="stage">
+        <canvas id="view" aria-label="Original car on the left, maths car on the right. Drag to turn, scroll or pinch to zoom."></canvas>
+        <span class="tag l" id="ltag">Original · 6,808 triangles · 785 KB</span>
+        <span class="tag r" id="rtag">Maths</span>
+        <span class="fps" id="fps">–</span>
+      </div>
+      <div class="controls">
+        <div class="group" id="runs"><span class="label">Start</span></div>
+        <div class="group" id="counts"><span class="label">Shapes</span></div>
+        <div class="group" id="draw"><span class="label">Draw maths as</span></div>
+        <div class="group" id="crowd"><span class="label">Cars</span></div>
+      </div>
+    </div>
+
+    <aside>
+      <h2>Scorecard</h2>
+      <table>
+        <thead><tr><th>Test</th><th>Result</th><th>Target</th></tr></thead>
+        <tbody id="score"></tbody>
+      </table>
+      <p class="verdict" id="verdict"></p>
+    </aside>
+  </div>
+
+  <div class="sils">
+    <span class="label">Silhouettes from 8 angles (selected fit)</span>
+    <div class="silrow" id="sils"></div>
+    <div class="key"><span><i style="background:#464646"></i>both</span><span><i style="background:#d64541"></i>original only (maths missed it)</span><span><i style="background:#3b82f6"></i>maths only (maths added it)</span></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h3>How it was made</h3>
+      <p>The car was turned into a grid of distances (2 cm cells). A program started from one plain box (run A) or a six-box hatchback layout written before the run (run B), adjusted every number until the error stopped falling, then kept adding a box wherever the car was least covered. Every box is mirrored left to right and may tilt forward or back. Paint is one colour per box, read from the original texture.</p>
+    </section>
+    <section>
+      <h3>What it can't do yet</h3>
+      <ul>
+        <li>No texture: lights, windows and trim are only as good as one colour per box.</li>
+        <li>Thin parts (mirrors) and inward curves (wheel arches) are hard for boxes that only add together.</li>
+        <li>The speed number here is your device, not the reference phone.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>What it's good for</h3>
+      <ul>
+        <li>Tiny files: the shape list is hundreds of bytes, not hundreds of kilobytes.</li>
+        <li>Variety: stretch one number and you have a longer car, without a new model.</li>
+        <li>A clean starting shape for Meshy models before they're cut down.</li>
+      </ul>
+    </section>
+  </div>
+
+  <p class="credit">Original car: based on "Generic passenger car pack" by Comrade1280, CC BY 4.0 (sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5), as modified in World Drive. The maths version is fitted to it, so the same credit applies.</p>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const DATA = /*__DATA__*/null;
+const ORIG_B64 = "__ORIG__";
+
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n.toLocaleString("en-GB");
+const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0)).buffer;
+
+// ---- scene ----
+const canvas = $("view");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+function stageColour() { scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--stage").trim() || "#dde1e6"); }
+stageColour();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", stageColour);
+new MutationObserver(stageColour).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+const camera = new THREE.PerspectiveCamera(35, 16 / 9, 0.1, 400);
+camera.position.set(0.5, 2.6, 9.5);
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 0.6, 0); controls.enableDamping = true;
+const SUN = new THREE.Vector3(5, 8, 6).normalize();
+scene.add(new THREE.HemisphereLight(0xffffff, 0x7d7f84, 1.5));
+const sun = new THREE.DirectionalLight(0xffffff, 2.0); sun.position.copy(SUN).multiplyScalar(10); scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: 0x8e9196, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+
+// ---- maths car drawn in the shader: march along each pixel's ray until it meets the shape ----
+// Technique: sphere tracing (Hart 1996); ray set up in object space from the bounding box,
+// as in three.js's volume-rendering examples (MIT). Rounded box and capped cylinder are the
+// standard distance formulas (see fit.py and research/31); soft minimum matches the fitter.
+const MAXS = 32;
+function mathsMaterial(fitDoc, wheels) {
+  const n = fitDoc.rows.length;
+  const A = [], B = [], C = [], W = [];
+  for (let i = 0; i < MAXS; i++) {
+    const r = fitDoc.rows[i] || [0, 0, 0.001, 0.001, 0.001, 0, 0];
+    const c = fitDoc.colours[i] || [0, 0, 0];
+    A.push(new THREE.Vector4(r[0], r[1], r[5], r[6]));            // centre y, z, radius, pitch
+    B.push(new THREE.Vector3(r[2], r[3], r[4]));                  // half sizes
+    C.push(new THREE.Vector3(...c.map((v) => Math.pow(v, 2.2)))); // paint, to linear light
+  }
+  const w = wheels[0];
+  return new THREE.ShaderMaterial({
+    uniforms: { uA: { value: A }, uB: { value: B }, uC: { value: C }, uN: { value: n }, uBlend: { value: fitDoc.blend },
+      uWheel: { value: new THREE.Vector4(Math.abs(w.centre[0]), w.centre[1], Math.abs(w.centre[2]), w.radius) }, uWheelW: { value: w.width },
+      uSun: { value: SUN } },
+    vertexShader: `
+      out vec3 vOrigin; out vec3 vDir;
+      void main() {
+        vOrigin = (inverse(modelMatrix) * vec4(cameraPosition, 1.0)).xyz;
+        vDir = position - vOrigin;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      precision highp float;
+      in vec3 vOrigin; in vec3 vDir;
+      uniform mat4 modelMatrix; uniform mat4 projectionMatrix; // three.js sets these for every program; the fragment stage must declare them itself
+      uniform vec4 uA[${MAXS}]; uniform vec3 uB[${MAXS}]; uniform vec3 uC[${MAXS}];
+      uniform int uN; uniform float uBlend; uniform vec4 uWheel; uniform float uWheelW; uniform vec3 uSun;
+      float rbox(vec3 p, vec3 h, float r) { vec3 q = abs(p) - h + r; return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0) - r; }
+      float wheelD(vec3 p) {
+        vec3 q = vec3(abs(p.x) - uWheel.x, p.y - uWheel.y, abs(p.z) - uWheel.z);
+        vec2 d = vec2(length(q.yz) - uWheel.w, abs(q.x) - uWheelW * 0.5);
+        return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+      }
+      float shapeD(int i, vec3 p) {
+        vec4 a = uA[i]; float c = cos(a.w), s = sin(a.w);
+        float y = p.y - a.x, z = p.z - a.y;
+        return rbox(vec3(abs(p.x), c * y + s * z, -s * y + c * z), uB[i], a.z);
+      }
+      // soft minimum by log-sum-exp, shifted by the nearest shape for precision
+      float body(vec3 p, out vec3 col) {
+        float m = 1e9; for (int i = 0; i < ${MAXS}; i++) { if (i >= uN) break; m = min(m, shapeD(i, p)); }
+        float sum = 0.0; col = vec3(0.0);
+        for (int i = 0; i < ${MAXS}; i++) { if (i >= uN) break; float e = exp(-(shapeD(i, p) - m) / uBlend); sum += e; col += e * uC[i]; }
+        col /= sum;
+        return m - uBlend * log(sum);
+      }
+      float scene(vec3 p, out vec3 col) {
+        float b = body(p, col); float w = wheelD(p);
+        if (w < b) { col = vec3(0.012); return w; }
+        return b;
+      }
+      void main() {
+        vec3 ro = vOrigin, rd = normalize(vDir);
+        float t = 0.0; vec3 col; bool hit = false;
+        // start where the ray enters the bounding box
+        vec3 bmin = vec3(-1.2, -0.05, -2.4), bmax = vec3(1.2, 1.7, 2.4);
+        vec3 t0 = (bmin - ro) / rd, t1 = (bmax - ro) / rd;
+        vec3 tmin = min(t0, t1), tmax = max(t0, t1);
+        float tn = max(max(tmin.x, tmin.y), tmin.z), tf = min(min(tmax.x, tmax.y), tmax.z);
+        t = max(tn, 0.0);
+        for (int k = 0; k < 96; k++) {
+          float d = scene(ro + rd * t, col);
+          if (d < 0.002) { hit = true; break; }
+          t += d; if (t > tf) break;
+        }
+        if (!hit) discard;
+        vec3 p = ro + rd * t; vec3 cc;
+        vec2 e = vec2(0.003, 0.0);
+        vec3 nrm = normalize(vec3(scene(p + e.xyy, cc) - scene(p - e.xyy, cc), scene(p + e.yxy, cc) - scene(p - e.yxy, cc), scene(p + e.yyx, cc) - scene(p - e.yyx, cc)));
+        vec3 wn = normalize((modelMatrix * vec4(nrm, 0.0)).xyz);
+        float hemi = 0.5 + 0.5 * wn.y;
+        vec3 light = mix(vec3(0.28), vec3(0.62), hemi) + vec3(0.85) * max(dot(wn, uSun), 0.0);
+        vec4 clip = projectionMatrix * viewMatrix * modelMatrix * vec4(p, 1.0);
+        gl_FragDepth = clip.z / clip.w * 0.5 + 0.5;
+        gl_FragColor = vec4(col * light, 1.0);
+        #include <colorspace_fragment>
+      }`,
+  });
+}
+
+// ---- data and builders ----
+let origTemplate = null;
+async function loadOriginal() {
+  const g = await new GLTFLoader().parseAsync(b64(ORIG_B64), "");
+  origTemplate = g.scene;
+}
+const meshTemplates = {};
+async function loadFallback(key) {
+  if (meshTemplates[key]) return meshTemplates[key];
+  const g = await new GLTFLoader().parseAsync(b64(DATA.fits[key].meshB64), "");
+  g.scene.traverse((m) => { if (m.isMesh) m.material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.1 }); });
+  // wheels for the mesh version
+  const grp = new THREE.Group(); grp.add(g.scene);
+  for (const w of DATA.wheels) {
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(w.radius, w.radius, w.width, 24), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 }));
+    c.rotation.z = Math.PI / 2; c.position.set(...w.centre); grp.add(c);
+  }
+  return (meshTemplates[key] = grp);
+}
+const boxGeo = new THREE.BoxGeometry(2.4, 1.75, 4.8).translate(0, 0.825, 0);
+const materials = {};
+function mathsCar(key) {
+  materials[key] ??= mathsMaterial(DATA.fits[key], DATA.wheels);
+  return new THREE.Mesh(boxGeo, materials[key]);
+}
+
+// ---- state and UI ----
+const state = { run: "B", n: 8, draw: "shader", crowd: "pair" };
+const fleet = new THREE.Group(); scene.add(fleet);
+let lastCrowd = "pair";
+function seg(groupId, label, key, value) {
+  const b = document.createElement("button"); b.className = "seg"; b.textContent = label; b.dataset.key = key; b.dataset.value = value;
+  b.addEventListener("click", () => { state[key] = typeof state[key] === "number" ? Number(value) : value; rebuild(); });
+  $(groupId).append(b);
+}
+seg("runs", "A · one box", "run", "A"); seg("runs", "B · layout", "run", "B");
+for (const n of DATA.counts) seg("counts", String(n), "n", n);
+seg("draw", "shader", "draw", "shader"); seg("draw", "mesh", "draw", "mesh");
+seg("crowd", "1 v 1", "crowd", "pair"); seg("crowd", "20 original", "crowd", "orig"); seg("crowd", "20 maths", "crowd", "maths");
+
+async function rebuild() {
+  for (const b of document.querySelectorAll(".seg")) b.setAttribute("aria-pressed", String(state[b.dataset.key]) === b.dataset.value);
+  const key = `${state.run}_${state.n}`;
+  const fit = DATA.fits[key];
+  fleet.clear();
+  const fallback = state.draw === "mesh" ? await loadFallback(key) : null;
+  const makeMaths = () => (fallback ? fallback.clone() : mathsCar(key));
+  if (state.crowd === "pair") {
+    const o = origTemplate.clone(); o.position.set(-1.5, 0, 0); fleet.add(o);
+    const m = makeMaths(); m.position.set(1.5, 0, 0); fleet.add(m);
+  } else {
+    // 20 of one kind, so the frame rate belongs to that kind alone
+    for (let i = 0; i < 20; i++) {
+      const c = state.crowd === "orig" ? origTemplate.clone() : makeMaths();
+      c.position.set(-4.8 + (i % 5) * 2.4, 0, 7.8 - Math.floor(i / 5) * 5.2); fleet.add(c);
+    }
+  }
+  if (state.crowd !== lastCrowd) { // frame the pair close up, the crowd from further back
+    if (state.crowd === "pair") camera.position.set(0.5, 2.6, 9.5); else camera.position.set(0, 10, 24);
+    controls.target.set(0, 0.6, 0); lastCrowd = state.crowd;
+  }
+  $("fps").textContent = "measuring…"; frames = 0; last = performance.now();
+  $("rtag").textContent = `Maths · ${fit.shapes} shapes · ${fmt(fit.m.shape_list_gz_bytes)} bytes` + (state.draw === "mesh" ? ` · ${fmt(fit.m.mesh_fallback_tris)} tri mesh` : "");
+  score(fit);
+  $("sils").innerHTML = fit.sils.map((s, i) => `<img alt="Silhouette at ${i * 45} degrees" src="data:image/png;base64,${s}">`).join("");
+}
+
+function score(fit) {
+  const m = fit.m;
+  const row = (t, v, target, ok) => `<tr><td>${t}</td><td class="v ${ok === undefined ? "" : ok ? "pass" : "fail"}">${v}</td><td class="v">${target}</td></tr>`;
+  $("score").innerHTML =
+    row("Smaller than the file", `${fmt(m.smaller_than_file_x)}×`, "10×", m.smaller_than_file_x >= 10) +
+    row("Smaller than its shape data alone", `${fmt(m.smaller_than_geometry_x)}×`, "10×", m.smaller_than_geometry_x >= 10) +
+    row("Silhouette overlap, whole car", `${m.overlap_whole_mean.toFixed(3)} (worst ${m.overlap_whole_min.toFixed(2)})`, "0.90", m.overlap_whole_mean >= 0.9) +
+    row("Silhouette overlap, body only", `${m.overlap_body_mean.toFixed(3)} (worst ${m.overlap_body_min.toFixed(2)})`, "–") +
+    row("Same result run twice", DATA.repeatable ? "identical" : "different", "identical", DATA.repeatable) +
+    row("60 fps, 20 cars", "your phone", "60");
+  $("verdict").textContent = DATA.verdict;
+}
+
+// frame timing: average over the last second
+let frames = 0, last = performance.now();
+function tick() {
+  controls.update(); renderer.render(scene, camera);
+  frames++; const now = performance.now();
+  if (now - last > 1000) { $("fps").textContent = `${Math.round((frames * 1000) / (now - last))} fps here`; frames = 0; last = now; }
+}
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe($("stage")); resize();
+await loadOriginal();
+await rebuild();
+renderer.setAnimationLoop(tick);
+</script>
