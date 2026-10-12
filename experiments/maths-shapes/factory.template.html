@@ -1,0 +1,158 @@
+<title>The Shape Factory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one wide yard of 24 made-up cars plus the real car, a view switch above it, plain notes below. */
+:root {
+  --bg: #eceef0; --surface: #f8f9fa; --ink: #1b1e22; --muted: #5d6570; --line: #d2d7dd;
+  --stage: #dde1e6; --accent: #2f6fe0;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15181c; --surface: #1d2126; --ink: #e8ebef; --muted: #9aa3ad; --line: #2f353c; --stage: #22272d; --accent: #6fa0ff; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #15181c; --surface: #1d2126; --ink: #e8ebef; --muted: #9aa3ad; --line: #2f353c; --stage: #22272d; --accent: #6fa0ff; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 48px; display: grid; gap: 18px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 800 clamp(28px, 4.4vw, 46px)/1.02 var(--display); margin: 6px 0 0; text-wrap: balance; }
+.lede { max-width: 72ch; color: var(--muted); margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.label { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.seg { font: 500 13px/1 var(--mono); padding: 9px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.seg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { position: relative; background: var(--stage); border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hint { position: absolute; left: 12px; bottom: 10px; font: 400 12px var(--mono); color: var(--muted); }
+.tag { position: absolute; right: 12px; top: 12px; font: 500 12px/1.3 var(--mono); padding: 7px 9px; border-radius: 6px; background: var(--surface); color: var(--ink); max-width: 60%; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+.notes section { min-width: 0; }
+.notes h3 { font: 600 17px/1.2 var(--display); margin: 0 0 6px; }
+.notes p, .notes li { color: var(--muted); margin: 0; font-size: 14px; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">World Engine · the learner's training yard</span>
+    <h1>The shape factory</h1>
+    <p class="lede">These are 24 of the made-up cars the learner studies. The factory invents a new one for every lesson, so it never sees the same car twice, and each comes with its exact answer: which boxes built it. The grey car at the front is your real hatchback, which the learner never studies. It's only used to check how well the lessons carry over.</p>
+  </header>
+
+  <div class="controls">
+    <span class="label">Show</span>
+    <button class="seg" data-mode="answer" aria-pressed="true">The answer (each box its own colour)</button>
+    <button class="seg" data-mode="sees" aria-pressed="false">What the learner sees (6 cm cubes)</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="Twenty-four made-up cars in rows, with the real hatchback in front. Drag to turn, scroll or pinch to zoom."></canvas>
+    <span class="tag" id="tag"></span>
+    <span class="hint">Drag to turn · scroll or pinch to zoom</span>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h3>Why made-up cars</h3>
+      <p>Like Corridor Crew's green-screen keyer trained on generated footage, every example here has a perfect answer, so the learner can be marked exactly. Real cars don't come with their box recipe.</p>
+    </section>
+    <section>
+      <h3>How they're made</h3>
+      <ul>
+        <li>A body, a cabin, then maybe a bonnet, windscreen, tailgate and bumpers, all sized from real car proportions (4 m long, about 1.75 m wide, 1.45 m tall), with random variation.</li>
+        <li>Up to two random extra boxes, so it doesn't only learn neat cars.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>The weak spot</h3>
+      <p>Real cars are smooth; these are blocky. That gap is why the learner's answer is then polished by the search. Making the factory's cars more like real ones is the main way to make it better.</p>
+    </section>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const DATA = /*__DATA__*/null;
+const $ = (id) => document.getElementById(id);
+const PALETTE = [0xe0b03a, 0x4f86c6, 0xd0614f, 0x5aa36b, 0x9b6fc4, 0xd88a3c, 0x46a7a8, 0xc65d8e];
+
+const canvas = $("view");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+function stageColour() { scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--stage").trim() || "#dde1e6"); }
+stageColour();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", stageColour);
+new MutationObserver(stageColour).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+const camera = new THREE.PerspectiveCamera(35, 16 / 9, 0.1, 500);
+camera.position.set(14, 16, 30);
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 0, 2); controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x7d7f84, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 2.0); sun.position.set(6, 10, 7); scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshStandardMaterial({ color: 0x8e9196, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+
+// A box from the factory's recipe: centre y and z, half sizes, corner radius, pitch; mirrored about x = 0 (so centred).
+function boxMesh(r, colour) {
+  const [cy, cz, hx, hy, hz, rad, pitch] = r;
+  const geo = new THREE.BoxGeometry(hx * 2, hy * 2, hz * 2);
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: colour, roughness: 0.6, transparent: true, opacity: 0.92 }));
+  m.position.set(0, cy, cz); m.rotation.x = pitch;
+  return m;
+}
+// The learner's view: every 6 cm cell that is inside the shape, as a cube (both halves shown).
+function cellsMesh(bits, scale, colour) {
+  const [NZ, NY, NX] = DATA.dims, cell = DATA.cell * scale;
+  const raw = Uint8Array.from(atob(bits), (c) => c.charCodeAt(0));
+  const on = [];
+  for (let i = 0; i < NZ * NY * NX; i++) if (raw[i >> 3] & (128 >> (i & 7))) on.push(i);
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(cell * 0.92, cell * 0.92, cell * 0.92),
+    new THREE.MeshStandardMaterial({ color: colour, roughness: 0.8 }), on.length * 2);
+  const m4 = new THREE.Matrix4(); let k = 0;
+  for (const i of on) {
+    const z = Math.floor(i / (NY * NX)), y = Math.floor(i / NX) % NY, x = i % NX;
+    const px = (x + 0.5) * cell, py = (y + 0.5) * cell, pz = (-1 + DATA.cell * (z + 0.5)) * scale;
+    m4.makeTranslation(px, py, pz); mesh.setMatrixAt(k++, m4);
+    m4.makeTranslation(-px, py, pz); mesh.setMatrixAt(k++, m4);
+  }
+  return mesh;
+}
+
+const yard = new THREE.Group(); scene.add(yard);
+let mode = "answer";
+function build() {
+  yard.clear();
+  DATA.cars.forEach((car, i) => {
+    const g = new THREE.Group();
+    if (mode === "answer") car.rows.forEach((r, j) => g.add(boxMesh(r, PALETTE[j % PALETTE.length])));
+    else g.add(cellsMesh(car.bits, 2.0, 0x9aa3ad));
+    g.position.set(-11.25 + (i % 6) * 4.5, 0, -12 + Math.floor(i / 6) * 6);
+    yard.add(g);
+  });
+  const real = cellsMesh(DATA.real.bits, DATA.real.scale, 0x4a4d52);
+  real.position.set(0, 0, 13); yard.add(real);
+  $("tag").textContent = mode === "answer"
+    ? "Coloured: the recipe the factory used. Front, grey cubes: your real hatchback as the learner sees it."
+    : "Grey cubes: exactly what the learner gets, a 6 cm grid. Front, dark: your real hatchback.";
+  for (const b of document.querySelectorAll(".seg")) b.setAttribute("aria-pressed", b.dataset.mode === mode);
+}
+for (const b of document.querySelectorAll(".seg")) b.addEventListener("click", () => { mode = b.dataset.mode; build(); });
+build();
+
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe($("stage")); resize();
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
