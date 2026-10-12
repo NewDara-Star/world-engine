@@ -1,0 +1,454 @@
+<title>Omole Realism Ladder</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the street first and big; the level switch and test button under it; the results table and notes after. */
+:root {
+  --bg: #eeebe4; --surface: #f9f7f2; --ink: #1d1c19; --muted: #625e55; --line: #d6d0c4;
+  --accent: #c8541f;  /* laterite red, Lagos soil */
+  --accent-ink: #ffffff; --good: #2f7d4a; --warn: #b5651d; --bad: #b3261e;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161512; --surface: #201e1a; --ink: #ece8df; --muted: #a49e92; --line: #36332d;
+  --accent: #e87a45; --accent-ink: #161512; --good: #6cc08b; --warn: #e39a55; --bad: #ef7a6f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #161512; --surface: #201e1a; --ink: #ece8df; --muted: #a49e92; --line: #36332d;
+  --accent: #e87a45; --accent-ink: #161512; --good: #6cc08b; --warn: #e39a55; --bad: #ef7a6f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 16px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 800 clamp(28px, 5vw, 46px)/1.02 var(--display); margin: 6px 0 4px; text-wrap: balance; }
+.lede { max-width: 70ch; color: var(--muted); margin: 0; }
+.stage { position: relative; background: #87a6c2; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; }
+@media (max-width: 640px) { .stage { aspect-ratio: 4 / 5; } }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hud { position: absolute; left: 10px; top: 10px; font: 500 12px/1.45 var(--mono); color: #fff; background: rgba(0,0,0,.55); padding: 7px 9px; border-radius: 7px; font-variant-numeric: tabular-nums; white-space: pre; }
+.banner { position: absolute; right: 10px; top: 10px; font: 500 12px/1.3 var(--mono); color: #fff; background: rgba(0,0,0,.55); padding: 7px 9px; border-radius: 7px; max-width: 55%; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.label { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.seg { font: 500 13px/1 var(--mono); padding: 9px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.go { font: 600 14px/1 var(--body); padding: 11px 16px; border-radius: 8px; border: 0; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+.go:disabled { opacity: .55; cursor: default; }
+.seg:focus-visible, .go:focus-visible, .copy:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.results { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.results h2 { font: 600 20px/1.2 var(--display); margin: 0; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 560px; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+th { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.v { font-family: var(--mono); }
+.ok { color: var(--good); font-weight: 600; } .meh { color: var(--warn); font-weight: 600; } .no { color: var(--bad); font-weight: 600; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.copy { font: 500 13px/1 var(--mono); padding: 9px 12px; border-radius: 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+#report { width: 100%; min-height: 0; font: 12px/1.4 var(--mono); color: var(--muted); background: transparent; border: 1px dashed var(--line); border-radius: 8px; padding: 8px; resize: vertical; box-sizing: border-box; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.notes section { min-width: 0; }
+.notes h3 { font: 600 17px/1.2 var(--display); margin: 0 0 6px; }
+.notes p, .notes li { color: var(--muted); margin: 0; font-size: 14px; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.credit { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">World Engine · how real can a phone go?</span>
+    <h1>Omole realism ladder</h1>
+    <p class="lede">Your street, Babatunde Ladega, drawn at three quality levels. Open this on your phone, press "Run the test", and keep the screen on for one to two minutes. It drives each level along your street and up into the air, times every frame, then keeps doubling the cars and trees on High until your phone can't keep up. For the truest numbers, turn Low Power Mode off first.</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="A drive along Babatunde Ladega Street in Omole, Lagos."></canvas>
+    <div class="hud" id="hud">loading…</div>
+    <div class="banner" id="banner">Low</div>
+  </div>
+
+  <div class="controls">
+    <div class="group" id="levels"><span class="label">Level</span></div>
+    <div class="group" id="views"><span class="label">View</span></div>
+    <button class="go" id="run">Run the test (1–2 min)</button>
+  </div>
+
+  <div class="results">
+    <h2>Results on this device</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Level</th><th>Typical fps</th><th>Worst 1%</th><th>CPU per frame</th><th>Triangles</th><th>Draw calls</th><th>Verdict</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="7">Not run yet. Press "Run the test".</td></tr></tbody>
+      </table>
+    </div>
+    <div class="row">
+      <button class="copy" id="copy">Copy results</button>
+      <span id="copied" class="label"></span>
+    </div>
+    <textarea id="report" rows="3" readonly aria-label="Results as text, to paste back to Claude"></textarea>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h3>What each level adds</h3>
+      <ul>
+        <li><b>Low:</b> flat light, no shadows, 8 cars, sharp only at 1× pixels, fog at 200 m.</li>
+        <li><b>Medium:</b> real sky lighting, sun shadows near you, film-like colour, trees, garden walls, 24 cars, up to 1.5× pixels.</li>
+        <li><b>High:</b> softer, sharper shadows, shading in corners (ambient occlusion), a little glow, more trees, 48 cars, up to 2× pixels, 600 m view.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>What's real and what's stand-in</h3>
+      <ul>
+        <li>Roads and the 4 mapped buildings are real OpenStreetMap data, baked by World data.</li>
+        <li>OpenStreetMap has almost no buildings around your street, so plain houses are placed along every road as stand-ins. They're there so the phone carries a realistic load, not to show what Omole looks like.</li>
+        <li>Cars are the World Drive cars, cut from about 800 KB each to about 140 KB (smaller pictures, packed shapes).</li>
+      </ul>
+    </section>
+    <section>
+      <h3>How to read it</h3>
+      <p>60 fps is smooth; 30 fps is playable for driving if it never dips. "Worst 1%" is the stutter you feel. The highest level that stays green is the realism we can afford on this phone. Copy the results and paste them back to me.</p>
+    </section>
+  </div>
+
+  <p class="credit">Map data © OpenStreetMap contributors, ODbL. Cars based on "Generic passenger car pack" by Comrade1280, CC BY 4.0. three.js (MIT).</p>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { Sky } from "three/addons/objects/Sky.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+
+const MAP = /*__MAP__*/null;
+const CARS = /*__CARS__*/[];
+const $ = (id) => document.getElementById(id);
+
+// ---------- levels: what each one turns on (our choices, recorded on the page) ----------
+const LEVELS = {
+  low:    { name: "Low",    ratio: 1.0, shadows: 0,    standard: false, sky: false, trees: 0,   walls: false, cars: 8,  far: 220, fog: 200, post: false },
+  medium: { name: "Medium", ratio: 1.5, shadows: 1024, standard: true,  sky: true,  trees: 260, walls: true,  cars: 24, far: 450, fog: 380, post: false },
+  high:   { name: "High",   ratio: 2.0, shadows: 2048, standard: true,  sky: true,  trees: 600, walls: true,  cars: 48, far: 650, fog: 560, post: true },
+};
+
+// ---------- renderer and scene ----------
+const canvas = $("view");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+renderer.info.autoReset = false;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.3, 650);
+const hemi = new THREE.HemisphereLight(0xdfe9f3, 0x8a7457, 1.4); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
+sun.position.set(-60, 90, 40); scene.add(sun); scene.add(sun.target);
+const SKY_COLOUR = new THREE.Color(0x9cbad6);
+const sky = new Sky(); sky.scale.setScalar(4000);
+const skyU = sky.material.uniforms;
+skyU.turbidity.value = 6; skyU.rayleigh.value = 1.6; skyU.mieCoefficient.value = 0.006; skyU.mieDirectionalG.value = 0.8;
+skyU.sunPosition.value.copy(sun.position).normalize();
+const pmrem = new THREE.PMREMGenerator(renderer);
+let skyEnv = null;
+
+// ---------- the map: game axes x = east, z = south (north is -z), metres ----------
+function roadMesh() {
+  const pos = [], idx = [];
+  for (const cell of MAP.roads) {
+    const base = pos.length / 3;
+    for (let i = 0; i < cell.c.length; i += 2) pos.push(cell.e * 100 + cell.c[i] / 100, 0.03, -(cell.n * 100 + cell.c[i + 1] / 100));
+    for (const t of cell.t) idx.push(base + t);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+  for (let i = 0; i < g.attributes.normal.count; i++) g.attributes.normal.setXYZ(i, 0, 1, 0);
+  return g;
+}
+function mappedBuildings() {
+  const parts = [];
+  for (const b of MAP.buildings) {
+    const ring = b.r[0], h = b.h / 100, pts = [];
+    for (let i = 0; i < ring.length; i += 2) pts.push([b.e * 100 + ring[i] / 100, -(b.n * 100 + ring[i + 1] / 100)]);
+    const pos = [], idx = [];
+    pts.forEach(([x, z], i) => {           // walls: one quad per edge
+      const [x2, z2] = pts[(i + 1) % pts.length], k = pos.length / 3;
+      pos.push(x, 0, z, x2, 0, z2, x2, h, z2, x, h, z);
+      idx.push(k, k + 1, k + 2, k, k + 2, k + 3);
+    });
+    const r0 = pos.length / 3;
+    pts.forEach(([x, z]) => pos.push(x, h, z));
+    for (const t of b.f) idx.push(r0 + t);  // roof triangles from the bake
+    const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx);
+    parts.push(g.toNonIndexed());
+  }
+  const m = mergeGeometries(parts); m.computeVertexNormals(); return m;
+}
+
+// Stand-in houses: one every ~24 m along both sides of every street, kept off the roads.
+// A deterministic generator so every phone tests the same scene.
+function rand(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const SEGS = [];
+for (const line of MAP.streets) for (let i = 0; i + 3 < line.length; i += 2) SEGS.push([line[i] / 10, -line[i + 1] / 10, line[i + 2] / 10, -line[i + 3] / 10]);
+function distToRoads(x, z) {
+  let best = 1e9;
+  for (const [ax, az, bx, bz] of SEGS) {
+    const dx = bx - ax, dz = bz - az, L = dx * dx + dz * dz || 1;
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / L));
+    best = Math.min(best, Math.hypot(x - ax - t * dx, z - az - t * dz));
+  }
+  return best;
+}
+function standIns() {
+  const r = rand(11), lots = [];
+  for (const [ax, az, bx, bz] of SEGS) {
+    const len = Math.hypot(bx - ax, bz - az); if (len < 8) continue;
+    const ux = (bx - ax) / len, uz = (bz - az) / len;
+    for (let d = 8; d < len - 6; d += 24) for (const side of [-1, 1]) {
+      const x = ax + ux * d - uz * 15 * side, z = az + uz * d + ux * 15 * side;
+      if (Math.abs(x) > 390 || Math.abs(z) > 390 || distToRoads(x, z) < 11) continue;
+      if (lots.some((l) => Math.hypot(l.x - x, l.z - z) < 17)) continue;
+      lots.push({ x, z, yaw: Math.atan2(ux, uz), floors: r() < 0.55 ? 2 : 1, w: 10 + r() * 4, d: 9 + r() * 4, tint: Math.floor(r() * 4) });
+    }
+  }
+  return lots;
+}
+const WALL_TINTS = [0xe9dfc8, 0xd9c7a6, 0xf0e6d6, 0xcfd6c4];
+function houseGeometries(lots, withWalls) {
+  const walls = [[], [], [], []], roofs = [], fences = [];
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+  for (const l of lots) {
+    const h = l.floors * 3.2;
+    q.setFromAxisAngle(up, l.yaw);
+    const body = new THREE.BoxGeometry(l.w, h, l.d).translate(0, h / 2, 0);
+    m.compose(new THREE.Vector3(l.x, 0, l.z), q, new THREE.Vector3(1, 1, 1));
+    walls[l.tint].push(body.applyMatrix4(m));
+    const roof = new THREE.ConeGeometry(Math.hypot(l.w, l.d) / 2 * 1.05, 2.2, 4, 1).rotateY(Math.PI / 4)
+      .scale(l.w / Math.hypot(l.w, l.d) * 1.42, 1, l.d / Math.hypot(l.w, l.d) * 1.42).translate(0, h + 1.1, 0);
+    roofs.push(roof.applyMatrix4(m).toNonIndexed());
+    if (withWalls) {   // compound wall around the plot, 2.2 m, typical of Lagos homes (stand-in)
+      const W = l.w + 6, D = l.d + 6;
+      for (const [sx, sz, lx, lz] of [[0, D / 2, W, 0.2], [0, -D / 2, W, 0.2], [W / 2, 0, 0.2, D], [-W / 2, 0, 0.2, D]])
+        fences.push(new THREE.BoxGeometry(lx, 2.2, lz).translate(sx, 1.1, sz).applyMatrix4(m));
+    }
+  }
+  return { walls: walls.map((w) => (w.length ? mergeGeometries(w.map((g) => g.toNonIndexed())) : null)), roofs: mergeGeometries(roofs), fences: fences.length ? mergeGeometries(fences.map((g) => g.toNonIndexed())) : null };
+}
+
+// ---------- cars: one instanced mesh per car part, so 48 cars cost the same draw calls as 1 ----------
+const carModels = [];
+async function loadCars() {
+  const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+  for (const b64 of CARS) {
+    const buf = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
+    const g = await loader.parseAsync(buf, "");
+    g.scene.updateMatrixWorld(true);
+    const parts = [];
+    g.scene.traverse((o) => { if (o.isMesh) parts.push({ geo: o.geometry, mat: o.material, local: o.matrixWorld.clone() }); });
+    carModels.push(parts);
+  }
+}
+function carRoute(i, r) {   // each car drives along one street segment and back, on the right-hand side (drivingSide: right)
+  const s = SEGS[Math.floor(r() * SEGS.length)];
+  return { s, t: r(), speed: (6 + r() * 6) / Math.max(1, Math.hypot(s[2] - s[0], s[3] - s[1])), dir: r() < 0.5 ? 1 : -1, model: i % 5 };
+}
+
+// ---------- building the level ----------
+const world = new THREE.Group(); scene.add(world);
+let cars = [], carMeshes = [], trees = null, composer = null, level = "low", groundMat = null;
+const LOTS = standIns();
+const ROADS = roadMesh(), MAPPED = MAP.buildings.length ? mappedBuildings() : null;
+const HOUSES = { plain: houseGeometries(LOTS, false), walled: houseGeometries(LOTS, true) };
+
+function mat(colour, L) { return L.standard ? new THREE.MeshStandardMaterial({ color: colour, roughness: 0.95, metalness: 0 }) : new THREE.MeshLambertMaterial({ color: colour }); }
+function add(geo, material, L) { if (!geo) return; const m = new THREE.Mesh(geo, material); m.castShadow = m.receiveShadow = L.shadows > 0; world.add(m); }
+
+function buildLevel(key, load = 1) {
+  level = key; const L = { ...LEVELS[key], cars: Math.round(LEVELS[key].cars * load), trees: Math.round(LEVELS[key].trees * load) };
+  world.clear(); cars = []; carMeshes = [];
+  renderer.setPixelRatio(Math.min(devicePixelRatio, L.ratio));
+  renderer.shadowMap.enabled = L.shadows > 0;
+  renderer.toneMapping = L.standard ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping;
+  sun.castShadow = L.shadows > 0;
+  if (L.shadows) {
+    sun.shadow.mapSize.set(L.shadows, L.shadows);
+    const c = sun.shadow.camera; c.left = c.bottom = -(L.shadows > 1024 ? 70 : 50); c.right = c.top = (L.shadows > 1024 ? 70 : 50);
+    c.near = 1; c.far = 300; c.updateProjectionMatrix(); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+    sun.shadow.map?.dispose(); sun.shadow.map = null;
+  }
+  scene.fog = new THREE.Fog(L.sky ? 0xb9c8d6 : SKY_COLOUR, L.fog * 0.55, L.fog);
+  camera.far = L.far; camera.updateProjectionMatrix();
+  if (L.sky) { scene.add(sky); skyEnv ??= pmrem.fromScene(skyOnly()).texture; scene.environment = skyEnv; scene.environmentIntensity = 0.35; scene.background = null; hemi.intensity = 0.5; renderer.toneMappingExposure = 0.6; }
+  else { scene.remove(sky); scene.environment = null; scene.background = SKY_COLOUR; hemi.intensity = 1.4; renderer.toneMappingExposure = 1; }
+
+  groundMat = mat(0x8f8a6a, L);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600), groundMat); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = L.shadows > 0; world.add(ground);
+  add(ROADS, mat(0x3a3b3d, L), L);
+  if (MAPPED) add(MAPPED, mat(0xd8c9ad, L), L);
+  const H = L.walls ? HOUSES.walled : HOUSES.plain;
+  H.walls.forEach((g, i) => add(g, mat(WALL_TINTS[i], L), L));
+  add(H.roofs, mat(0x7a4a33, L), L);
+  if (H.fences) add(H.fences, mat(0xbdb39e, L), L);
+
+  if (L.trees) {   // instanced trees: crown + trunk, two draw calls for all of them
+    const r = rand(5), crowns = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(2.6, 1), mat(0x3f6b33, L), L.trees);
+    const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.25, 0.35, 3, 6).translate(0, 1.5, 0), mat(0x5a4330, L), L.trees);
+    const m4 = new THREE.Matrix4(); let k = 0, tries = 0;
+    while (k < L.trees && tries++ < L.trees * 20) {
+      const x = (r() - 0.5) * 780, z = (r() - 0.5) * 780;
+      if (distToRoads(x, z) < 5) continue;
+      const s = 0.8 + r() * 0.7;
+      m4.makeScale(s, s, s).setPosition(x, 0, z); trunks.setMatrixAt(k, m4);
+      m4.makeScale(s, s * (0.8 + r() * 0.4), s).setPosition(x, 3 * s + 1.6 * s, z); crowns.setMatrixAt(k, m4); k++;
+    }
+    crowns.count = trunks.count = k;
+    for (const t of [crowns, trunks]) { t.castShadow = t.receiveShadow = L.shadows > 0; world.add(t); }
+  }
+
+  const r = rand(21);
+  for (let i = 0; i < L.cars; i++) cars.push(carRoute(i, r));
+  carModels.forEach((parts, mi) => {
+    const n = cars.filter((c) => c.model === mi).length; if (!n) return;
+    for (const p of parts) {
+      const im = new THREE.InstancedMesh(p.geo, p.mat, n); im.castShadow = L.shadows > 0; im.frustumCulled = false;
+      world.add(im); carMeshes.push({ im, local: p.local, model: mi });
+    }
+  });
+
+  composer?.dispose?.(); composer = null;
+  if (L.post) {
+    const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+    const rt = new THREE.WebGLRenderTarget(size.x, size.y, { type: THREE.HalfFloatType, samples: 4 });
+    composer = new EffectComposer(renderer, rt);
+    composer.addPass(new RenderPass(scene, camera));
+    const ao = new GTAOPass(scene, camera, size.x, size.y); ao.blendIntensity = 0.8; composer.addPass(ao);
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(size.x, size.y), 0.05, 0.3, 0.98));
+    composer.addPass(new OutputPass());
+  }
+  resize();
+  $("banner").textContent = `${L.name}${load > 1 ? ` ×${load}` : ""} · ${L.cars} cars · ${L.trees} trees`;
+  for (const b of document.querySelectorAll("#levels .seg")) b.setAttribute("aria-pressed", b.dataset.v === key);
+}
+function skyOnly() { const s = new THREE.Scene(); const k = new Sky(); k.scale.setScalar(4000); Object.assign(k.material.uniforms.sunPosition.value, skyU.sunPosition.value); for (const n of ["turbidity", "rayleigh", "mieCoefficient", "mieDirectionalG"]) k.material.uniforms[n].value = skyU[n].value; s.add(k); return s; }
+
+// ---------- moving things ----------
+const HOME = []; for (const line of MAP.home) for (let i = 0; i < line.length; i += 2) HOME.push(new THREE.Vector3(line[i] / 10, 1.25, -line[i + 1] / 10));
+const homePath = new THREE.CatmullRomCurve3(HOME); const homeLen = homePath.getLength();
+let view = "driver", t0 = performance.now();
+const tmp = new THREE.Matrix4(), carM = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), pos = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1);
+function moveCamera(now) {
+  const secs = Math.max(0, now - t0) / 1000;   // rAF time can be a little before t0
+  if (view === "driver") {   // 30 km/h along the home street and back
+    const d = (secs * 8.33) % (2 * homeLen), u = (d < homeLen ? d : 2 * homeLen - d) / homeLen;
+    const p = homePath.getPointAt(u), ahead = homePath.getPointAt(Math.min(1, Math.max(0, u + (d < homeLen ? 0.04 : -0.04))));
+    const side = new THREE.Vector3().subVectors(ahead, p).cross(up).normalize().multiplyScalar(1.8);
+    camera.position.copy(p).add(side); camera.lookAt(ahead.add(side));
+  } else {                   // a slow circle 60 m up, looking at the street
+    const a = secs * 0.12; camera.position.set(Math.cos(a) * 140, 60, Math.sin(a) * 140); camera.lookAt(0, 0, 0);
+  }
+  sun.position.set(camera.position.x - 60, 90, camera.position.z + 40); sun.target.position.set(camera.position.x, 0, camera.position.z);
+}
+function moveCars(dt) {
+  const counts = [0, 0, 0, 0, 0];
+  for (const c of cars) {
+    c.t += c.speed * dt * c.dir; if (c.t > 1 || c.t < 0) { c.dir *= -1; c.t = Math.max(0, Math.min(1, c.t)); }
+    const [ax, az, bx, bz] = c.s, hx = (bx - ax) * c.dir, hz = (bz - az) * c.dir, L = Math.hypot(hx, hz) || 1;
+    pos.set(ax + (bx - ax) * c.t - (hz / L) * 1.8, 0, az + (bz - az) * c.t + (hx / L) * 1.8);
+    q.setFromAxisAngle(up, Math.atan2(hx, hz)); carM.compose(pos, q, one);
+    c.slot = counts[c.model]++; c.m = carM.clone();
+  }
+  for (const cm of carMeshes) {
+    for (const c of cars) if (c.model === cm.model) cm.im.setMatrixAt(c.slot, tmp.multiplyMatrices(c.m, cm.local));
+    cm.im.instanceMatrix.needsUpdate = true;
+  }
+}
+
+// ---------- timing ----------
+let frames = [], workMs = [], last = performance.now(), hudAt = 0, test = null;
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); frames.push(now - last); last = now;
+  if (frames.length > 600) frames.shift();
+  moveCamera(now); moveCars(dt);
+  renderer.info.reset();
+  const w0 = performance.now();
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  workMs.push(performance.now() - w0); if (workMs.length > 600) workMs.shift();
+  if (test) { const t = test; t.tick(now - (t.prev ?? now)); t.prev = now; }   // tick may end the test
+  if (now - hudAt > 500) { hudAt = now; hud(); }
+}
+function stats(list) {
+  const s = [...list].sort((a, b) => a - b), med = s[Math.floor(s.length / 2)] || 16.7, p99 = s[Math.floor(s.length * 0.99)] || med;
+  return { fps: 1000 / med, low: 1000 / p99, ms: med };
+}
+function hud() {
+  const s = stats(frames.slice(-120));
+  $("hud").textContent = `${s.fps.toFixed(0)} fps   ${s.ms.toFixed(1)} ms\n${(renderer.info.render.triangles / 1000).toFixed(0)}k tri   ${renderer.info.render.calls} calls`;
+}
+
+// ---------- the test: each level, 9 s driving then 7 s flying; the first 2 s of each are thrown away ----------
+const results = {};
+function runTest() {
+  $("run").disabled = true; for (const k in results) delete results[k];
+  const plan = [["low", 1], ["medium", 1], ["high", 1], ["high", 2], ["high", 4], ["high", 8]];
+  let li = -1;
+  const next = () => {
+    li++;
+    const prevHigh = results["high ×" + (plan[li - 1]?.[1])] ?? results.high;
+    // stop pushing once High can no longer hold the screen's own pace
+    if (li >= plan.length || (li > 3 && prevHigh && (prevHigh.fps < cap() * 0.9 || prevHigh.low < cap() * 0.7))) { test = null; $("run").disabled = false; showResults(); return; }
+    const [key, load] = plan[li]; buildLevel(key, load); setView("driver");
+    const name = load > 1 ? `${key} ×${load}` : key;
+    const rec = { dt: [], work: [], tri: 0, calls: 0 }; let elapsed = 0;
+    test = { tick(ms) {
+      elapsed += ms;
+      if (elapsed > 2500) { rec.dt.push(ms); rec.work.push(workMs[workMs.length - 1]); rec.tri = Math.max(rec.tri, renderer.info.render.triangles); rec.calls = Math.max(rec.calls, renderer.info.render.calls); }
+      if (elapsed > 9000 && view === "driver") setView("drone");
+      if (elapsed > 16000) { const w = [...rec.work].sort((a, b) => a - b); results[name] = { ...stats(rec.dt), work: w[Math.floor(w.length / 2)], tri: rec.tri, calls: rec.calls, label: load > 1 ? `High ×${load} load` : LEVELS[key].name }; showResults(); next(); }
+    } };
+  };
+  next();
+}
+// The screen's own pace: phones in low-power mode, and some in-app browsers, hold pages to 30 frames a second.
+function cap() { const f = Object.values(results).map((r) => r.fps); const top = Math.max(...f, 0); return top > 50 ? 60 : top > 25 ? 30 : top; }
+function verdict(r) { return r.fps >= 55 && r.low >= 40 ? ["Smooth", "ok"] : r.fps >= 30 && r.low >= 24 ? ["Playable", "meh"] : ["Too slow", "no"]; }
+function verdictFor(r) { const c = cap() || 60; return r.fps >= c * 0.92 && r.low >= c * 0.7 ? ["Holds the pace", "ok"] : r.fps >= 28 && r.low >= 22 ? ["Playable", "meh"] : ["Too slow", "no"]; }
+function showResults() {
+  const keys = Object.keys(results); if (!keys.length) return;
+  $("rows").innerHTML = keys.map((k) => { const r = results[k], [v, c] = verdictFor(r);
+    return `<tr><td>${r.label}</td><td class="v">${r.fps.toFixed(0)}</td><td class="v">${r.low.toFixed(0)}</td><td class="v">${r.work.toFixed(1)} ms busy</td><td class="v">${(r.tri / 1000).toFixed(0)}k</td><td class="v">${r.calls}</td><td class="${c}">${v}</td></tr>`; }).join("");
+  const gl = renderer.getContext(), dbg = gl.getExtension("WEBGL_debug_renderer_info");
+  const gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "unknown GPU";
+  const capped = cap() === 30 ? "\nScreen pace: held to 30 fps (low-power mode or in-app browser); the busy time shows the headroom." : "";
+  $("report").value = `Realism ladder v2, ${new Date().toISOString().slice(0, 16)}\nDevice: ${navigator.userAgent}\nGPU: ${gpu}; screen ${screen.width}x${screen.height} @${devicePixelRatio}x${capped}\n` +
+    keys.map((k) => { const r = results[k]; return `${r.label}: ${r.fps.toFixed(0)} fps, worst 1% ${r.low.toFixed(0)}, ${r.work.toFixed(1)} ms busy, ${(r.tri / 1000).toFixed(0)}k triangles, ${r.calls} draw calls, ${verdictFor(r)[0]}`; }).join("\n");
+}
+
+// ---------- controls ----------
+for (const [k, L] of Object.entries(LEVELS)) { const b = document.createElement("button"); b.className = "seg"; b.dataset.v = k; b.textContent = L.name; b.onclick = () => { if (!test) buildLevel(k); }; $("levels").append(b); }
+for (const v of ["driver", "drone"]) { const b = document.createElement("button"); b.className = "seg"; b.dataset.v = v; b.textContent = v === "driver" ? "Driving" : "From above"; b.onclick = () => { if (!test) setView(v); }; $("views").append(b); }
+function setView(v) { view = v; t0 = performance.now(); for (const b of document.querySelectorAll("#views .seg")) b.setAttribute("aria-pressed", b.dataset.v === v); }
+$("run").onclick = runTest;
+$("copy").onclick = async () => {
+  const text = $("report").value || "No results yet.";
+  try { await navigator.clipboard.writeText(text); $("copied").textContent = "Copied"; }
+  catch { $("report").focus(); $("report").select(); $("copied").textContent = "Selected: copy it with your keyboard or long-press"; }
+};
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+  composer?.setSize(r.width, r.height);
+}
+new ResizeObserver(resize).observe($("stage"));
+
+await loadCars();
+buildLevel("low"); setView("driver");
+renderer.setAnimationLoop(frame);
+</script>
